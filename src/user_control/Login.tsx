@@ -1,12 +1,13 @@
 import React from 'react';
-import { useForm, FieldError } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 
-import { LoginInfo } from './types';
-import { LoginValidationError } from './LoginValidationError';
+import { LoginInfo } from '../utils/types';
+import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
-import { ChooseLoginType } from './types';
+import { ChooseLoginType } from '../utils/types';
+import { useAuthContext } from '../App';
 
 export function Login() {
   const {
@@ -17,7 +18,8 @@ export function Login() {
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   });
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { login } = useAuthContext();
 
   const [isWrongSubmit, setIsWrongSubmit] = useState(false);
   const [wrongMessage, setWrongMessage] = useState<string | undefined>();
@@ -27,7 +29,8 @@ export function Login() {
   const onSubmit = (contact: LoginInfo) => {
     handleSubmittedLoginInfo(contact, buttonTypeRef.current).then((response) => {
       if (response.ok) {
-        // navigate('/home');
+        login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
+        navigate('/' + contact.user_name + '/search_friend');
         console.log('Login successful');
       } else {
         setIsWrongSubmit(true);
@@ -35,10 +38,6 @@ export function Login() {
       }
     });
   };
-
-  function getEditorStyle(fieldError: FieldError | undefined) {
-    return fieldError ? 'border-red-500' : '';
-  }
 
   return (
     <div>
@@ -59,7 +58,7 @@ export function Login() {
             })}
             className={getEditorStyle(errors.user_name)}
           ></input>
-          <LoginValidationError fieldError={errors.user_name} />
+          <ValidationError fieldError={errors.user_name} />
         </div>
         <div>
           <label htmlFor="password">Password</label>
@@ -76,7 +75,7 @@ export function Login() {
             })}
             className={getEditorStyle(errors.password)}
           ></input>
-          <LoginValidationError fieldError={errors.password} />
+          <ValidationError fieldError={errors.password} />
         </div>
         <div>
           <button type="submit" onClick={() => (buttonTypeRef.current = 'login')}>

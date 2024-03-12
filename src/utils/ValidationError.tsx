@@ -4,7 +4,7 @@ type Props = {
   fieldError: FieldError | undefined;
 };
 
-export function LoginValidationError({ fieldError }: Props) {
+export function ValidationError({ fieldError }: Props) {
   if (!fieldError) return null;
 
   return (
@@ -12,4 +12,8 @@ export function LoginValidationError({ fieldError }: Props) {
       {fieldError.message}
     </div>
   );
+}
+
+export function getEditorStyle(fieldError: FieldError | undefined) {
+  return fieldError ? 'border-red-500' : '';
 }

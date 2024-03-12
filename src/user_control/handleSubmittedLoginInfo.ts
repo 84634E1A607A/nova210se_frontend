@@ -1,6 +1,6 @@
-import { LoginInfo } from './types';
-import { PostMethodReturn } from './types';
-import { ChooseLoginType } from './types';
+import { LoginInfo } from '../utils/types';
+import { PostMethodReturn } from '../utils/types';
+import { ChooseLoginType } from '../utils/types';
 
 export async function handleSubmittedLoginInfo(
   contact: LoginInfo,
@@ -15,6 +15,7 @@ export async function handleSubmittedLoginInfo(
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // without it, cookie can't be set (include)
     },
   );
   if (response.ok)
