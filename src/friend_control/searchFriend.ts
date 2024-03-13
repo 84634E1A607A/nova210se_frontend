@@ -1,7 +1,10 @@
 import { assertIsLeastUserInfo } from '../utils/asserts';
 import { LeastUserInfo } from '../utils/types';
 
-export async function searchFriend(searchParam: string): Promise<Array<LeastUserInfo>> {
+export async function searchFriend(
+  searchParam: string,
+  csrftoken: string,
+): Promise<Array<LeastUserInfo>> {
   const userList: Array<LeastUserInfo> = [];
   if (searchParam === '') return userList;
 
@@ -15,6 +18,7 @@ export async function searchFriend(searchParam: string): Promise<Array<LeastUser
       ),
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       credentials: 'include',
     })

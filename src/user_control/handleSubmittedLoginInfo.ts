@@ -5,6 +5,7 @@ import { ChooseLoginType } from '../utils/types';
 export async function handleSubmittedLoginInfo(
   contact: LoginInfo,
   submitType: ChooseLoginType,
+  csrftoken: string,
 ): Promise<PostMethodReturn> {
   console.log(contact.user_name, 'trying to login');
   const response = await fetch(
@@ -14,6 +15,7 @@ export async function handleSubmittedLoginInfo(
       body: JSON.stringify(contact),
       headers: {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
       },
       credentials: 'include', // without it, cookie can't be set (include)
     },

@@ -2,11 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { searchFriend } from './searchFriend';
 import { LeastUserInfo } from '../utils/types';
+import { useCookies } from 'react-cookie';
 // import { useEffect } from 'react';
 
 // type Params = { user_name: string; search_param: string };
 
 export function SearchNewFriendResultList() {
+  const [cookies] = useCookies(['csrftoken']);
+
   const [searchParams] = useSearchParams();
   const search_param = searchParams.get('search_param');
   // useEffect(() => {}, [searchParams]);
@@ -15,7 +18,7 @@ export function SearchNewFriendResultList() {
     queryKey: ['new_friends_searched', search_param],
     queryFn: () => {
       if (search_param === null) return Promise.resolve([] as LeastUserInfo[]);
-      return searchFriend(search_param);
+      return searchFriend(search_param, cookies.csrftoken);
     },
   });
 

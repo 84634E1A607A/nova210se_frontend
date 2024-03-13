@@ -8,6 +8,7 @@ import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
 import { ChooseLoginType } from '../utils/types';
 import { useAuthContext } from '../App';
+import { useCookies } from 'react-cookie';
 
 export function Login() {
   const {
@@ -26,17 +27,24 @@ export function Login() {
 
   const buttonTypeRef = useRef<ChooseLoginType>('login');
 
+  const [cookies] = useCookies(['csrftoken']);
+
   const onSubmit = (contact: LoginInfo) => {
-    handleSubmittedLoginInfo(contact, buttonTypeRef.current).then((response) => {
-      if (response.ok) {
-        login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
-        navigate('/' + contact.user_name + '/search_friend');
-        console.log('Login successful');
-      } else {
-        setIsWrongSubmit(true);
-        setWrongMessage(response.message);
-      }
-    });
+    handleSubmittedLoginInfo(contact, buttonTypeRef.current, cookies.csrftoken)
+      .then((response) => {
+        if (response.ok) {
+          login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
+          navigate('/' + contact.user_name + '/search_friend');
+          console.log('Login successful');
+        } else {
+          setIsWrongSubmit(true);
+          setWrongMessage(response.message);
+        }
+      })
+      .catch((error) => {
+        window.alert('Fatal error during login (such as network abortion), please try again!');
+        navigate('/login');
+      });
   };
 
   return (
