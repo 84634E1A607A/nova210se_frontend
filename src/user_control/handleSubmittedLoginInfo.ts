@@ -8,18 +8,15 @@ export async function handleSubmittedLoginInfo(
   csrftoken: string,
 ): Promise<PostMethodReturn> {
   console.log(contact.user_name, 'trying to login');
-  const response = await fetch(
-    process.env.REACT_APP_API_USER_CONTROL_URL!.concat('/', submitType),
-    {
-      method: 'POST',
-      body: JSON.stringify(contact),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken,
-      },
-      credentials: 'include', // without it, cookie can't be set (include)
+  const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user/', submitType), {
+    method: 'POST',
+    body: JSON.stringify(contact),
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken,
     },
-  );
+    credentials: 'include', // without it, cookie can't be set (include)
+  });
   if (response.ok)
     return {
       status_code: response.status,
