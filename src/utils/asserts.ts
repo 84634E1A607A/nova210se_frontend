@@ -1,4 +1,4 @@
-import { Friend, Group } from './types';
+import { Friend, Group, Invitation } from './types';
 import { LeastUserInfo } from './types';
 
 export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is LeastUserInfo {
@@ -25,6 +25,11 @@ export function assertIsGroup(group: unknown): asserts group is Group {
     throw new Error('Server response group_name is not a string');
 }
 
+export function assertIsGroupsList(data: unknown): asserts data is Group[] {
+  if (!Array.isArray(data)) throw new Error('Server response is not an array');
+  for (const group of data) assertIsGroup(group);
+}
+
 export function assertIsFriend(friend: unknown): asserts friend is Friend {
   if (typeof friend !== 'object') throw new Error('Server response is not an object');
   if (friend === null) throw new Error('Server response is null');
@@ -47,4 +52,21 @@ export function assertIsFriendsListData(data: unknown): asserts data is { friend
   if (data === null) throw new Error('Server response is null');
   if (!('body' in data)) throw new Error('Server response does not contain body');
   assertIsFriendsList(data.body);
+}
+
+export function assertIsInvitationList(
+  invitationList: unknown,
+): asserts invitationList is Invitation[] {
+  if (!Array.isArray(invitationList)) throw new Error('Not a list');
+  for (const invitation of invitationList) {
+    if (!('id' in invitation)) throw new Error('Missing id');
+    if (!('comment' in invitation)) throw new Error('Missing comment');
+    if (!('sender' in invitation)) throw new Error('Missing sender');
+    if (!('source' in invitation)) throw new Error('Missing source');
+    if (typeof invitation.id !== 'number') throw new Error('id is not a number');
+    if (typeof invitation.comment !== 'string') throw new Error('comment is not a string');
+    if (typeof invitation.sender !== 'string') throw new Error('sender is not a string');
+    if (invitation.source !== 'search' && typeof invitation.source !== 'number')
+      throw new Error('source is not valid');
+  }
 }
