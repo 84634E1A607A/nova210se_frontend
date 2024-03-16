@@ -1,4 +1,4 @@
-import { Friend, Group, Invitation } from './types';
+import { Friend, Group, Invitation, InvitationSourceType } from './types';
 import { LeastUserInfo } from './types';
 
 export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is LeastUserInfo {
@@ -69,4 +69,10 @@ export function assertIsInvitationList(
     if (invitation.source !== 'search' && typeof invitation.source !== 'number')
       throw new Error('source is not valid');
   }
+}
+
+export function assertIsInvitationSourceType(
+  source: unknown,
+): asserts source is InvitationSourceType {
+  if (source !== 'search' && typeof source !== 'number') throw new Error('source is not valid');
 }

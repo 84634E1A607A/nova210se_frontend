@@ -5,14 +5,20 @@ type InvitationParam = { id: number; source: InvitationSourceType; comment?: str
 
 export async function invite(invitationInfo: InvitationParam, csrftoken: string) {
   if (invitationInfo.comment === undefined) invitationInfo.comment = '';
-  const response = await fetch(process.env.REACT_APP_API_URL!.concat('friend/invite'), {
-    method: 'POST',
-    body: JSON.stringify(invitationInfo),
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrftoken,
-    },
-  });
-  if (response.ok) return true;
-  return false;
+  try {
+    const response = await fetch(process.env.REACT_APP_API_URL!.concat('friend/invite'), {
+      method: 'POST',
+      body: JSON.stringify(invitationInfo),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+    });
+    if (response.ok) return true;
+    return false;
+  } catch (e) {
+    console.error(e);
+    window.alert('Failed to send invitation');
+    return false;
+  }
 }
