@@ -9,7 +9,7 @@ export async function searchFriend(
   if (searchParam === '') return userList;
 
   const fetchList = async (searchParamSent: string | number) => {
-    const resultList = await fetch(process.env.REACT_APP_API_URL!.concat('friend/find'), {
+    const resultList = await fetch(process.env.REACT_APP_API_URL!.concat('/friend/find'), {
       method: 'POST',
       body: JSON.stringify(
         typeof searchParamSent === 'string'

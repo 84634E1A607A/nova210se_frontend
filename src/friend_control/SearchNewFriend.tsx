@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { SearchNewFriendResultList } from './SearchNewFriendResultList';
 
@@ -11,8 +11,6 @@ export function SearchNewFriend() {
     handleSubmit,
     formState: { errors },
   } = useForm<SearchForm>({ mode: 'onBlur', reValidateMode: 'onBlur' });
-
-  // const navigate = useNavigate();
 
   const [, setSearchParams] = useSearchParams();
 
