@@ -13,6 +13,7 @@ export async function invite(invitationInfo: InvitationParam, csrftoken: string)
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken,
       },
+      credentials: 'include',
     });
     if (response.ok) return true;
     return false;

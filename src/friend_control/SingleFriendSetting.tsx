@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { DeleteFriendButton } from './DeleteFriendButton';
 import { useForm } from 'react-hook-form';
-import { queryGroup } from './queryGroup';
 import { getGroupsList } from './getGroupsList';
 import { createGroup } from './createGroup';
 import { useCookies } from 'react-cookie';

@@ -7,6 +7,7 @@ export async function editGroupName(newName: string, groupId: number, csrftoken:
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken,
       },
+      credentials: 'include',
     });
   } catch (e) {
     console.error(e);

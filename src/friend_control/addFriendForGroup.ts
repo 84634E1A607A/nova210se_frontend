@@ -11,6 +11,7 @@ export async function addFriendForGroup(
         'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify({ group_id }),
+      credentials: 'include',
     });
   } catch (e) {
     console.error(e);

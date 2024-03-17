@@ -6,6 +6,7 @@ export async function deleteFriend(friendUserId: number, csrftoken: string) {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken,
       },
+      credentials: 'include',
     });
   } catch (e) {
     console.log(e);

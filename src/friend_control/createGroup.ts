@@ -1,5 +1,4 @@
 import { assertIsGroup } from '../utils/asserts';
-import { Group } from '../utils/types';
 
 /* For now, group can only be created in a friend's setting */
 export async function createGroup(group_name: string, csrftoken: string) {
@@ -11,6 +10,7 @@ export async function createGroup(group_name: string, csrftoken: string) {
         'X-CSRFToken': csrftoken,
       },
       body: JSON.stringify({ group_name }),
+      credentials: 'include',
     });
     if (response.status === 400 || response.status === 403) return undefined;
     const data = await response.json();

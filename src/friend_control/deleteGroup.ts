@@ -5,6 +5,7 @@ export async function deleteGroup(groupId: number, csrftoken: string) {
       headers: {
         'X-CSRFToken': csrftoken,
       },
+      credentials: 'include',
     });
   } catch (e) {
     console.error(e);
