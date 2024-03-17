@@ -16,7 +16,6 @@ export function SearchNewFriend() {
 
   const onSubmit = ({ searchParam }: SearchForm) => {
     setSearchParams({ search_param: searchParam });
-    // navigate('');
   };
 
   return (
