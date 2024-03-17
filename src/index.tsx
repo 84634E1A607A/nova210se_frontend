@@ -45,6 +45,18 @@ const router = createBrowserRouter([
       {
         path: ':user_name/search_friend',
         element: <SearchNewFriend />,
+        loader: async () => {
+          console.log('In search_friend loader');
+          const existingData = queryClient.getQueryData(['friends']);
+          if (existingData) {
+            console.log("In search_friend's loader, has precious cache");
+            return defer({ ...existingData });
+          }
+          console.log("In search_friend's loader, no precious cache");
+          return defer({
+            friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
+          });
+        },
       },
       {
         path: ':user_name/:friend_user_id',

@@ -43,15 +43,18 @@ export function assertIsFriend(friend: unknown): asserts friend is Friend {
 }
 
 export function assertIsFriendsList(friendsList: unknown): asserts friendsList is Friend[] {
+  console.log(friendsList);
   if (!Array.isArray(friendsList)) throw new Error('Server response is not an array');
   for (const friend of friendsList) assertIsFriend(friend);
 }
 
 export function assertIsFriendsListData(data: unknown): asserts data is { friends: Friend[] } {
+  console.log(data);
+  if (data === undefined) console.error('Server response is undefined');
   if (typeof data !== 'object') throw new Error('Server response is not an object');
   if (data === null) throw new Error('Server response is null');
-  if (!('body' in data)) throw new Error('Server response does not contain body');
-  assertIsFriendsList(data.body);
+  if (!('friends' in data)) throw new Error('Server response does not contain body');
+  assertIsFriendsList(data.friends);
 }
 
 export function assertIsInvitationList(

@@ -23,8 +23,7 @@ export function SearchNewFriendResultList() {
     },
   });
 
-  const data = useLoaderData();
-  assertIsFriendsListData(data);
+  const data = useLoaderData(); // Please do not copy the code from the learn-react book, dont !! immediately assert it
 
   if (isLoading || searchNewFriendResultList === undefined) {
     return <div className="w-96 mx-auto mt-6">Loading ...</div>;
@@ -37,7 +36,10 @@ export function SearchNewFriendResultList() {
             <li key={user.id}>
               <Suspense>
                 <Await resolve={data}>
-                  <UserDisplayTab leastUserInfo={user} friendsList={data.friends} />
+                  {() => {
+                    assertIsFriendsListData(data);
+                    return <UserDisplayTab leastUserInfo={user} friendsList={data.friends} />;
+                  }}
                 </Await>
               </Suspense>
             </li>
