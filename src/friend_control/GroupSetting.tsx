@@ -1,6 +1,8 @@
 import { useCookies } from 'react-cookie';
 import { ActionFunctionArgs, Form, redirect, useParams } from 'react-router-dom';
 import { editGroupName } from './editGroupName';
+import { getGroupsList } from './getGroupsList';
+import { deleteGroup } from './deleteGroup';
 
 type Params = { group_id: string; user_name: string };
 type Setting = { new_group_name: string; user_name: string; token: string; group_id: number };
@@ -28,9 +30,12 @@ export function GroupSetting() {
         <input type="hidden" name="token" id="token" value={cookie.csrftoken!} />
         <input type="hidden" name="group_id" id="group_id" value={group_id} />
         <div>
-          <button type="submit">submit</button>
+          <button type="submit">edit</button>
         </div>
       </Form>
+      <button type="button" onClick={() => deleteGroup(group_id, cookie.csrftoken)}>
+        Delete
+      </button>
     </div>
   );
 }
@@ -43,6 +48,13 @@ export async function groupSettingAction({ request }: ActionFunctionArgs) {
     token: formData.get('token'),
     group_id: Number(formData.get('group_id')),
   } as Setting;
+
+  const groups = await getGroupsList();
+  const group = groups.find((group) => group.group_name === setting.new_group_name);
+  if (group) {
+    window.alert('Group name already exists');
+    return redirect(`${setting.user_name}/group_setting/${setting.group_id}`);
+  }
 
   await editGroupName(setting.new_group_name, setting.group_id, setting.token);
 
