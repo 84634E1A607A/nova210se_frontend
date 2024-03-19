@@ -17,6 +17,7 @@ import { GroupSetting, groupSettingAction } from './friend_control/GroupSetting'
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { getInvitations } from './friend_control/getInvitations';
 import { assertIsFriendsGroupsData } from './utils/queryRouterLoaderAsserts';
+import { AccountManagement } from './user_control/AccountManagement';
 
 const queryClient = new QueryClient();
 
@@ -32,67 +33,69 @@ const router = createBrowserRouter([
       {
         path: ':user_name',
         element: <MainPageFramework />,
-      },
-      {
-        path: ':user_name/friends',
-        element: <FriendsPage />,
-        loader: async () => {
-          const existingData = queryClient.getQueryData(['friends', 'groups']);
-          if (existingData) {
-            assertIsFriendsGroupsData(existingData);
-            return defer({ friends: existingData.friends, groups: existingData.groups });
-          }
-          return defer({
-            friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
-            groups: queryClient.fetchQuery({ queryKey: ['groups'], queryFn: getGroupsList }),
-          });
-        },
-      },
-      {
-        path: ':user_name/search_friend',
-        element: <SearchNewFriend />,
-        loader: async () => {
-          const existingData = queryClient.getQueryData(['friends']);
-          if (existingData) return defer({ friends: existingData });
-          return defer({
-            friends: queryClient.fetchQuery({
-              queryKey: ['friends'],
-              queryFn: getFriendsList,
-            }),
-          });
-        },
-      },
-      {
-        path: ':user_name/:friend_user_id',
-        element: <SingleFriendSetting />,
-      },
-      {
-        path: ':user_name/invite',
-        element: <InviteFriendPage />,
-      },
-      {
-        path: ':user_name/main_page',
-        element: <MainPageFramework />,
-        children: [],
-      },
-      {
-        path: ':user_name/group_setting/:group_id',
-        element: <GroupSetting />,
-        action: groupSettingAction,
-      },
-      {
-        path: ':user_name/invitation_list',
-        element: <OngoingInvitations />,
-        loader: async () => {
-          const existingData = queryClient.getQueryData(['invitations']);
-          if (existingData) return defer({ invitaions: existingData });
-          return defer({
-            invitaions: queryClient.fetchQuery({
-              queryKey: ['invitations'],
-              queryFn: getInvitations,
-            }),
-          });
-        },
+        // has a loader to load chats and group chats
+        children: [
+          {
+            path: 'friends',
+            element: <FriendsPage />,
+            loader: async () => {
+              const existingData = queryClient.getQueryData(['friends', 'groups']);
+              if (existingData) {
+                assertIsFriendsGroupsData(existingData);
+                return defer({ friends: existingData.friends, groups: existingData.groups });
+              }
+              return defer({
+                friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
+                groups: queryClient.fetchQuery({ queryKey: ['groups'], queryFn: getGroupsList }),
+              });
+            },
+          },
+          {
+            path: 'search_friend',
+            element: <SearchNewFriend />,
+            loader: async () => {
+              const existingData = queryClient.getQueryData(['friends']);
+              if (existingData) return defer({ friends: existingData });
+              return defer({
+                friends: queryClient.fetchQuery({
+                  queryKey: ['friends'],
+                  queryFn: getFriendsList,
+                }),
+              });
+            },
+          },
+          {
+            path: ':friend_user_id',
+            element: <SingleFriendSetting />,
+          },
+          {
+            path: 'invite',
+            element: <InviteFriendPage />,
+          },
+          {
+            path: 'group_setting/:group_id',
+            element: <GroupSetting />,
+            action: groupSettingAction,
+          },
+          {
+            path: 'account_management',
+            element: <AccountManagement />,
+          },
+          {
+            path: 'invitation_list',
+            element: <OngoingInvitations />,
+            loader: async () => {
+              const existingData = queryClient.getQueryData(['invitations']);
+              if (existingData) return defer({ invitaions: existingData });
+              return defer({
+                invitaions: queryClient.fetchQuery({
+                  queryKey: ['invitations'],
+                  queryFn: getInvitations,
+                }),
+              });
+            },
+          },
+        ],
       },
     ],
   },

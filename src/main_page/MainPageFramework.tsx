@@ -1,14 +1,30 @@
-import React from 'react';
-// import { useParams } from 'react-router-dom';
 import { DisplayCurrentUserInfo } from '../user_control/DisplayCurrentUserInfo';
-
-// type Params = { user_name: string };
+import { Link, Outlet, useParams } from 'react-router-dom';
+import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
+import { UrlParams } from '../utils/types';
 
 export function MainPageFramework() {
-  // const params = useParams<Params>(); // user_name: params.user_name
+  const params = useParams<UrlParams>();
+
   return (
     <div>
-      <DisplayCurrentUserInfo />
+      <Sidebar>
+        <Menu>
+          <MenuItem component={<DisplayCurrentUserInfo />} />
+          <MenuItem component={<Link to={`/${params.user_name!}/account_management`} />}>
+            Account
+          </MenuItem>
+          <MenuItem component={<Link to={`/${params.user_name!}/friends`} />}>My friends</MenuItem>
+          <MenuItem component={<Link to={`/${params.user_name!}/invitation_list`} />}>
+            Invitations
+          </MenuItem>
+        </Menu>
+        <Menu>
+          {/* For chats and group chats */}
+          <MenuItem component={<p>for future chats</p>}> First dummy chat</MenuItem>
+        </Menu>
+      </Sidebar>
+      <Outlet />
     </div>
   );
 }
