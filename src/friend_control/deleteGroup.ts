@@ -1,10 +1,7 @@
-export async function deleteGroup(groupId: number, csrftoken: string) {
+export async function deleteGroup(groupId: number) {
   try {
     await fetch(process.env.REACT_APP_API_URL!.concat(`/friend/group/${groupId}`), {
       method: 'DELETE',
-      headers: {
-        'X-CSRFToken': csrftoken,
-      },
       credentials: 'include',
     });
   } catch (e) {

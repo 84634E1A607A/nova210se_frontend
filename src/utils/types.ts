@@ -13,14 +13,14 @@ export type PostMethodReturn = {
 
 export type ChooseLoginType = 'login' | 'register';
 
-export type LeastUserInfo = { id: number; user_name: string; avatar: string };
+export type LeastUserInfo = { id: number; user_name: string; avatar_url: string };
 
 export type InvitationSourceType = 'search' | number;
 
 export type Invitation = {
   id: number;
   comment: string;
-  sender: string;
+  sender: LeastUserInfo;
   source: InvitationSourceType;
 };
 
@@ -35,3 +35,6 @@ export type ListItem = {
   has_unread: boolean;
   unread_count: number; // the requirement document mandates this field to be shown
 };
+
+// maybe some field names are wrong
+export type UrlParams = { user_name: string; friend_user_id?: string };

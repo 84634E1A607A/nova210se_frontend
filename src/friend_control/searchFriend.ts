@@ -1,38 +1,34 @@
 import { assertIsLeastUserInfo } from '../utils/asserts';
 import { LeastUserInfo } from '../utils/types';
 
-export async function searchFriend(
-  searchParam: string,
-  csrftoken: string,
-): Promise<Array<LeastUserInfo>> {
+export async function searchFriend(searchParam: string): Promise<Array<LeastUserInfo>> {
   const userList: Array<LeastUserInfo> = [];
   if (searchParam === '') return userList;
 
   const fetchList = async (searchParamSent: string | number) => {
-    const resultList = await fetch(process.env.REACT_APP_API_URL!.concat('/friend/find'), {
-      method: 'POST',
-      body: JSON.stringify(
-        typeof searchParamSent === 'string'
-          ? { name_contains: searchParamSent }
-          : { id: searchParamSent },
-      ),
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken,
-      },
-      credentials: 'include',
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        return data.body;
-      })
-      .then((body) => {
-        assertIsLeastUserInfoList(body);
-        return body;
+    try {
+      const response = await fetch(process.env.REACT_APP_API_URL!.concat('/friend/find'), {
+        method: 'POST',
+        body: JSON.stringify(
+          typeof searchParamSent === 'string'
+            ? { name_contains: searchParamSent }
+            : { id: searchParamSent },
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       });
-    userList.push(...resultList);
+      if (!response.ok) throw new Error('Fetch failed to search friend!');
+      const data = await response.json();
+      let body = data.data;
+      if (body === undefined) body = [];
+      assertIsLeastUserInfoList(body);
+      userList.push(...body);
+    } catch (e) {
+      console.error(e);
+      window.alert('Failed to search friend');
+    }
   };
 
   const searchId = parseInt(searchParam);

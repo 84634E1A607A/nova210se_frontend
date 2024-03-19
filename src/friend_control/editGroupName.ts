@@ -1,11 +1,10 @@
-export async function editGroupName(newName: string, groupId: number, csrftoken: string) {
+export async function editGroupName(newName: string, groupId: number) {
   try {
     await fetch(process.env.REACT_APP_API_URL!.concat(`/friend/group/${groupId}`), {
       method: 'PATCH',
       body: JSON.stringify({ group_name: newName }),
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': csrftoken,
       },
       credentials: 'include',
     });

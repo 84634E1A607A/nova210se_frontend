@@ -3,16 +3,15 @@ import { DeleteFriendButton } from './DeleteFriendButton';
 import { useForm } from 'react-hook-form';
 import { getGroupsList } from './getGroupsList';
 import { createGroup } from './createGroup';
-import { useCookies } from 'react-cookie';
 import { addFriendForGroup } from './addFriendForGroup';
 import { getFriendInfo } from './getFriendInfo';
+import { getDefaultGroup } from './getDefaultGroup';
 
 type Params = { user_name: string; friend_user_id: string };
 type GroupForm = { target_group_name: string };
 
 export function SingleFriendSetting() {
   const params = useParams<Params>();
-  const [cookie] = useCookies(['csrftoken']);
 
   const {
     register,
@@ -21,30 +20,38 @@ export function SingleFriendSetting() {
   } = useForm<GroupForm>();
 
   const handleChangedGroupOfFriend = async ({ target_group_name }: GroupForm) => {
-    if (target_group_name === 'default') {
+    const friendId = parseInt(params.friend_user_id!);
+    const friend = await getFriendInfo(friendId);
+    if (!friend) return;
+
+    const currentGroupName = friend.group.group_name;
+    if (target_group_name === 'default' && currentGroupName === '') {
+      window.alert('Friend already in default group');
+      return;
     }
-    const groups = await getGroupsList();
-    const group = groups.find((group) => group.group_name === target_group_name);
-    if (group === undefined) {
-      const newGroup = await createGroup(target_group_name, cookie.csrftoken!);
-      if (newGroup === undefined) window.alert('Failed to create group');
-      else
-        await addFriendForGroup(
-          newGroup.group_id,
-          parseInt(params.friend_user_id!),
-          cookie.csrftoken!,
-        );
-    } else {
-      const friend = await getFriendInfo(parseInt(params.friend_user_id!));
-      if (friend!.group.group_name === target_group_name)
+
+    let groupId;
+    if (target_group_name === 'default')
+      groupId = await getDefaultGroup().then((group) => group!.group_id);
+    else {
+      const groups = await getGroupsList();
+      const group = groups.find((group) => group.group_name === target_group_name);
+
+      if (!group) {
+        const newGroup = await createGroup(target_group_name);
+        if (!newGroup) {
+          window.alert('Failed to create group');
+          return;
+        }
+        groupId = newGroup.group_id;
+      } else if (currentGroupName === target_group_name) {
         window.alert('Friend already in this group');
-      else
-        await addFriendForGroup(
-          group.group_id,
-          parseInt(params.friend_user_id!),
-          cookie.csrftoken!,
-        );
+        return;
+      } else {
+        groupId = group.group_id;
+      }
     }
+    await addFriendForGroup(groupId, friendId);
   };
 
   return (

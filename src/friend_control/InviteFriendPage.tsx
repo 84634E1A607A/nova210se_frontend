@@ -1,21 +1,24 @@
-import { useCookies } from 'react-cookie';
 import { invite } from './invite';
 import { InvitationSourceType } from '../utils/types';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { assertIsInvitationSourceType } from '../utils/asserts';
 import { useState } from 'react';
 
-export function InviteFriendPage() {
-  const [cookie] = useCookies(['csrftoken']);
+type Params = { user_name: string };
 
+export function InviteFriendPage() {
   const location = useLocation();
   const state = location.state;
   assertIsValidState(state);
 
   const [comment, setComment] = useState('');
+  const navigate = useNavigate();
+  const params = useParams<Params>();
 
   const onClick = async () => {
-    invite({ ...state, comment }, cookie.csrftoken);
+    if (!invite({ ...state, comment })) window.alert('Failed to send invitation');
+    else window.alert('Invitation sent');
+    navigate(`/${params.user_name!}/main_page`);
   };
 
   return (

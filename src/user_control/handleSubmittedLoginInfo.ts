@@ -5,35 +5,49 @@ import { ChooseLoginType } from '../utils/types';
 export async function handleSubmittedLoginInfo(
   contact: LoginInfo,
   submitType: ChooseLoginType,
-  csrftoken: string,
 ): Promise<PostMethodReturn> {
-  console.log(contact.user_name, 'trying to login');
-  const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user/', submitType), {
-    method: 'POST',
-    body: JSON.stringify(contact),
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrftoken,
-    },
-    credentials: 'include', // without it, cookie can't be set (include)
-  });
-  if (response.ok)
-    return {
-      status_code: response.status,
-      ok: true,
-      message: submitType === 'login' ? 'Login successful' : 'Registration successful',
-    };
+  const url = `${process.env.REACT_APP_API_URL!}/user/${submitType}`;
 
-  let fail_info = '';
-  switch (response.status) {
-    case 409:
-      fail_info = 'User name already exists, switch to a new one to register';
-      break;
-    case 403:
-      fail_info = 'User does not exist or password is incorrect';
-      break;
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(contact),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // without it, cookie can't be set (include)
+    });
+
+    if (response.ok) {
+      return {
+        status_code: response.status,
+        ok: true,
+        message: submitType === 'login' ? 'Login successful' : 'Registration successful',
+      };
+    }
+
+    const failInfo = getFailureMessage(response.status);
+    return { status_code: response.status, ok: false, message: failInfo };
+  } catch (error) {
+    console.error('Error', error);
+    window.alert('Failed to login');
+    return { status_code: 500, ok: false, message: 'Internal server error' };
   }
-  if (response.status >= 500) fail_info = 'Internal server error';
-  if (response.status >= 300 && response.status < 400) fail_info = 'Redirect error';
-  return { status_code: response.status, ok: false, message: fail_info };
+}
+
+function getFailureMessage(status: number): string {
+  switch (status) {
+    case 409:
+      return 'User name already exists, switch to a new one to register';
+    case 403:
+      return 'User does not exist or password is incorrect';
+    case 500:
+      return 'Internal server error';
+    default:
+      if (status >= 300 && status < 400) {
+        return 'Redirect error';
+      } else {
+        return 'Unknown error';
+      }
+  }
 }

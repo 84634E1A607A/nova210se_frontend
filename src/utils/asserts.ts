@@ -9,9 +9,9 @@ export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is Le
   if (!('user_name' in userInfo)) throw new Error('Server response does not contain user_name');
   if (typeof userInfo.user_name !== 'string')
     throw new Error('Server response user_name is not a string');
-  if (!('avatar' in userInfo)) throw new Error('Server response does not contain avatar');
-  if (typeof userInfo.avatar !== 'string')
-    throw new Error('Server response avatar is not a string');
+  if (!('avatar_url' in userInfo)) throw new Error('Server response does not contain avatar_url');
+  if (typeof userInfo.avatar_url !== 'string')
+    throw new Error('Server response avatar_url is not a string');
 }
 
 export function assertIsGroup(group: unknown): asserts group is Group {
@@ -53,7 +53,7 @@ export function assertIsFriendsListData(data: unknown): asserts data is { friend
   if (data === undefined) console.error('Server response is undefined');
   if (typeof data !== 'object') throw new Error('Server response is not an object');
   if (data === null) throw new Error('Server response is null');
-  if (!('friends' in data)) throw new Error('Server response does not contain body');
+  if (!('friends' in data)) throw new Error("Server response does not contain ' friends ' body");
   assertIsFriendsList(data.friends);
 }
 
@@ -68,7 +68,7 @@ export function assertIsInvitationList(
     if (!('source' in invitation)) throw new Error('Missing source');
     if (typeof invitation.id !== 'number') throw new Error('id is not a number');
     if (typeof invitation.comment !== 'string') throw new Error('comment is not a string');
-    if (typeof invitation.sender !== 'string') throw new Error('sender is not a string');
+    assertIsLeastUserInfo(invitation.sender);
     if (invitation.source !== 'search' && typeof invitation.source !== 'number')
       throw new Error('source is not valid');
   }

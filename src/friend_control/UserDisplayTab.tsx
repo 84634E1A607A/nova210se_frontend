@@ -25,7 +25,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
   let source: InvitationSourceType = 'search';
 
-  // TODO: group id source is not implemented
+  // TODO: chat group id source is not implemented
 
   if (!location.pathname.includes(`${params.user_name!}/search_friend`)) {
     /* give it a group number */
@@ -34,7 +34,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   // const isFriend = friendsList.some((friend) => friend.friend.id === leastUserInfo.id);
   return (
     <div>
-      <img src={leastUserInfo.avatar} alt="avatar" />
+      <img src={leastUserInfo.avatar_url} alt="avatar_url" />
       <p>{userName}</p>
       <p>{groupName ?? null}</p>
       {isFriend ? (
@@ -43,7 +43,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
           <Link to="">more</Link>
         </div>
       ) : (
-        <Link to={`${params.user_name!}/invite`} state={{ source: source, id: leastUserInfo.id }}>
+        <Link to={`/${params.user_name!}/invite`} state={{ source: source, id: leastUserInfo.id }}>
           invite
         </Link>
       )}
