@@ -31,8 +31,7 @@ export function Login() {
       .then((response) => {
         if (response.ok) {
           login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
-          navigate('/' + contact.user_name + '/search_friend');
-          console.log('Login successful');
+          navigate('/' + contact.user_name);
         } else {
           setIsWrongSubmit(true);
           setWrongMessage(response.message);
