@@ -35,7 +35,6 @@ export function SearchNewFriend() {
           <button type="submit">Search</button>
         </div>
       </form>
-
       <SearchNewFriendResultList />
     </div>
   );

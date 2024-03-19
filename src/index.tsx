@@ -14,6 +14,9 @@ import { getGroupsList } from './friend_control/getGroupsList';
 import { SingleFriendSetting } from './friend_control/SingleFriendSetting';
 import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { GroupSetting, groupSettingAction } from './friend_control/GroupSetting';
+import { OngoingInvitations } from './friend_control/OngoingInvitations';
+import { getInvitations } from './friend_control/getInvitations';
+import { assertIsFriendsGroupsData } from './utils/queryRouterLoaderAsserts';
 
 const queryClient = new QueryClient();
 
@@ -35,7 +38,10 @@ const router = createBrowserRouter([
         element: <FriendsPage />,
         loader: async () => {
           const existingData = queryClient.getQueryData(['friends', 'groups']);
-          if (existingData) return defer({ ...existingData });
+          if (existingData) {
+            assertIsFriendsGroupsData(existingData);
+            return defer({ friends: existingData.friends, groups: existingData.groups });
+          }
           return defer({
             friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
             groups: queryClient.fetchQuery({ queryKey: ['groups'], queryFn: getGroupsList }),
@@ -46,15 +52,13 @@ const router = createBrowserRouter([
         path: ':user_name/search_friend',
         element: <SearchNewFriend />,
         loader: async () => {
-          console.log('In search_friend loader');
           const existingData = queryClient.getQueryData(['friends']);
-          if (existingData) {
-            console.log("In search_friend's loader, has precious cache");
-            return defer({ ...existingData });
-          }
-          console.log("In search_friend's loader, no precious cache");
+          if (existingData) return defer({ friends: existingData });
           return defer({
-            friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
+            friends: queryClient.fetchQuery({
+              queryKey: ['friends'],
+              queryFn: getFriendsList,
+            }),
           });
         },
       },
@@ -75,6 +79,20 @@ const router = createBrowserRouter([
         path: ':user_name/group_setting/:group_id',
         element: <GroupSetting />,
         action: groupSettingAction,
+      },
+      {
+        path: ':user_name/invitation_list',
+        element: <OngoingInvitations />,
+        loader: async () => {
+          const existingData = queryClient.getQueryData(['invitations']);
+          if (existingData) return defer({ invitaions: existingData });
+          return defer({
+            invitaions: queryClient.fetchQuery({
+              queryKey: ['invitations'],
+              queryFn: getInvitations,
+            }),
+          });
+        },
       },
     ],
   },

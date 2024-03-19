@@ -1,25 +1,30 @@
-// import { useQueryClient } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { Await, useLoaderData } from 'react-router-dom';
-import { assertIsFriendsList, assertIsFriendsListData, assertIsGroupsList } from '../utils/asserts';
+import { assertIsFriendsList, assertIsGroupsList } from '../utils/asserts';
 import { FriendsList } from './FriendsList';
+import { assertIsFriendsGroupsData } from '../utils/queryRouterLoaderAsserts';
 
-/* for listing all the friends and chat groups, categorized by friend group
+/**
+ * @description for listing all the friends and chat groups, categorized by friend group
  */
 export function FriendsPage() {
-  // const queryClient = useQueryClient();
-  const data = useLoaderData(); // { friends: Friend[] }, and this type/structure is stipulated by react-query key
-  assertIsFriendsListData(data);
+  const data = useLoaderData();
+  assertIsFriendsGroupsData(data);
+
   return (
     <div>
       <Suspense fallback={<div>Loading friends list...</div>}>
-        <Await resolve={data}>
-          {(data) => {
-            const friends = data.friends;
+        <Await resolve={data.friends}>
+          {(friends) => {
             assertIsFriendsList(friends);
-            const groups = data.groups;
-            assertIsGroupsList(groups);
-            return <FriendsList friends={friends} groups={groups} />;
+            return (
+              <Await resolve={data.groups}>
+                {(groups) => {
+                  assertIsGroupsList(groups);
+                  return <FriendsList friends={friends} groups={groups} />;
+                }}
+              </Await>
+            );
           }}
         </Await>
       </Suspense>

@@ -14,7 +14,6 @@ const useAuth = () => {
     isAuthed,
     login: () => {
       setIsAuthed(true);
-      console.log('login in useAuth hook');
     },
     logout: () => setIsAuthed(false),
   };
