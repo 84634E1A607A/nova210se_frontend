@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom';
 import { DeleteFriendButton } from './DeleteFriendButton';
 import { useForm } from 'react-hook-form';
 import { getGroupsList } from './getGroupsList';
@@ -6,12 +5,12 @@ import { createGroup } from './createGroup';
 import { addFriendForGroup } from './addFriendForGroup';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
+import { useFriendUserId } from '../utils/UrlParamsHooks';
 
-type Params = { user_name: string; friend_user_id: string };
 type GroupForm = { target_group_name: string };
 
 export function SingleFriendSetting() {
-  const params = useParams<Params>();
+  const friendUserId = useFriendUserId();
 
   const {
     register,
@@ -20,8 +19,7 @@ export function SingleFriendSetting() {
   } = useForm<GroupForm>();
 
   const handleChangedGroupOfFriend = async ({ target_group_name }: GroupForm) => {
-    const friendId = parseInt(params.friend_user_id!);
-    const friend = await getFriendInfo(friendId);
+    const friend = await getFriendInfo(friendUserId);
     if (!friend) return;
 
     const currentGroupName = friend.group.group_name;
@@ -51,12 +49,12 @@ export function SingleFriendSetting() {
         groupId = group.group_id;
       }
     }
-    await addFriendForGroup(groupId, friendId);
+    await addFriendForGroup(groupId, friendUserId);
   };
 
   return (
     <div>
-      <DeleteFriendButton friendUserId={parseInt(params.friend_user_id!)} />
+      <DeleteFriendButton friendUserId={friendUserId} />
       <form onSubmit={handleSubmit(handleChangedGroupOfFriend)}>
         <div>
           <label htmlFor="target_group_name">

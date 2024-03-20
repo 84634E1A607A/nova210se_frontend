@@ -1,9 +1,10 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
 import { DeleteFriendButton } from './DeleteFriendButton';
+import { useUserName } from '../utils/UrlParamsHooks';
 
 type Props = { leastUserInfo: LeastUserInfo; friendsList: Friend[] };
-type Params = { user_name: string };
+
 /**
  * show all kinds of user info tab in a list of users
  * @param
@@ -11,23 +12,23 @@ type Params = { user_name: string };
  */
 export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   let isFriend = false;
-  let userName = '';
+  let userNameToDisplay = leastUserInfo.user_name;
   let groupName: undefined | string;
   const friend = friendsList.find((friend) => friend.friend.id === leastUserInfo.id);
   if (friend !== undefined) {
     isFriend = true;
-    userName = friend.nickname;
+    if (friend.nickname !== '') userNameToDisplay = friend.nickname;
     groupName = friend.group.group_name;
   }
 
-  const params = useParams<Params>();
+  const userName = useUserName();
   const location = useLocation();
 
   let source: InvitationSourceType = 'search';
 
   // TODO: chat group id source is not implemented
 
-  if (!location.pathname.includes(`${params.user_name!}/search_friend`)) {
+  if (!location.pathname.includes(`${userName}/search_friend`)) {
     /* give it a group number */
   }
 
@@ -35,7 +36,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   return (
     <div>
       <img src={leastUserInfo.avatar_url} alt="avatar_url" />
-      <p>{userName}</p>
+      <p>{userNameToDisplay}</p>
       <p>{groupName ?? null}</p>
       {isFriend ? (
         <div>
@@ -43,7 +44,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
           <Link to="">more</Link>
         </div>
       ) : (
-        <Link to={`/${params.user_name!}/invite`} state={{ source: source, id: leastUserInfo.id }}>
+        <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
           invite
         </Link>
       )}

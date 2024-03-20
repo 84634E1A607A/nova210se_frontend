@@ -37,4 +37,4 @@ export type ListItem = {
 };
 
 // maybe some field names are wrong
-export type UrlParams = { user_name: string; friend_user_id?: string };
+export type UrlParams = { user_name: string; friend_user_id?: string; group_id?: string };

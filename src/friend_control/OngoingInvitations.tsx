@@ -6,7 +6,7 @@ import { acceptInvitation } from './acceptInvitation';
 import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Invitation } from '../utils/types';
-import { useUserName } from '../utils/useUserName';
+import { useUserName } from '../utils/UrlParamsHooks';
 
 export function OngoingInvitations() {
   const data = useLoaderData();
