@@ -11,6 +11,9 @@ export function MainPageFramework() {
       <Sidebar>
         <Menu>
           <MenuItem component={<DisplayCurrentUserInfo />} />
+          <MenuItem component={<Link to={`/${params.user_name!}/search_friend`} />}>
+            Search new friend
+          </MenuItem>
           <MenuItem component={<Link to={`/${params.user_name!}/account_management`} />}>
             Account
           </MenuItem>
