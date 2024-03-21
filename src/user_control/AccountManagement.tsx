@@ -8,10 +8,11 @@ export function AccountManagement() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isValid, dirtyFields, touchedFields },
+    formState: { errors, dirtyFields },
   } = useForm<EdittingInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
+    defaultValues: { old_password: '', new_password: '', avatar_url: '' },
   });
 
   const onSubmit = async (info: EdittingInfo) => {
@@ -21,10 +22,7 @@ export function AccountManagement() {
       setError('avatar_url', { message: errorMessageForNoFieldAtAll });
       return;
     }
-    if (
-      (info.new_password !== '' && info.old_password === '') ||
-      (info.new_password === '' && info.old_password !== '')
-    ) {
+    if (info.new_password !== '' && info.old_password === '') {
       const errorMessageForOnlyOnePassword =
         'Either both old and new passwords must be filled in, or neither';
       setError('old_password', { message: errorMessageForOnlyOnePassword });
@@ -60,7 +58,6 @@ export function AccountManagement() {
         <div>
           <label htmlFor="new_password">New Password</label>
           <input
-            defaultValue={'' as string}
             type="password"
             id="new_password"
             {...register('new_password', {
@@ -75,9 +72,7 @@ export function AccountManagement() {
           />
           <ValidationError fieldError={errors.new_password} />
         </div>
-        <div
-          className={`${getHiddenOrVisibleEditorStyle(isValid, dirtyFields.new_password, touchedFields.old_password)}`}
-        >
+        <div className={`${getHiddenOrVisibleEditorStyle(dirtyFields.new_password)}`}>
           <label htmlFor="old_password">Old Password</label>
           <input
             defaultValue={'' as string}
@@ -105,10 +100,6 @@ export function AccountManagement() {
 
 type EdittingInfo = { old_password?: string; new_password?: string; avatar_url?: string };
 
-function getHiddenOrVisibleEditorStyle(
-  wholeFormIsValid: boolean,
-  depExists: boolean | undefined,
-  selfExists: boolean | undefined,
-) {
-  if (!(depExists && (wholeFormIsValid || selfExists))) return 'hidden';
+function getHiddenOrVisibleEditorStyle(depExists: boolean | undefined) {
+  if (!depExists) return 'hidden';
 }
