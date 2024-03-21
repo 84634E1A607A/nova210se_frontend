@@ -9,6 +9,7 @@ export function AccountManagement() {
     handleSubmit,
     setError,
     formState: { errors, dirtyFields },
+    setValue,
   } = useForm<EdittingInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -39,7 +40,6 @@ export function AccountManagement() {
         <div>
           <label htmlFor="avatar_url">New Avatar URL</label>
           <input
-            defaultValue={'' as string}
             type="text"
             id="avatar_url"
             {...register('avatar_url', {
@@ -75,7 +75,6 @@ export function AccountManagement() {
         <div className={`${getHiddenOrVisibleEditorStyle(dirtyFields.new_password)}`}>
           <label htmlFor="old_password">Old Password</label>
           <input
-            defaultValue={'' as string}
             type="password"
             id="old_password"
             {...register('old_password', {
@@ -91,7 +90,14 @@ export function AccountManagement() {
           <ValidationError fieldError={errors.old_password} />
         </div>
         <div>
-          <button type="submit"> Submit</button>
+          <button
+            type="submit"
+            onClick={() => {
+              if (!dirtyFields.new_password) setValue('old_password', '');
+            }}
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>
