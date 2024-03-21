@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
@@ -37,10 +36,11 @@ export function Login() {
           setWrongMessage(response.message);
         }
       })
-      .catch((error) => {
+      .catch((_error) => {
         window.alert('Fatal error during login (such as network abortion), please try again!');
         navigate('/login');
       });
+    //_error's underscore shows that it's unused intentionally, ignored by eslint
   };
 
   return (

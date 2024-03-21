@@ -54,7 +54,6 @@ export function AccountManagement() {
             type="password"
             id="new_password"
             {...register('new_password', {
-              onChange: (e) => {},
               maxLength: { value: 100, message: 'Password must be at most 100 characters long' },
               minLength: { value: 6, message: 'Password must be at least 6 characters long' },
               pattern: {
