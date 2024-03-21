@@ -2,26 +2,22 @@ import { assertIsLeastUserInfo } from '../utils/asserts';
 
 /**
  *
- * @param old_password?: string
- * @param new_password?: string
- * @param avatar_url?: string
+ * @param old_password: string
+ * @param new_password: string
+ * @param avatar_url: string
  * @returns Promise<LeastUserInfo | undefined>
  * Without new_password, the old_password can be arbitrary
  */
-export async function editUserInfo(
-  old_password?: string,
-  new_password?: string,
-  avatar_url?: string,
-) {
-  if (old_password === undefined) old_password = '';
+export async function editUserInfo(old_password: string, new_password: string, avatar_url: string) {
+  const avatarUrlInRequestBody = avatar_url === '' ? {} : { avatar_url };
+  const requestBody =
+    new_password === ''
+      ? { ...avatarUrlInRequestBody }
+      : { old_password, new_password, ...avatarUrlInRequestBody };
   try {
     const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user'), {
       method: 'PATCH',
-      body: JSON.stringify({
-        old_password,
-        new_password,
-        avatar_url,
-      }),
+      body: JSON.stringify(requestBody),
       headers: {
         'Content-Type': 'application/json',
       },

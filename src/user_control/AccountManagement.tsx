@@ -16,11 +16,21 @@ export function AccountManagement() {
 
   const onSubmit = async (info: EdittingInfo) => {
     if (info.new_password === '' && info.avatar_url === '') {
-      setError('new_password', { message: 'At least one field must be filled in' });
-      setError('avatar_url', { message: 'At least one field must be filled in' });
+      const errorMessageForNoFieldAtAll = 'At least one field must be filled in';
+      setError('new_password', { message: errorMessageForNoFieldAtAll });
+      setError('avatar_url', { message: errorMessageForNoFieldAtAll });
       return;
     }
-    await editUserInfo(info.old_password, info.new_password, info.avatar_url).then((user) => {
+    if (
+      (info.new_password !== '' && info.old_password === '') ||
+      (info.new_password === '' && info.old_password !== '')
+    ) {
+      const errorMessageForOnlyOnePassword =
+        'Either both old and new passwords must be filled in, or neither';
+      setError('old_password', { message: errorMessageForOnlyOnePassword });
+      setError('new_password', { message: errorMessageForOnlyOnePassword });
+    }
+    await editUserInfo(info.old_password!, info.new_password!, info.avatar_url!).then((user) => {
       if (user === undefined) setError('old_password', { message: 'Old password is incorrect' });
     });
   };
@@ -31,7 +41,7 @@ export function AccountManagement() {
         <div>
           <label htmlFor="avatar_url">New Avatar URL</label>
           <input
-            defaultValue={''}
+            defaultValue={'' as string}
             type="text"
             id="avatar_url"
             {...register('avatar_url', {
@@ -50,7 +60,7 @@ export function AccountManagement() {
         <div>
           <label htmlFor="new_password">New Password</label>
           <input
-            defaultValue={''}
+            defaultValue={'' as string}
             type="password"
             id="new_password"
             {...register('new_password', {
@@ -70,7 +80,7 @@ export function AccountManagement() {
         >
           <label htmlFor="old_password">Old Password</label>
           <input
-            defaultValue={''}
+            defaultValue={'' as string}
             type="password"
             id="old_password"
             {...register('old_password', {
@@ -101,5 +111,4 @@ function getHiddenOrVisibleEditorStyle(
   selfExists: boolean | undefined,
 ) {
   if (!(depExists && (wholeFormIsValid || selfExists))) return 'hidden';
-  // if (depExists === undefined || depExists === false || wholeFormIsValid === false) return 'hidden';
 }
