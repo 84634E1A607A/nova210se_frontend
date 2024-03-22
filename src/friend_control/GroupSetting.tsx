@@ -30,7 +30,7 @@ export function GroupSetting() {
         </div>
       </Form>
       <button type="button" onClick={() => deleteGroup(groupId!)}>
-        Delete
+        Delete Group
       </button>
     </div>
   );

@@ -2,7 +2,10 @@ import { useForm } from 'react-hook-form';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { editUserInfo } from './editUserInfo';
 
-// For changing username, avatar_url, password etc. Or to logout, delete account, etc.
+/**
+ * For changing username, avatar_url, password etc. Or to logout, delete account, etc.
+ * @returns JSX.Element
+ */
 export function AccountManagement() {
   const {
     register,

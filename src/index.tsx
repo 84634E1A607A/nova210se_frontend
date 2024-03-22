@@ -49,6 +49,13 @@ const router = createBrowserRouter([
                 groups: queryClient.fetchQuery({ queryKey: ['groups'], queryFn: getGroupsList }),
               });
             },
+            children: [
+              // this child has no Outlet in its parent, so it requires nav to reach it
+              {
+                path: ':friend_user_id', // /:user_name/friends/:friend_user_id
+                element: <SingleFriendSetting />,
+              },
+            ],
           },
           {
             path: 'search_friend',
@@ -64,10 +71,7 @@ const router = createBrowserRouter([
               });
             },
           },
-          {
-            path: ':friend_user_id',
-            element: <SingleFriendSetting />,
-          },
+
           {
             path: 'invite',
             element: <InviteFriendPage />,

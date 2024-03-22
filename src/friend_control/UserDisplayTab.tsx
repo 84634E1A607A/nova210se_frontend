@@ -2,18 +2,27 @@ import { Link, useLocation } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
 import { DeleteFriendButton } from './DeleteFriendButton';
 import { useUserName } from '../utils/UrlParamsHooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { assertIsFriendsList } from '../utils/asserts';
 
-type Props = { leastUserInfo: LeastUserInfo; friendsList: Friend[] };
+type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[] };
 
 /**
- * show all kinds of user info tab in a list of users
- * @param
+ * show all kinds of user info tab in a list of users (such as friends or searched strangers list)
+ * @param friendsList: Friend[] (all friends of current user)
  * @returns
  */
 export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   let isFriend = false;
   let userNameToDisplay = leastUserInfo.user_name;
   let groupName: undefined | string;
+
+  const queryCLient = useQueryClient();
+
+  if (friendsList === undefined) {
+    friendsList = queryCLient.getQueryData(['friends']);
+    assertIsFriendsList(friendsList);
+  }
   const friend = friendsList.find((friend) => friend.friend.id === leastUserInfo.id);
   if (friend !== undefined) {
     isFriend = true;
@@ -32,7 +41,6 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
     /* give it a group number */
   }
 
-  // const isFriend = friendsList.some((friend) => friend.friend.id === leastUserInfo.id);
   return (
     <div>
       <img src={leastUserInfo.avatar_url} alt="avatar_url" />

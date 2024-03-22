@@ -27,22 +27,21 @@ export function OngoingInvitations() {
   const { mutate: accept, variables: acceptVar } = useMutation({
     mutationFn: handleAccept,
     onSuccess: (friend) => {
+      if (friend === undefined) return;
       queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
-        if (oldFriends === undefined) {
-          return [friend] as Friend[];
-        } else {
-          return [...oldFriends, friend] as Friend[];
-        }
+        if (oldFriends === undefined) return [friend];
+        else return [...oldFriends, friend];
       });
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== acceptVar);
       });
-      navigate(`/${userName}/invitation_list`);
+      navigate(`/${userName}/invitation_list`); // update loader
     },
   });
   const { mutate: reject, variables: rejectVar } = useMutation({
     mutationFn: handleReject,
-    onSuccess: () => {
+    onSuccess: (rejectSuccessful) => {
+      if (!rejectSuccessful) return;
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== rejectVar);
       });
