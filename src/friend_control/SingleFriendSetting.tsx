@@ -133,8 +133,14 @@ export function SingleFriendSetting() {
   );
 }
 
+/**
+ * notice: I used getQueryData because I'm sure once the user reaches here, the react-query cache
+ * for friends is certainly valid, can't be nothing or broken. There are also similar usages in other
+ * modules.
+ */
 function getThisFriend(queryClient: QueryClient, friendUserId: number) {
   const friends = queryClient.getQueryData<Friend[]>(['friends']);
   assertIsFriendsList(friends);
+
   return friends.find((friend) => friend.friend.id === friendUserId)!.friend;
 }

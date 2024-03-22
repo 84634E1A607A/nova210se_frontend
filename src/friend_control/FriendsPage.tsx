@@ -5,7 +5,8 @@ import { FriendsList } from './FriendsList';
 import { assertIsFriendsGroupsData } from '../utils/queryRouterLoaderAsserts';
 
 /**
- * @description for listing all the friends and chat groups, categorized by friend group
+ * @description for listing all the friends and chat groups, categorized by friend group.
+ * Outlet: to show SingleFriendSetting component if a frined is clicked
  */
 export function FriendsPage() {
   const data = useLoaderData();
