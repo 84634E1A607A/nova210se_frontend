@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
@@ -37,10 +36,11 @@ export function Login() {
           setWrongMessage(response.message);
         }
       })
-      .catch((error) => {
+      .catch((_error) => {
         window.alert('Fatal error during login (such as network abortion), please try again!');
         navigate('/login');
       });
+    //_error's underscore shows that it's unused intentionally, ignored by eslint
   };
 
   return (
@@ -54,6 +54,7 @@ export function Login() {
             id="user_name"
             {...register('user_name', {
               required: 'You must enter your user_name',
+              maxLength: { value: 32, message: 'User name must be at most 32 characters long' },
               pattern: {
                 value: /^[a-zA-Z0-9-_()@.]+$/,
                 message:
@@ -61,7 +62,7 @@ export function Login() {
               },
             })}
             className={getEditorStyle(errors.user_name)}
-          ></input>
+          />
           <ValidationError fieldError={errors.user_name} />
         </div>
         <div>
@@ -72,6 +73,7 @@ export function Login() {
             {...register('password', {
               required: 'You must enter your password',
               minLength: { value: 6, message: 'Password must be at least 6 characters long' },
+              maxLength: { value: 100, message: 'Password must be at most 100 characters long' },
               pattern: {
                 value: /^[^\s]*$/,
                 message: 'Password cannot contain blank spaces',

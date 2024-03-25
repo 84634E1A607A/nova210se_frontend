@@ -1,17 +1,17 @@
+import { useUserName } from '../utils/UrlParamsHooks';
 import { deleteFriend } from './deleteFriend';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type Props = { friendUserId: number };
-type Params = { user_name: string };
 
 export function DeleteFriendButton({ friendUserId }: Props) {
   const navigate = useNavigate();
 
-  const params = useParams<Params>();
+  const userName = useUserName();
 
   const onClick = async () => {
     deleteFriend(friendUserId);
-    navigate(`/${params.user_name!}/friends`);
+    navigate(`/${userName}/friends`);
   };
 
   return (

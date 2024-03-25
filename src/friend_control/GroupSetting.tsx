@@ -1,14 +1,14 @@
-import { ActionFunctionArgs, Form, redirect, useParams } from 'react-router-dom';
+import { ActionFunctionArgs, Form, redirect } from 'react-router-dom';
 import { editGroupName } from './editGroupName';
 import { getGroupsList } from './getGroupsList';
 import { deleteGroup } from './deleteGroup';
+import { useGroupId, useUserName } from '../utils/UrlParamsHooks';
 
-type Params = { group_id: string; user_name: string };
 type Setting = { new_group_name: string; user_name: string; group_id: number };
 
 export function GroupSetting() {
-  const params = useParams<Params>();
-  const group_id = parseInt(params.group_id!);
+  const userName = useUserName();
+  const groupId = useGroupId();
 
   return (
     <div>
@@ -23,14 +23,14 @@ export function GroupSetting() {
             pattern="^[\w@+\-.]+$"
           />
         </div>
-        <input type="hidden" name="user_name" id="user_name" value={params.user_name!} />
-        <input type="hidden" name="group_id" id="group_id" value={group_id} />
+        <input type="hidden" name="user_name" id="user_name" value={userName} />
+        <input type="hidden" name="group_id" id="group_id" value={groupId} />
         <div>
           <button type="submit">edit</button>
         </div>
       </Form>
-      <button type="button" onClick={() => deleteGroup(group_id)}>
-        Delete
+      <button type="button" onClick={() => deleteGroup(groupId!)}>
+        Delete Group
       </button>
     </div>
   );

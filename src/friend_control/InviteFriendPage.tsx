@@ -1,10 +1,9 @@
 import { invite } from './invite';
 import { InvitationSourceType } from '../utils/types';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { assertIsInvitationSourceType } from '../utils/asserts';
 import { useState } from 'react';
-
-type Params = { user_name: string };
+import { useUserName } from '../utils/UrlParamsHooks';
 
 export function InviteFriendPage() {
   const location = useLocation();
@@ -13,12 +12,12 @@ export function InviteFriendPage() {
 
   const [comment, setComment] = useState('');
   const navigate = useNavigate();
-  const params = useParams<Params>();
+  const userName = useUserName();
 
   const onClick = async () => {
     if (!invite({ ...state, comment })) window.alert('Failed to send invitation');
     else window.alert('Invitation sent');
-    navigate(`/${params.user_name!}/main_page`);
+    navigate(`/${userName}/main_page`);
   };
 
   return (

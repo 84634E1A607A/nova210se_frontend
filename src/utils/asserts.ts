@@ -79,3 +79,7 @@ export function assertIsInvitationSourceType(
 ): asserts source is InvitationSourceType {
   if (source !== 'search' && typeof source !== 'number') throw new Error('source is not valid');
 }
+
+export function assertIsNumber(data: unknown): asserts data is number {
+  if (typeof data !== 'number') throw new Error('Not a number');
+}
