@@ -14,7 +14,6 @@ export async function getFriendsList(): Promise<Friend[]> {
     let friendsList = data.data;
     if (friendsList === undefined) friendsList = [];
     assertIsFriendsList(friendsList);
-    console.log('In getFriendsList', friendsList);
     return friendsList;
   } catch (e) {
     console.error(e);
