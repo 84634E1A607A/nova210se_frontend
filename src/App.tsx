@@ -1,42 +1,15 @@
-import React, { useContext } from 'react';
-// import logo from './logo.svg';
 import './App.css';
 
 import { Outlet } from 'react-router-dom';
-import { createContext } from 'react';
-import { AuthMandate } from './utils/AuthMandate';
-
-type AuthContextType = { isAuthed: boolean; login: () => void; logout: () => void };
-
-const useAuth = () => {
-  const [isAuthed, setIsAuthed] = React.useState(false);
-  return {
-    isAuthed,
-    login: () => {
-      setIsAuthed(true);
-    },
-    logout: () => setIsAuthed(false),
-  };
-};
-
-// const AuthContext = createContext() as React.Context<AuthContextType>;
-const AuthContext = createContext<AuthContextType>({
-  isAuthed: false,
-  login: () => {},
-  logout: () => {},
-});
+import { RouterGuard } from './user_control/RouterGuard';
 
 function App() {
   return (
-    <AuthContext.Provider value={useAuth()}>
-      <AuthMandate>
-        <div className="App">
-          <Outlet />
-        </div>
-      </AuthMandate>
-    </AuthContext.Provider>
+    <div className="App">
+      <RouterGuard />
+      <Outlet />
+    </div>
   );
 }
 
 export default App;
-export const useAuthContext = () => useContext(AuthContext);
