@@ -13,6 +13,7 @@ import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/asserts';
 import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
 import { Suspense } from 'react';
+import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 
 type GroupForm = { target_group_name: string };
 
@@ -23,8 +24,11 @@ export function SingleFriendSetting() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<GroupForm>();
+    formState: { isSubmitting, errors },
+  } = useForm<GroupForm>({
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+  });
 
   const handleChangedGroupOfFriend: (_form: GroupForm) => Promise<{
     changeSuccessful: boolean;
@@ -134,8 +138,15 @@ export function SingleFriendSetting() {
           <input
             type="text"
             id="target_group_name"
-            {...register('target_group_name', { required: true, pattern: /^[\w@+\-.]+$/ })}
+            {...register('target_group_name', {
+              required: true,
+              pattern: /^[\w@+\-.]+$/,
+              maxLength: 19,
+              minLength: 1,
+            })}
+            className={getEditorStyle(errors.target_group_name)}
           />
+          <ValidationError fieldError={errors.target_group_name} />
         </div>
         <div>
           <button type="submit" disabled={isSubmitting}>
