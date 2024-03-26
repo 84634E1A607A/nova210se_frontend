@@ -17,7 +17,7 @@ export function InviteFriendPage() {
   const onClick = async () => {
     if (!invite({ ...state, comment })) window.alert('Failed to send invitation');
     else window.alert('Invitation sent');
-    navigate(`/${userName}/main_page`);
+    navigate(`/${userName}`);
   };
 
   return (

@@ -6,11 +6,13 @@ import { addFriendForGroup } from './addFriendForGroup';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
 import { useFriendUserId, useUserName } from '../utils/UrlParamsHooks';
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Group } from '../utils/types';
-import { useNavigate } from 'react-router-dom';
+import { Await, Navigate, useLoaderData, useNavigate } from 'react-router-dom';
 import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/asserts';
+import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
+import { Suspense } from 'react';
 
 type GroupForm = { target_group_name: string };
 
@@ -82,6 +84,8 @@ export function SingleFriendSetting() {
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const data = useLoaderData();
+  assertIsFriendsData(data);
 
   const { mutate } = useMutation({
     mutationFn: handleChangedGroupOfFriend,
@@ -110,7 +114,17 @@ export function SingleFriendSetting() {
 
   return (
     <div>
-      <UserDisplayTab leastUserInfo={getThisFriend(queryClient, friendUserId)} />
+      <Suspense>
+        <Await resolve={data.friends}>
+          {(friends) => {
+            assertIsFriendsList(friends);
+            const thisFriend = getThisFriend(friends, friendUserId);
+            if (!thisFriend) return <Navigate to={`/${userName}/invalid`} />;
+            return <UserDisplayTab leastUserInfo={thisFriend.friend} />;
+          }}
+        </Await>
+      </Suspense>
+
       <DeleteFriendButton friendUserId={friendUserId} />
       <form onSubmit={handleSubmit((form) => mutate(form))}>
         <div>
@@ -133,14 +147,7 @@ export function SingleFriendSetting() {
   );
 }
 
-/**
- * notice: I used getQueryData because I'm sure once the user reaches here, the react-query cache
- * for friends is certainly valid, can't be nothing or broken. There are also similar usages in other
- * modules.
- */
-function getThisFriend(queryClient: QueryClient, friendUserId: number) {
-  const friends = queryClient.getQueryData<Friend[]>(['friends']);
-  assertIsFriendsList(friends);
-
-  return friends.find((friend) => friend.friend.id === friendUserId)!.friend;
+function getThisFriend(friends: Friend[], friendUserId: number) {
+  const thisFriend = friends.find((friend) => friend.friend.id === friendUserId);
+  return thisFriend;
 }

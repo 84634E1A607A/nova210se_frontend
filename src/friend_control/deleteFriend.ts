@@ -5,7 +5,7 @@ export async function deleteFriend(friendUserId: number) {
       credentials: 'include',
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     window.alert('Failed to delete friend');
   }
 }

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Await, useLoaderData, useSearchParams } from 'react-router-dom';
 import { searchFriend } from './searchFriend';
-import { Friend, LeastUserInfo } from '../utils/types';
+import { LeastUserInfo } from '../utils/types';
 import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/asserts';
 import { Suspense } from 'react';
+import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
 
 // type Params = { user_name: string; search_param: string };
 
@@ -21,7 +22,7 @@ export function SearchNewFriendResultList() {
   });
 
   const data = useLoaderData();
-  assertIsData(data);
+  assertIsFriendsData(data);
 
   if (isLoading || searchNewFriendResultList === undefined)
     return <div className="w-96 mx-auto mt-6">Loading ...</div>;
@@ -46,12 +47,4 @@ export function SearchNewFriendResultList() {
       </ul>
     </div>
   );
-}
-
-type Data = { friends: Friend[] };
-
-function assertIsData(data: unknown): asserts data is Data {
-  if (typeof data !== 'object') throw new Error('Server response is not an object');
-  if (data === null) throw new Error('Server response is null');
-  if (!('friends' in data)) throw new Error('Server response does not contain friends');
 }
