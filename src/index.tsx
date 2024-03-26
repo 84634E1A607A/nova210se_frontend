@@ -15,6 +15,7 @@ import { GroupSetting, groupSettingAction } from './friend_control/GroupSetting'
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import { FriendsGroupsLoader, FriendsLoader, InvitationsLoader } from './utils/Loaders';
+import { ErrorPage } from './utils/ErrorPage';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: 'login',
