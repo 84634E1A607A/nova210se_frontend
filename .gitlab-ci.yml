@@ -32,7 +32,7 @@ unit-test:
 
 style-test:
   extends: .test
-  # allow_failure: true
+  allow_failure: false
   script:
     - npx eslint --max-warnings 0 .
 
@@ -51,4 +51,4 @@ deploy:
     - deployer dyno replace $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" "$REGISTRY_USER" "$REGISTRY_PWD"
   only:
     - master
-    - fix-reload_nginx_error
+    - feature-use_mutate_to_change_cache

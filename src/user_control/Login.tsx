@@ -6,7 +6,6 @@ import { LoginInfo } from '../utils/types';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
 import { ChooseLoginType } from '../utils/types';
-import { useAuthContext } from '../App';
 
 export function Login() {
   const {
@@ -18,7 +17,7 @@ export function Login() {
     reValidateMode: 'onBlur',
   });
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  // const { login } = useAuthContext();
 
   const [isWrongSubmit, setIsWrongSubmit] = useState(false);
   const [wrongMessage, setWrongMessage] = useState<string | undefined>();
@@ -29,7 +28,7 @@ export function Login() {
     handleSubmittedLoginInfo(contact, buttonTypeRef.current)
       .then((response) => {
         if (response.ok) {
-          login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
+          // login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
           navigate('/' + contact.user_name);
         } else {
           setIsWrongSubmit(true);
