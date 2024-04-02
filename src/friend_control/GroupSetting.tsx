@@ -11,7 +11,7 @@ export function GroupSetting() {
   const groupId = useGroupId();
 
   return (
-    <div>
+    <div className="grow">
       <Form method="post">
         <div>
           <label htmlFor="new_group_name">New group name</label>
@@ -29,7 +29,7 @@ export function GroupSetting() {
           <button type="submit">edit</button>
         </div>
       </Form>
-      <button type="button" onClick={() => deleteGroup(groupId!)}>
+      <button type="button" onClick={() => deleteGroup(groupId)}>
         Delete Group
       </button>
     </div>

@@ -50,7 +50,7 @@ export function OngoingInvitations() {
   });
 
   return (
-    <div>
+    <div className="grow">
       <h1>Ongoing Invitations</h1>
       <Suspense fallback={<div>Loading invitaions...</div>}>
         <Await resolve={data.invitaions}>

@@ -11,13 +11,12 @@ export function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
   });
   const navigate = useNavigate();
-  // const { login } = useAuthContext();
 
   const [isWrongSubmit, setIsWrongSubmit] = useState(false);
   const [wrongMessage, setWrongMessage] = useState<string | undefined>();
@@ -79,14 +78,22 @@ export function Login() {
               },
             })}
             className={getEditorStyle(errors.password)}
-          ></input>
+          />
           <ValidationError fieldError={errors.password} />
         </div>
         <div>
-          <button type="submit" onClick={() => (buttonTypeRef.current = 'login')}>
+          <button
+            type="submit"
+            onClick={() => (buttonTypeRef.current = 'login')}
+            disabled={isSubmitting}
+          >
             Login
           </button>
-          <button type="submit" onClick={() => (buttonTypeRef.current = 'register')}>
+          <button
+            type="submit"
+            onClick={() => (buttonTypeRef.current = 'register')}
+            disabled={isSubmitting}
+          >
             Register
           </button>
         </div>

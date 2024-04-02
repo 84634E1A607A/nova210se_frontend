@@ -13,15 +13,12 @@ export function RouterGuard() {
       const userInfo = await getUserInfo();
       const userName = userInfo?.user_name;
       if (userName === undefined) navigate('/login');
-      else if (isValidPath(path, userName)) {
-        if (path[path.length - 1] === '/') navigate(path.slice(0, -1));
-        else navigate(path);
-      } else navigate(`/${userName}/invalid`);
+      else if (!isValidPath(path, userName)) navigate(`/${userName}/invalid`);
     }
 
     if (path !== '/login' && path !== '/') checkIsValidPath();
     else navigate('/login');
-  }, [path, navigate]);
+  }, [navigate, path]);
 
   return <></>;
 }

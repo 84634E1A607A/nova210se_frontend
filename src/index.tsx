@@ -42,6 +42,7 @@ const router = createBrowserRouter([
               {
                 path: ':friend_user_id', // /:user_name/friends/:friend_user_id
                 element: <SingleFriendSetting />,
+                loader: async () => FriendsLoader(queryClient),
               },
             ],
           },
@@ -50,7 +51,6 @@ const router = createBrowserRouter([
             element: <SearchNewFriend />,
             loader: async () => FriendsLoader(queryClient),
           },
-
           {
             path: 'invite',
             element: <InviteFriendPage />,

@@ -13,7 +13,7 @@ export function FriendsPage() {
   assertIsFriendsGroupsData(data);
 
   return (
-    <div>
+    <div className="grow">
       <Outlet />
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>

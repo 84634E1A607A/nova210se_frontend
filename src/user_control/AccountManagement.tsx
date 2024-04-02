@@ -38,7 +38,7 @@ export function AccountManagement() {
   };
 
   return (
-    <div>
+    <div className="grow">
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="avatar_url">New Avatar URL</label>

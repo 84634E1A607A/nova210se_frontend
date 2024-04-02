@@ -1,4 +1,3 @@
-import { DeleteFriendButton } from './DeleteFriendButton';
 import { useForm } from 'react-hook-form';
 import { getGroupsList } from './getGroupsList';
 import { createGroup } from './createGroup';
@@ -6,11 +5,14 @@ import { addFriendForGroup } from './addFriendForGroup';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
 import { useFriendUserId, useUserName } from '../utils/UrlParamsHooks';
-import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Group } from '../utils/types';
-import { useNavigate } from 'react-router-dom';
+import { Await, Navigate, useLoaderData, useNavigate } from 'react-router-dom';
 import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/asserts';
+import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
+import { Suspense } from 'react';
+import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 
 type GroupForm = { target_group_name: string };
 
@@ -21,8 +23,11 @@ export function SingleFriendSetting() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
-  } = useForm<GroupForm>();
+    formState: { isSubmitting, errors },
+  } = useForm<GroupForm>({
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
+  });
 
   const handleChangedGroupOfFriend: (_form: GroupForm) => Promise<{
     changeSuccessful: boolean;
@@ -82,6 +87,8 @@ export function SingleFriendSetting() {
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const data = useLoaderData();
+  assertIsFriendsData(data);
 
   const { mutate } = useMutation({
     mutationFn: handleChangedGroupOfFriend,
@@ -110,8 +117,17 @@ export function SingleFriendSetting() {
 
   return (
     <div>
-      <UserDisplayTab leastUserInfo={getThisFriend(queryClient, friendUserId)} />
-      <DeleteFriendButton friendUserId={friendUserId} />
+      <Suspense>
+        <Await resolve={data.friends}>
+          {(friends) => {
+            assertIsFriendsList(friends);
+            const thisFriend = getThisFriend(friends, friendUserId);
+            if (!thisFriend) return <Navigate to={`/${userName}/invalid`} />;
+            return <UserDisplayTab leastUserInfo={thisFriend.friend} inSetting={true} />;
+          }}
+        </Await>
+      </Suspense>
+
       <form onSubmit={handleSubmit((form) => mutate(form))}>
         <div>
           <label htmlFor="target_group_name">
@@ -120,8 +136,15 @@ export function SingleFriendSetting() {
           <input
             type="text"
             id="target_group_name"
-            {...register('target_group_name', { required: true, pattern: /^[\w@+\-.]+$/ })}
+            {...register('target_group_name', {
+              required: true,
+              pattern: /^[\w@+\-.]+$/,
+              maxLength: 19,
+              minLength: 1,
+            })}
+            className={getEditorStyle(errors.target_group_name)}
           />
+          <ValidationError fieldError={errors.target_group_name} />
         </div>
         <div>
           <button type="submit" disabled={isSubmitting}>
@@ -133,14 +156,7 @@ export function SingleFriendSetting() {
   );
 }
 
-/**
- * notice: I used getQueryData because I'm sure once the user reaches here, the react-query cache
- * for friends is certainly valid, can't be nothing or broken. There are also similar usages in other
- * modules.
- */
-function getThisFriend(queryClient: QueryClient, friendUserId: number) {
-  const friends = queryClient.getQueryData<Friend[]>(['friends']);
-  assertIsFriendsList(friends);
-
-  return friends.find((friend) => friend.friend.id === friendUserId)!.friend;
+function getThisFriend(friends: Friend[], friendUserId: number) {
+  const thisFriend = friends.find((friend) => friend.friend.id === friendUserId);
+  return thisFriend;
 }

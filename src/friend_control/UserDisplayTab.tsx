@@ -1,18 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
-import { DeleteFriendButton } from './DeleteFriendButton';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { assertIsFriendsList } from '../utils/asserts';
+import { DeleteFriendButton } from './DeleteFriendButton';
 
-type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[] };
+type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[]; inSetting?: boolean };
 
 /**
  * show all kinds of user info tab in a list of users (such as friends or searched strangers list)
  * @param friendsList: Friend[] (all friends of current user)
  * @returns
  */
-export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
+export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props) {
   let isFriend = false;
   let userNameToDisplay = leastUserInfo.user_name;
   let groupName: undefined | string;
@@ -41,21 +41,42 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
     /* give it a group number */
   }
 
+  const displayTab = () => {
+    if (isFriend) {
+      if (!inSetting) return <Link to={`/${userName}/friends/${friend!.friend.id}`}>More</Link>;
+      else return <DeleteFriendButton friendUserId={friend!.friend.id} />;
+    } else {
+      return (
+        <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
+          invite
+        </Link>
+      );
+    }
+  };
+
   return (
-    <div>
-      <img src={leastUserInfo.avatar_url} alt="avatar_url" />
-      <p>{userNameToDisplay}</p>
-      <p>{groupName ?? null}</p>
-      {isFriend ? (
-        <div>
-          <DeleteFriendButton friendUserId={friend!.friend.id} />
-          <Link to="">more</Link>
+    <div className="flex flex-row h-12 justify-evenly items-center bg-gray-300 rounded-lg p-2">
+      <img src={leastUserInfo.avatar_url} alt="avatar_url" className="h-full" />
+      <div className="flex flex-col">
+        <p>{userNameToDisplay}</p>
+        <p>
+          {groupName === undefined || groupName === null || groupName === ''
+            ? 'default group'
+            : groupName}
+        </p>
+      </div>
+
+      {displayTab()}
+
+      {/* {isFriend ? (
+        <div className="flex flex-col">
+          <Link to={`/${userName}/friends/${friend!.friend.id}`}>More</Link>
         </div>
       ) : (
         <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
           invite
         </Link>
-      )}
+      )} */}
     </div>
   );
 }
