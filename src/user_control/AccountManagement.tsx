@@ -4,6 +4,7 @@ import { editUserInfo } from './editUserInfo';
 import { logout } from './logout';
 import { deleteAccount } from './deleteAccount';
 import { useNavigate } from 'react-router-dom';
+import { theme } from '../utils/ui/themes';
 
 /**
  * For changing username, avatar_url, password etc. Or to logout, delete account, etc.
@@ -108,23 +109,29 @@ export function AccountManagement() {
           </button>
         </div>
       </form>
-      <button
-        onClick={() => {
-          logout();
-          navigate('/');
-        }}
-      >
-        Logout
-      </button>
-      <button
-        onClick={() => {
-          deleteAccount();
-          navigate('/');
-          window.alert('Account deleted');
-        }}
-      >
-        Delete account
-      </button>
+      <div className="flex flex-col pt-6 space-y-2 items-center">
+        <button
+          className="w-fit"
+          style={{ backgroundColor: theme.tertiary_container }}
+          onClick={() => {
+            logout();
+            navigate('/');
+          }}
+        >
+          Logout
+        </button>
+        <button
+          className="w-fit"
+          style={{ backgroundColor: theme.error_container }}
+          onClick={() => {
+            deleteAccount();
+            navigate('/');
+            window.alert('Account deleted');
+          }}
+        >
+          Delete account
+        </button>
+      </div>
     </div>
   );
 }
