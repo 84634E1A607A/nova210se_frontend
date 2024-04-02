@@ -120,6 +120,7 @@ export function Login() {
       <div>
         {isWrongSubmit && (
           <div
+            role="alert"
             className="absolute top-0 left-0 w-full p-4 text-white text-center"
             style={{ backgroundColor: theme.error }}
           >
