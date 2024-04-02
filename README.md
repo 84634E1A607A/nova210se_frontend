@@ -1,3 +1,17 @@
+# Setup instructions
+
+## Install requirements
+
+run `npm i`
+
+## environment variables
+
+create a `.env.development.local` file in root project, and add the following content:
+
+```
+REACT_APP_API_URL = http://localhost:8000
+```
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
