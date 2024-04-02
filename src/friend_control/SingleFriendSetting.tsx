@@ -1,4 +1,3 @@
-import { DeleteFriendButton } from './DeleteFriendButton';
 import { useForm } from 'react-hook-form';
 import { getGroupsList } from './getGroupsList';
 import { createGroup } from './createGroup';
