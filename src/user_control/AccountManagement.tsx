@@ -1,6 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { editUserInfo } from './editUserInfo';
+import { logout } from './logout';
+import { deleteAccount } from './deleteAccount';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * For changing username, avatar_url, password etc. Or to logout, delete account, etc.
@@ -37,8 +40,10 @@ export function AccountManagement() {
     });
   };
 
+  const navigate = useNavigate();
+
   return (
-    <div className="grow">
+    <div className="grow flex-col">
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="avatar_url">New Avatar URL</label>
@@ -103,6 +108,23 @@ export function AccountManagement() {
           </button>
         </div>
       </form>
+      <button
+        onClick={() => {
+          logout();
+          navigate('/');
+        }}
+      >
+        Logout
+      </button>
+      <button
+        onClick={() => {
+          deleteAccount();
+          navigate('/');
+          window.alert('Account deleted');
+        }}
+      >
+        Delete account
+      </button>
     </div>
   );
 }
