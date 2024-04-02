@@ -3,17 +3,20 @@ import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { assertIsFriendsList } from '../utils/asserts';
-import { DeleteFriendButton } from './DeleteFriendButton';
 import { Avatar } from '../utils/ui/Avatar';
+import { SingleFriendSetting } from './SingleFriendSetting';
+import { useCollapse } from 'react-collapsed';
+import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';
+import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 
-type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[]; inSetting?: boolean };
+type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[] };
 
 /**
  * show all kinds of user info tab in a list of users (such as friends or searched strangers list)
  * @param friendsList: Friend[] (all friends of current user)
  * @returns
  */
-export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props) {
+export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   let isFriend = false;
   let userNameToDisplay = leastUserInfo.user_name;
   let groupName: undefined | string;
@@ -34,6 +37,8 @@ export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props)
   const userName = useUserName();
   const location = useLocation();
 
+  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
+
   let source: InvitationSourceType = 'search';
 
   // TODO: chat group id source is not implemented
@@ -42,35 +47,46 @@ export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props)
     /* give it a group number */
   }
 
-  const displayTab = () => {
-    if (isFriend) {
-      if (!inSetting) return <Link to={`/${userName}/friends/${friend!.friend.id}`}>More</Link>;
-      else return <DeleteFriendButton friendUserId={friend!.friend.id} />;
-    } else {
-      return (
-        <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
-          invite
-        </Link>
-      );
-    }
-  };
-
   return (
-    <div className="flex flex-row h-12 justify-evenly items-center bg-gray-300 rounded-lg p-2">
-      <div className="h-11 p-1 flex">
-        <Avatar url={leastUserInfo.avatar_url} />
-      </div>
+    <div>
+      <div className="flex flex-row h-12 justify-evenly items-center bg-gray-300 rounded-lg p-2">
+        <div className="h-11 p-1 flex">
+          <Avatar url={leastUserInfo.avatar_url} />
+        </div>
 
-      <div className="flex flex-col">
-        <p>{userNameToDisplay}</p>
-        <p>
-          {groupName === undefined || groupName === null || groupName === ''
-            ? 'default group'
-            : groupName}
-        </p>
-      </div>
+        <div className="flex flex-col">
+          <p>{userNameToDisplay}</p>
+          <p>
+            {groupName === undefined || groupName === null || groupName === ''
+              ? 'default group'
+              : groupName}
+          </p>
+        </div>
 
-      {displayTab()}
+        {isFriend ? (
+          <span
+            {...getToggleProps()}
+            role="img"
+            aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
+            className=" inline-block w-10 cursor-pointer items-center"
+          >
+            {isExpanded ? (
+              <Folddown className="fill-teal-900 w-6 h-6" />
+            ) : (
+              <Foldup className="fill-teal-900 w-6 h-6" />
+            )}
+          </span>
+        ) : (
+          <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
+            invite
+          </Link>
+        )}
+      </div>
+      {isFriend ? (
+        <div {...getCollapseProps()}>
+          <SingleFriendSetting friendUserId={friend!.friend.id} />
+        </div>
+      ) : null}
     </div>
   );
 }

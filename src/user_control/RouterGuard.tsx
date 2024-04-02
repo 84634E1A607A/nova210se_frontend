@@ -9,15 +9,23 @@ export function RouterGuard() {
   const path = location.pathname;
 
   useEffect(() => {
-    async function checkIsValidPath() {
-      const userInfo = await getUserInfo();
-      const userName = userInfo?.user_name;
-      if (userName === undefined) navigate('/login');
-      else if (!isValidPath(path, userName)) navigate(`/${userName}/invalid`);
+    async function checkIsValidPath(toRoot?: boolean) {
+      getUserInfo()
+        .then((userInfo) => {
+          if (userInfo === undefined) {
+            navigate('/login');
+            return;
+          }
+          const userName = userInfo.user_name;
+          if (!isValidPath(path, userName)) navigate(`/${userName}/invalid`);
+          if (toRoot) navigate(`/${userName}`);
+        })
+        .catch(() => navigate('/login'));
     }
 
     if (path !== '/login' && path !== '/') checkIsValidPath();
-    else navigate('/login');
+    else if (path === '/login') navigate('/login');
+    else checkIsValidPath(true);
   }, [navigate, path]);
 
   return <></>;

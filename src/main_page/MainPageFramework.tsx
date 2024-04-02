@@ -12,10 +12,10 @@ export function MainPageFramework() {
       <Sidebar className="text-purple-500 mr-1" style={{ background: theme.primary_container }}>
         <Menu>
           <MenuItem component={<DisplayCurrentUserInfo />} />
+          <MenuItem component={<Link to={`/${userName}/account_management`} />}>Account</MenuItem>
           <MenuItem component={<Link to={`/${userName}/search_friend`} />}>
             Search new friend
           </MenuItem>
-          <MenuItem component={<Link to={`/${userName}/account_management`} />}>Account</MenuItem>
           <MenuItem component={<Link to={`/${userName}/friends`} />}>My friends</MenuItem>
           <MenuItem component={<Link to={`/${userName}/invitation_list`} />}>Invitations</MenuItem>
         </Menu>

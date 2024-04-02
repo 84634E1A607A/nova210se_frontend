@@ -6,6 +6,7 @@ import { LoginInfo } from '../utils/types';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
 import { ChooseLoginType } from '../utils/types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function Login() {
   const {
@@ -22,12 +23,13 @@ export function Login() {
   const [wrongMessage, setWrongMessage] = useState<string | undefined>();
 
   const buttonTypeRef = useRef<ChooseLoginType>('login');
+  const queryClient = useQueryClient();
 
   const onSubmit = (contact: LoginInfo) => {
     handleSubmittedLoginInfo(contact, buttonTypeRef.current)
       .then((response) => {
         if (response.ok) {
-          // login(); // set auth state so that not everyone can arbitrarily enter but only logged-in user
+          queryClient.clear();
           navigate('/' + contact.user_name);
         } else {
           setIsWrongSubmit(true);
