@@ -11,7 +11,7 @@ export function GroupSetting() {
   const groupId = useGroupId();
 
   return (
-    <div>
+    <div className="grow">
       <Form method="post">
         <div>
           <label htmlFor="new_group_name">New group name</label>

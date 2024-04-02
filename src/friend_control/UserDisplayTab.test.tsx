@@ -23,13 +23,13 @@ const mockRouter = createMemoryRouter([
 
 const testQueryClient = new QueryClient();
 
-test('should have "more" and no "invite" if is friend', () => {
+test('should have "More" and no "invite" if is friend', () => {
   render(
     <QueryClientProvider client={testQueryClient}>
       <RouterProvider router={mockRouter} />
     </QueryClientProvider>,
   );
-  const more = screen.getByText('more');
+  const more = screen.getByText('More');
   expect(more).toBeInTheDocument();
   const invite = screen.queryByText('invite');
   expect(invite).not.toBeInTheDocument();

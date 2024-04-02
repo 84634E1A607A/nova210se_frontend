@@ -21,11 +21,13 @@ export function InviteFriendPage() {
   };
 
   return (
-    <form onSubmit={onClick}>
-      <label htmlFor="comment">comment</label>
-      <textarea id="comment" onChange={(e) => setComment(e.target.value)} />
-      <button type="submit">invite</button>
-    </form>
+    <div className="grow">
+      <form onSubmit={onClick}>
+        <label htmlFor="comment">comment</label>
+        <textarea id="comment" onChange={(e) => setComment(e.target.value)} />
+        <button type="submit">invite</button>
+      </form>
+    </div>
   );
 }
 

@@ -19,7 +19,7 @@ export function SearchNewFriend() {
   };
 
   return (
-    <div>
+    <div className="grow">
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="searchParam">Search for new friend</label>

@@ -51,7 +51,6 @@ const router = createBrowserRouter([
             element: <SearchNewFriend />,
             loader: async () => FriendsLoader(queryClient),
           },
-
           {
             path: 'invite',
             element: <InviteFriendPage />,

@@ -124,12 +124,11 @@ export function SingleFriendSetting() {
             assertIsFriendsList(friends);
             const thisFriend = getThisFriend(friends, friendUserId);
             if (!thisFriend) return <Navigate to={`/${userName}/invalid`} />;
-            return <UserDisplayTab leastUserInfo={thisFriend.friend} />;
+            return <UserDisplayTab leastUserInfo={thisFriend.friend} inSetting={true} />;
           }}
         </Await>
       </Suspense>
 
-      <DeleteFriendButton friendUserId={friendUserId} />
       <form onSubmit={handleSubmit((form) => mutate(form))}>
         <div>
           <label htmlFor="target_group_name">
