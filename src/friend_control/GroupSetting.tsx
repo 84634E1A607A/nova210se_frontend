@@ -2,16 +2,40 @@ import { ActionFunctionArgs, Form, redirect } from 'react-router-dom';
 import { editGroupName } from './editGroupName';
 import { getGroupsList } from './getGroupsList';
 import { deleteGroup } from './deleteGroup';
-import { useGroupId, useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/UrlParamsHooks';
+import { Friend, Group } from '../utils/types';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type Setting = { new_group_name: string; user_name: string; group_id: number };
+type Props = { group: Group; defaultGroup: Group };
 
-export function GroupSetting() {
+export function GroupSetting({ group, defaultGroup }: Props) {
   const userName = useUserName();
-  const groupId = useGroupId();
+  const groupId = group.group_id;
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: deleteGroup,
+    onSuccess: (deleteSuccessful) => {
+      if (deleteSuccessful) {
+        queryClient.setQueryData<Group[]>(['groups'], (oldGroups) => {
+          return oldGroups!.filter((oldGroup) => oldGroup.group_id !== groupId);
+        });
+        queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
+          if (!oldFriends) return [];
+          return oldFriends.map((oldFriend) => {
+            if (oldFriend.group.group_id === groupId) {
+              return { ...oldFriend, group: defaultGroup };
+            }
+            return oldFriend;
+          });
+        });
+      }
+    },
+  });
 
   return (
-    <div className="grow">
+    <>
       <Form method="post">
         <div>
           <label htmlFor="new_group_name">New group name</label>
@@ -29,10 +53,10 @@ export function GroupSetting() {
           <button type="submit">edit</button>
         </div>
       </Form>
-      <button type="button" onClick={() => deleteGroup(groupId)}>
+      <button type="button" onClick={() => mutate(groupId)}>
         Delete Group
       </button>
-    </div>
+    </>
   );
 }
 
@@ -48,11 +72,10 @@ export async function groupSettingAction({ request }: ActionFunctionArgs) {
   const group = groups.find((group) => group.group_name === setting.new_group_name);
   if (group) {
     window.alert('Group name already exists');
-    return redirect(`${setting.user_name}/group_setting/${setting.group_id}`);
+    return redirect(`${setting.user_name}/friends`);
   }
 
   await editGroupName(setting.new_group_name, setting.group_id);
 
-  // TODO: worry about redirect will erase login state
-  return redirect(`${setting.user_name}/friends`);
+  return redirect(`/${setting.user_name}/friends`);
 }

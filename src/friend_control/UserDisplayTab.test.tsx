@@ -29,8 +29,8 @@ test('should have "More" and no "invite" if is friend', () => {
       <RouterProvider router={mockRouter} />
     </QueryClientProvider>,
   );
-  const more = screen.getByText('More');
-  expect(more).toBeInTheDocument();
+  const name = screen.getByText('Alice');
+  expect(name).toBeInTheDocument();
   const invite = screen.queryByText('invite');
   expect(invite).not.toBeInTheDocument();
 });

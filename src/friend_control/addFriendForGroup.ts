@@ -1,7 +1,7 @@
 export async function addFriendForGroup(group_id: number, friend_user_id: number) {
   try {
     await fetch(process.env.REACT_APP_API_URL!.concat(`/friend/${friend_user_id}`), {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },

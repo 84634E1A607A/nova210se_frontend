@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { getFriendsList } from '../friend_control/getFriendsList';
 import { getGroupsList } from '../friend_control/getGroupsList';
 import { getInvitations } from '../friend_control/getInvitations';
+import { getUserInfo } from '../user_control/getUserInfo';
 
 export async function FriendsGroupsLoader(queryClient: QueryClient) {
   const existingData = queryClient.getQueryData(['friends', 'groups']);
@@ -35,6 +36,17 @@ export async function InvitationsLoader(queryClient: QueryClient) {
     invitaions: queryClient.fetchQuery({
       queryKey: ['invitations'],
       queryFn: getInvitations,
+    }),
+  });
+}
+
+export async function UserLoader(queryClient: QueryClient) {
+  const existingData = queryClient.getQueryData(['user']);
+  if (existingData) return defer({ user: existingData });
+  return defer({
+    user: queryClient.fetchQuery({
+      queryKey: ['user'],
+      queryFn: getUserInfo,
     }),
   });
 }

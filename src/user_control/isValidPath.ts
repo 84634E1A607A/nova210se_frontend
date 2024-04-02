@@ -4,7 +4,6 @@ export function isValidPath(path: string, userName: string) {
     '^/login/?$',
     `^/${userName}/?$`,
     `^/${userName}/friends/?$`,
-    `^/${userName}/friends/([^/]+)/?$`,
     `^/${userName}/search_friend/?$`,
     `^/${userName}/invite/?$`,
     `^/${userName}/group_setting/([^/]+)/?$`,

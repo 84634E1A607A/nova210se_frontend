@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Await, Outlet, useLoaderData } from 'react-router-dom';
+import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsList, assertIsGroupsList } from '../utils/asserts';
 import { FriendsList } from './FriendsList';
 import { assertIsFriendsGroupsData } from '../utils/queryRouterLoaderAsserts';
@@ -14,7 +14,7 @@ export function FriendsPage() {
 
   return (
     <div className="grow">
-      <Outlet />
+      <p>Friends</p>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
           {(friends) => {

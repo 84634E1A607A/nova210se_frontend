@@ -9,12 +9,11 @@ import { MainPageFramework } from './main_page/MainPageFramework';
 import { FriendsPage } from './friend_control/FriendsPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchNewFriend } from './friend_control/SearchNewFriend';
-import { SingleFriendSetting } from './friend_control/SingleFriendSetting';
 import { InviteFriendPage } from './friend_control/InviteFriendPage';
-import { GroupSetting, groupSettingAction } from './friend_control/GroupSetting';
+import { groupSettingAction } from './friend_control/GroupSetting';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
-import { FriendsGroupsLoader, FriendsLoader, InvitationsLoader } from './utils/Loaders';
+import { FriendsGroupsLoader, FriendsLoader, InvitationsLoader, UserLoader } from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
 
 const queryClient = new QueryClient();
@@ -32,19 +31,14 @@ const router = createBrowserRouter([
       {
         path: ':user_name',
         element: <MainPageFramework />,
+        loader: async () => UserLoader(queryClient),
         // has a loader to load chats and group chats
         children: [
           {
             path: 'friends',
             element: <FriendsPage />,
             loader: async () => FriendsGroupsLoader(queryClient),
-            children: [
-              {
-                path: ':friend_user_id', // /:user_name/friends/:friend_user_id
-                element: <SingleFriendSetting />,
-                loader: async () => FriendsLoader(queryClient),
-              },
-            ],
+            action: groupSettingAction,
           },
           {
             path: 'search_friend',
@@ -55,11 +49,11 @@ const router = createBrowserRouter([
             path: 'invite',
             element: <InviteFriendPage />,
           },
-          {
-            path: 'group_setting/:group_id',
-            element: <GroupSetting />,
-            action: groupSettingAction,
-          },
+          // {
+          //   path: 'group_setting/:group_id',
+          //   element: <GroupSetting />,
+          //   action: groupSettingAction,
+          // },
           {
             path: 'account_management',
             element: <AccountManagement />,
