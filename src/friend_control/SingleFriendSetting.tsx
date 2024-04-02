@@ -117,6 +117,7 @@ export function SingleFriendSetting() {
 
   return (
     <div>
+      <p>Friend setting</p>
       <Suspense>
         <Await resolve={data.friends}>
           {(friends) => {

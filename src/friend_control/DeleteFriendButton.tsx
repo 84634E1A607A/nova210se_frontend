@@ -24,8 +24,11 @@ export function DeleteFriendButton({ friendUserId }: Props) {
     onSuccess: (deleteSuccessful) => {
       if (deleteSuccessful) {
         queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
+          console.log(oldFriends);
+          console.log(oldFriends!.filter((friend) => friend.friend.id !== friendUserId));
           return oldFriends!.filter((friend) => friend.friend.id !== friendUserId);
         });
+        navigate(`/${userName}/friends`);
       }
     },
   });

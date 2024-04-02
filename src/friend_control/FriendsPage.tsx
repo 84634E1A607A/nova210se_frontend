@@ -15,6 +15,8 @@ export function FriendsPage() {
   return (
     <div className="grow">
       <Outlet />
+
+      <p>Friends</p>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
           {(friends) => {

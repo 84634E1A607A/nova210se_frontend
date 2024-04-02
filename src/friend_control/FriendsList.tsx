@@ -14,6 +14,7 @@ export function FriendsList({ friends, groups }: Props) {
                 friends={friends.filter((friend) => {
                   return friend.group.group_id === group.group_id;
                 })}
+                group={group}
               />
             </li>
           );

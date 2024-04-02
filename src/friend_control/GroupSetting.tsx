@@ -53,6 +53,5 @@ export async function groupSettingAction({ request }: ActionFunctionArgs) {
 
   await editGroupName(setting.new_group_name, setting.group_id);
 
-  // TODO: worry about redirect will erase login state
   return redirect(`${setting.user_name}/friends`);
 }
