@@ -124,6 +124,8 @@ export function AccountManagement() {
           className="w-fit"
           style={{ backgroundColor: theme.error_container }}
           onClick={() => {
+            const confirmDelete = window.confirm('Are you sure you want to delete your account?');
+            if (!confirmDelete) return;
             deleteAccount();
             navigate('/');
             window.alert('Account deleted');
