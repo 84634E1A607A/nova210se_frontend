@@ -4,6 +4,7 @@ import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { assertIsFriendsList } from '../utils/asserts';
 import { DeleteFriendButton } from './DeleteFriendButton';
+import { Avatar } from '../utils/ui/Avatar';
 
 type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[]; inSetting?: boolean };
 
@@ -56,7 +57,10 @@ export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props)
 
   return (
     <div className="flex flex-row h-12 justify-evenly items-center bg-gray-300 rounded-lg p-2">
-      <img src={leastUserInfo.avatar_url} alt="avatar_url" className="h-full" />
+      <div className="h-11 p-1 flex">
+        <Avatar url={leastUserInfo.avatar_url} />
+      </div>
+
       <div className="flex flex-col">
         <p>{userNameToDisplay}</p>
         <p>
@@ -67,16 +71,6 @@ export function UserDisplayTab({ leastUserInfo, friendsList, inSetting }: Props)
       </div>
 
       {displayTab()}
-
-      {/* {isFriend ? (
-        <div className="flex flex-col">
-          <Link to={`/${userName}/friends/${friend!.friend.id}`}>More</Link>
-        </div>
-      ) : (
-        <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
-          invite
-        </Link>
-      )} */}
     </div>
   );
 }
