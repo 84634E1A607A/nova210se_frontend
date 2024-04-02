@@ -4,20 +4,18 @@ import { createGroup } from './createGroup';
 import { addFriendForGroup } from './addFriendForGroup';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
-import { useFriendUserId, useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Group } from '../utils/types';
-import { Await, Navigate, useLoaderData, useNavigate } from 'react-router-dom';
-import { UserDisplayTab } from './UserDisplayTab';
-import { assertIsFriendsList } from '../utils/asserts';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
-import { Suspense } from 'react';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
+import { DeleteFriendButton } from './DeleteFriendButton';
 
 type GroupForm = { target_group_name: string };
+type Props = { friendUserId: number };
 
-export function SingleFriendSetting() {
-  const friendUserId = useFriendUserId();
+export function SingleFriendSetting({ friendUserId }: Props) {
   const userName = useUserName();
 
   const {
@@ -110,25 +108,13 @@ export function SingleFriendSetting() {
         window.alert(
           `Friend ${friendOfConcern!.friend.user_name} moved to group ${changingGroup!.group_name === '' ? 'default' : changingGroup!.group_name}`,
         );
-        navigate(`/${userName}/friends/${friendUserId}`);
+        navigate(`/${userName}/friends`);
       }
     },
   });
 
   return (
     <div>
-      <p>Friend setting</p>
-      <Suspense>
-        <Await resolve={data.friends}>
-          {(friends) => {
-            assertIsFriendsList(friends);
-            const thisFriend = getThisFriend(friends, friendUserId);
-            if (!thisFriend) return <Navigate to={`/${userName}/invalid`} />;
-            return <UserDisplayTab leastUserInfo={thisFriend.friend} inSetting={true} />;
-          }}
-        </Await>
-      </Suspense>
-
       <form onSubmit={handleSubmit((form) => mutate(form))}>
         <div>
           <label htmlFor="target_group_name">
@@ -153,11 +139,8 @@ export function SingleFriendSetting() {
           </button>
         </div>
       </form>
+
+      <DeleteFriendButton friendUserId={friendUserId} />
     </div>
   );
-}
-
-function getThisFriend(friends: Friend[], friendUserId: number) {
-  const thisFriend = friends.find((friend) => friend.friend.id === friendUserId);
-  return thisFriend;
 }

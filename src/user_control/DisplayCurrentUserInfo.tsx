@@ -24,5 +24,6 @@ export function DisplayCurrentUserInfo() {
         }}
       </Await>
     </Suspense>
+    // <div>user</div>
   );
 }
