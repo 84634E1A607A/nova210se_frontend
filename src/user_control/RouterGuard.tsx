@@ -20,7 +20,10 @@ export function RouterGuard() {
           if (!isValidPath(path, userName)) navigate(`/${userName}/invalid`);
           if (toRoot) navigate(`/${userName}`);
         })
-        .catch(() => navigate('/login'));
+        .catch((e) => {
+          if (e.name === 'AssertionError') navigate('/login');
+          else throw new Error(e);
+        });
     }
 
     if (path !== '/login' && path !== '/') checkIsValidPath();
