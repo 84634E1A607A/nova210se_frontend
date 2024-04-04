@@ -8,6 +8,7 @@ import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
 import { ChooseLoginType } from '../utils/types';
 import { theme } from '../utils/ui/themes';
 import { useQueryClient } from '@tanstack/react-query';
+import { maxUserNameLength } from '../utils/ConstValues';
 
 export function Login() {
   const {
@@ -41,7 +42,7 @@ export function Login() {
         window.alert('Fatal error during login (such as network abortion), please try again!');
         navigate('/login');
       });
-    //_error's underscore shows that it's unused intentionally, ignored by eslint
+    //_error's underscore shows that it's unused intentionally and deliberately, ignored by eslint
   };
 
   return (
@@ -58,7 +59,10 @@ export function Login() {
               id="user_name"
               {...register('user_name', {
                 required: 'You must enter your user_name',
-                maxLength: { value: 32, message: 'User name must be at most 32 characters long' },
+                maxLength: {
+                  value: maxUserNameLength,
+                  message: `User name must be at most ${maxUserNameLength} characters long`,
+                },
                 pattern: {
                   value: /^[a-zA-Z0-9-_()@.]+$/,
                   message:
