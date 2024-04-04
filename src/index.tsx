@@ -49,11 +49,6 @@ const router = createBrowserRouter([
             path: 'invite',
             element: <InviteFriendPage />,
           },
-          // {
-          //   path: 'group_setting/:group_id',
-          //   element: <GroupSetting />,
-          //   action: groupSettingAction,
-          // },
           {
             path: 'account_management',
             element: <AccountManagement />,

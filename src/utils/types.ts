@@ -13,7 +13,13 @@ export type PostMethodReturn = {
 
 export type ChooseLoginType = 'login' | 'register';
 
-export type LeastUserInfo = { id: number; user_name: string; avatar_url: string };
+export type LeastUserInfo = {
+  id: number;
+  user_name: string;
+  avatar_url: string;
+  phone?: string;
+  email?: string;
+};
 
 export type InvitationSourceType = 'search' | number;
 

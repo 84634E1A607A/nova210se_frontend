@@ -61,6 +61,16 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
               ? 'default group'
               : groupName}
           </p>
+          <p>
+            {leastUserInfo.phone === undefined || leastUserInfo.phone === ''
+              ? null
+              : leastUserInfo.phone}
+          </p>
+          <p>
+            {leastUserInfo.email === undefined || leastUserInfo.email === ''
+              ? null
+              : leastUserInfo.email}
+          </p>
         </div>
 
         {isFriend ? (

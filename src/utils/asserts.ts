@@ -81,3 +81,10 @@ export function assertIsInvitationSourceType(
 export function assertIsNumber(data: unknown): asserts data is number {
   if (typeof data !== 'number') throw new Error('Not a number');
 }
+
+export function assertIsApiError(error: unknown): asserts error is { error: string } {
+  if (typeof error !== 'object') throw new Error('Not an object');
+  if (error === null) throw new Error('Null');
+  if (!('error' in error)) throw new Error('Missing error');
+  if (typeof error.error !== 'string') throw new Error('error is not a string');
+}

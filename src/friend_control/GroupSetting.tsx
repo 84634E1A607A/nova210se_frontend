@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, Form, redirect } from 'react-router-dom';
+import { ActionFunctionArgs, Form, redirect, useNavigate } from 'react-router-dom';
 import { editGroupName } from './editGroupName';
 import { getGroupsList } from './getGroupsList';
 import { deleteGroup } from './deleteGroup';
@@ -13,6 +13,7 @@ export function GroupSetting({ group, defaultGroup }: Props) {
   const userName = useUserName();
   const groupId = group.group_id;
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { mutate } = useMutation({
     mutationFn: deleteGroup,
@@ -30,6 +31,7 @@ export function GroupSetting({ group, defaultGroup }: Props) {
             return oldFriend;
           });
         });
+        navigate(`/${userName}/friends`);
       }
     },
   });

@@ -14,11 +14,16 @@ export function DisplayCurrentUserInfo() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="flex flex-row justify-evenly items-center">
-              <div className="p-1 w-10">
-                <Avatar url={user.avatar_url} />
+            <div className="flex flex-col justify-evenly items-center">
+              <div className="flex flex-row h-12 items-center">
+                <div className="p-1 w-10">
+                  <Avatar url={user.avatar_url} />
+                </div>
+                <p className="font-medium">{user.user_name}</p>
               </div>
-              <p className="font-medium">{user.user_name}</p>
+
+              <p>{user.phone === undefined || user.phone === '' ? null : user.phone}</p>
+              <p>{user.email === undefined || user.email === '' ? null : user.email}</p>
             </div>
           );
         }}

@@ -1,4 +1,5 @@
-import { assertIsLeastUserInfo } from '../utils/asserts';
+import { assertIsApiError, assertIsLeastUserInfo } from '../utils/asserts';
+import { EdittingInfo } from './AccountManagement';
 
 /**
  *
@@ -8,12 +9,24 @@ import { assertIsLeastUserInfo } from '../utils/asserts';
  * @returns Promise<LeastUserInfo | undefined>
  * Without new_password, the old_password can be arbitrary
  */
-export async function editUserInfo(old_password: string, new_password: string, avatar_url: string) {
+export async function editUserInfo(
+  old_password: string,
+  new_password: string,
+  avatar_url: string,
+  phone: string,
+  email: string,
+  user_name: string,
+) {
   const avatarUrlInRequestBody = avatar_url === '' ? {} : { avatar_url };
-  const requestBody =
-    new_password === ''
-      ? { ...avatarUrlInRequestBody }
-      : { old_password, new_password, ...avatarUrlInRequestBody };
+  const userNameInRequestBody = user_name === '' ? {} : { user_name };
+  let requestBody: EdittingInfo = { ...avatarUrlInRequestBody, ...userNameInRequestBody };
+  if (!(phone === '' && new_password === '' && email === '')) {
+    requestBody = { ...requestBody, old_password };
+    if (phone !== '') requestBody = { ...requestBody, phone };
+    if (new_password !== '') requestBody = { ...requestBody, new_password };
+    if (email !== '') requestBody = { ...requestBody, email };
+  }
+
   try {
     const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user'), {
       method: 'PATCH',
@@ -24,15 +37,15 @@ export async function editUserInfo(old_password: string, new_password: string, a
       credentials: 'include',
     });
     if (!response.ok) {
-      const message = await response.text();
-      throw new Error(message);
+      const error = await response.json();
+      assertIsApiError(error);
+      throw new Error(error.error);
     }
     const data = await response.json();
     const user = data.data;
     assertIsLeastUserInfo(user);
     return user;
   } catch (e) {
-    console.error(e);
-    window.alert('Failed to edit user info!');
+    window.alert(`${e}${e !== '' ? '\n' : ''}Failed to edit user info.`);
   }
 }
