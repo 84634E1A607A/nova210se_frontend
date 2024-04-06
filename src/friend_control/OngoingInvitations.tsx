@@ -7,6 +7,8 @@ import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Invitation } from '../utils/types';
 import { useUserName } from '../utils/UrlParamsHooks';
+import { theme } from '../utils/ui/themes';
+import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
 
 export function OngoingInvitations() {
   const data = useLoaderData();
@@ -50,7 +52,7 @@ export function OngoingInvitations() {
   });
 
   return (
-    <div className="grow">
+    <div className="grow flex flex-col">
       <h1>Ongoing Invitations</h1>
       <Suspense fallback={<div>Loading invitaions...</div>}>
         <Await resolve={data.invitaions}>
@@ -61,20 +63,36 @@ export function OngoingInvitations() {
                 <ul>
                   {inviations.map((invitation) => (
                     <li key={invitation.id}>
-                      <div>
+                      <div
+                        className="p-2 m-1"
+                        style={{ backgroundColor: theme.secondary_container }}
+                      >
                         <p>
-                          Invitation from {invitation.sender.user_name} by means of
+                          From{' '}
                           {invitation.source === 'search'
                             ? ' search'
                             : ` group with id: ${invitation.source}`}
                         </p>
-                        <p>Invitation message: {invitation.comment}</p>
-                        <button type="button" onClick={() => accept(invitation.id)}>
-                          Accept
-                        </button>
-                        <button type="button" onClick={() => reject(invitation.id)}>
-                          Reject
-                        </button>
+                        {invitation.comment === '' ? null : (
+                          <p>Invitation message: {invitation.comment}</p>
+                        )}
+                        <UserDisplayTabInInvitations leastUserInfo={invitation.sender} />
+                        <div className="flex flex-row place-items-center place-content-evenly">
+                          <button
+                            type="button"
+                            onClick={() => accept(invitation.id)}
+                            className="text-green-600"
+                          >
+                            Accept
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => reject(invitation.id)}
+                            className="text-red-600"
+                          >
+                            Reject
+                          </button>
+                        </div>
                       </div>
                     </li>
                   ))}
