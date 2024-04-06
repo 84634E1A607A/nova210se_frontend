@@ -49,7 +49,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
   return (
     <div>
-      <div className="flex flex-row h-12 justify-evenly items-center bg-gray-300 rounded-lg p-2">
+      <div className="flex flex-row h-fit justify-evenly items-center bg-gray-300 rounded-lg p-2">
         <div className="h-11 p-1 flex">
           <Avatar url={leastUserInfo.avatar_url} />
         </div>

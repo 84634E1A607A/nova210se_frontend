@@ -1,28 +1,47 @@
 import { invite } from './invite';
-import { InvitationSourceType } from '../utils/types';
+import { Friend, InvitationSourceType } from '../utils/types';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { assertIsInvitationSourceType } from '../utils/asserts';
 import { useState } from 'react';
 import { useUserName } from '../utils/UrlParamsHooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function InviteFriendPage() {
-  const location = useLocation();
-  const state = location.state;
-  assertIsValidState(state);
-
   const [comment, setComment] = useState('');
   const navigate = useNavigate();
   const userName = useUserName();
 
-  const onClick = async () => {
-    if (!invite({ ...state, comment })) window.alert('Failed to send invitation');
-    else window.alert('Invitation sent');
-    navigate(`/${userName}`);
-  };
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: invite,
+    onSuccess: ({ sendInvitationSuccessful, friend }) => {
+      let alertMessage = '';
+      if (friend !== undefined) {
+        queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
+          if (oldFriends === undefined) return [friend];
+          else return [...oldFriends, friend];
+        });
+        alertMessage = `You and ${friend.friend.user_name} are friends now`;
+      } else if (!sendInvitationSuccessful) alertMessage = 'Failed to send invitation';
+      else alertMessage = 'Invitation sent';
+
+      window.alert(alertMessage);
+      navigate(`/${userName}`);
+    },
+  });
+
+  const location = useLocation();
+  const state = location.state;
+  assertIsValidState(state);
 
   return (
     <div className="grow">
-      <form onSubmit={onClick}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // prevent the state from being erased out to null
+          mutate({ ...state, comment });
+        }}
+      >
         <label htmlFor="comment">comment</label>
         <textarea id="comment" onChange={(e) => setComment(e.target.value)} />
         <button type="submit">invite</button>

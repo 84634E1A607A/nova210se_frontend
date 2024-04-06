@@ -114,7 +114,7 @@ export function Login() {
           </button>
           <button
             className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
-              focus:outline-none focus:shadow-outline focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
             type="submit"
             onClick={() => (buttonTypeRef.current = 'login')}
             disabled={isSubmitting}
