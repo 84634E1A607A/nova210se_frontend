@@ -11,7 +11,7 @@ export function MainPageFramework() {
     <div className="flex flex-row h-screen w-screen">
       <Sidebar className="text-purple-500 mr-1" style={{ background: theme.primary_container }}>
         <Menu>
-          <MenuItem component={<DisplayCurrentUserInfo />} />
+          <MenuItem className="mb-3" component={<DisplayCurrentUserInfo />} />
           <MenuItem component={<Link to={`/${userName}/account_management`} />}>Account</MenuItem>
           <MenuItem component={<Link to={`/${userName}/search_friend`} />}>
             Search new friend
@@ -21,6 +21,9 @@ export function MainPageFramework() {
         </Menu>
         <Menu>
           {/* For chats and group chats */}
+          <MenuItem component={<Link to={`/${userName}/create_group_chat`} />}>
+            Create chat
+          </MenuItem>
           <MenuItem component={<p>for future chats</p>}> First dummy chat</MenuItem>
         </Menu>
       </Sidebar>

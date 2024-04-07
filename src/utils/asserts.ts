@@ -99,12 +99,20 @@ export function assertIsMessage(data: unknown): asserts data is Message {
   if (data === null) throw new Error('Null');
   if (!('message_id' in data)) throw new Error('Missing message_id');
   if (typeof data.message_id !== 'number') throw new Error('message_id is not a number');
+  if (!('message' in data)) throw new Error('Missing message');
+  if (typeof data.message !== 'string') throw new Error('message is not a string');
   if (!('sender' in data)) throw new Error('Missing sender');
   assertIsLeastUserInfo(data.sender);
-  if (!('content' in data)) throw new Error('Missing content');
-  if (typeof data.content !== 'string') throw new Error('content is not a string');
-  if (!('timestamp' in data)) throw new Error('Missing timestamp');
-  if (typeof data.timestamp !== 'number') throw new Error('timestamp is not a number');
+  if (!('send_time' in data)) throw new Error('Missing send_time');
+  if (typeof data.send_time === 'string') {
+    // convert from iso time stamp to number
+    data.send_time = new Date(data.send_time).getTime();
+    if (typeof data.send_time !== 'number' || isNaN(data.send_time))
+      throw new Error('send_time is not valid');
+  } else if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
+  if (!('reply_to' in data)) throw new Error('Missing reply_to');
+  if (data.reply_to !== null && typeof data.reply_to !== 'number')
+    throw new Error('reply_to is not a number');
 }
 
 export function assertIsChat(data: unknown): asserts data is Chat {

@@ -47,9 +47,12 @@ export type UrlParams = { user_name: string; friend_user_id?: string; group_id?:
 
 export type Message = {
   message_id: number;
+  message: string;
   sender: LeastUserInfo;
-  content: string;
-  timestamp: number;
+  send_time: number;
+  reply_to: number | null;
+  // unread_users: LeastUserInfo[];
+  // replied_by: Message[];
 };
 
 export type Chat = {
@@ -60,3 +63,12 @@ export type Chat = {
   chat_members: LeastUserInfo[];
   last_message: Message;
 };
+
+/**
+ * @description The info needed to display a friend. Only for front-end use.
+ */
+export interface LeastFriendInfo {
+  displayName: string;
+  userId: number;
+  avatarUrl: string | undefined;
+}
