@@ -21,20 +21,20 @@ export function DisplayCurrentUserInfo({ isIconOnly = true }: Props) {
                 <Avatar url={user.avatar_url} />
               </div>
               {!isIconOnly && (
-                <div className="flex flex-col items-start mt-3">
+                <div className="items-start mt-3 " style={{ maxWidth: 250 }}>
                   <div className="flex items-center mt-1">
                     <span className="font-medium mr-2">Username:</span>
-                    <span>{user.user_name}</span>
+                    <span className="truncate block">{user.user_name}</span>
                   </div>
                   <div className="flex items-center mt-1">
                     <span className="font-medium mr-2">Email:</span>
-                    <span>
+                    <span className="truncate block " title={`${user.email}`}>
                       {user.email === undefined || user.email === '' ? 'N/A' : user.email}
                     </span>
                   </div>
                   <div className="flex items-center mt-1">
                     <span className="font-medium mr-2">Phone:</span>
-                    <span>
+                    <span className="truncate block">
                       {user.phone === undefined || user.phone === '' ? 'N/A' : user.phone}
                     </span>
                   </div>
