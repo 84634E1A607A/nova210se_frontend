@@ -44,3 +44,31 @@ export type ListItem = {
 
 // maybe some field names are wrong
 export type UrlParams = { user_name: string; friend_user_id?: string; group_id?: string };
+
+export type Message = {
+  message_id: number;
+  message: string;
+  sender: LeastUserInfo;
+  send_time: number;
+  reply_to: number | null;
+  // unread_users: LeastUserInfo[];
+  // replied_by: Message[];
+};
+
+export type Chat = {
+  chat_id: number;
+  chat_name: string;
+  chat_owner: LeastUserInfo;
+  chat_admins: LeastUserInfo[];
+  chat_members: LeastUserInfo[];
+  last_message: Message;
+};
+
+/**
+ * @description The info needed to display a friend. Only for front-end use.
+ */
+export interface LeastFriendInfo {
+  displayName: string;
+  userId: number;
+  avatarUrl: string | undefined;
+}

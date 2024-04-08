@@ -15,11 +15,13 @@ export function DisplayCurrentUserInfo() {
           assertIsLeastUserInfo(user);
           return (
             <div className="flex flex-col justify-evenly items-center">
-              <div className="flex flex-row h-12 items-center">
-                <div className="p-1 w-10">
+              <div className="flex flex-row h-5 items-center justify-evenly mb-4">
+                <div className="p-1 w-2 h-2 m-2">
                   <Avatar url={user.avatar_url} />
                 </div>
-                <p className="font-medium">{user.user_name}</p>
+                <div className="flex flex-col mb-auto">
+                  <p className="font-medium">{user.user_name}</p>
+                </div>
               </div>
 
               <p>{user.phone === undefined || user.phone === '' ? null : user.phone}</p>

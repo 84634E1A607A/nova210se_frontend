@@ -1,4 +1,4 @@
-import { Friend, Group, Invitation, InvitationSourceType } from './types';
+import { Chat, Friend, Group, Invitation, InvitationSourceType, Message } from './types';
 import { LeastUserInfo } from './types';
 
 export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is LeastUserInfo {
@@ -12,6 +12,11 @@ export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is Le
   if (!('avatar_url' in userInfo)) throw new Error('Server response does not contain avatar_url');
   if (typeof userInfo.avatar_url !== 'string')
     throw new Error('Server response avatar_url is not a string');
+}
+
+export function assertIsLeastUserInfoList(body: unknown): asserts body is LeastUserInfo[] {
+  if (!Array.isArray(body)) throw new Error('Server response is not an array');
+  for (const userInfo of body) assertIsLeastUserInfo(userInfo);
 }
 
 export function assertIsGroup(group: unknown): asserts group is Group {
@@ -87,4 +92,42 @@ export function assertIsApiError(error: unknown): asserts error is { error: stri
   if (error === null) throw new Error('Null');
   if (!('error' in error)) throw new Error('Missing error');
   if (typeof error.error !== 'string') throw new Error('error is not a string');
+}
+
+export function assertIsMessage(data: unknown): asserts data is Message {
+  if (typeof data !== 'object') throw new Error('Not an object');
+  if (data === null) throw new Error('Null');
+  if (!('message_id' in data)) throw new Error('Missing message_id');
+  if (typeof data.message_id !== 'number') throw new Error('message_id is not a number');
+  if (!('message' in data)) throw new Error('Missing message');
+  if (typeof data.message !== 'string') throw new Error('message is not a string');
+  if (!('sender' in data)) throw new Error('Missing sender');
+  assertIsLeastUserInfo(data.sender);
+  if (!('send_time' in data)) throw new Error('Missing send_time');
+  if (typeof data.send_time === 'string') {
+    // convert from iso time stamp to number
+    data.send_time = new Date(data.send_time).getTime();
+    if (typeof data.send_time !== 'number' || isNaN(data.send_time))
+      throw new Error('send_time is not valid');
+  } else if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
+  if (!('reply_to' in data)) throw new Error('Missing reply_to');
+  if (data.reply_to !== null && typeof data.reply_to !== 'number')
+    throw new Error('reply_to is not a number');
+}
+
+export function assertIsChat(data: unknown): asserts data is Chat {
+  if (typeof data !== 'object') throw new Error('Not an object');
+  if (data === null) throw new Error('Null');
+  if (!('chat_id' in data)) throw new Error('Missing chat_id');
+  if (typeof data.chat_id !== 'number') throw new Error('chat_id is not a number');
+  if (!('chat_name' in data)) throw new Error('Missing chat_name');
+  if (typeof data.chat_name !== 'string') throw new Error('chat_name is not a string');
+  if (!('chat_owner' in data)) throw new Error('Missing chat_owner');
+  assertIsLeastUserInfo(data.chat_owner);
+  if (!('chat_admins' in data)) throw new Error('Missing chat_admins');
+  assertIsLeastUserInfoList(data.chat_admins);
+  if (!('chat_members' in data)) throw new Error('Missing chat_members');
+  assertIsLeastUserInfoList(data.chat_members);
+  if (!('last_message' in data)) throw new Error('Missing last_message');
+  assertIsMessage(data.last_message);
 }

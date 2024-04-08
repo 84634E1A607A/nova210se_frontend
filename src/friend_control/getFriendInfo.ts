@@ -19,6 +19,5 @@ export async function getFriendInfo(friend_user_id: number) {
     return friend;
   } catch (e) {
     console.error(e);
-    window.alert('Failed to get friend info');
   }
 }

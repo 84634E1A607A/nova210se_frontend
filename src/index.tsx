@@ -15,6 +15,7 @@ import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import { FriendsGroupsLoader, FriendsLoader, InvitationsLoader, UserLoader } from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
+import { CreateGroupChat } from './chat_control/pages/CreateGroupChat';
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,12 @@ const router = createBrowserRouter([
             path: 'invitation_list',
             element: <OngoingInvitations />,
             loader: async () => InvitationsLoader(queryClient),
+          },
+          {
+            path: 'create_group_chat',
+            element: <CreateGroupChat />,
+            loader: async () => FriendsGroupsLoader(queryClient),
+            // If I want to divide friends into groups when display in multiselect, the loader should load 'groups' in addition.
           },
         ],
       },
