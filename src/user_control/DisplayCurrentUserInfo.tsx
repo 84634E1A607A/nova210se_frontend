@@ -4,7 +4,9 @@ import { Suspense } from 'react';
 import { assertIsLeastUserInfo } from '../utils/asserts';
 import { Avatar } from '../utils/ui/Avatar';
 
-export function DisplayCurrentUserInfo() {
+type Props = { isIconOnly?: boolean };
+
+export function DisplayCurrentUserInfo({ isIconOnly = true }: Props) {
   const loaderData = useLoaderData();
   assertIsUserData(loaderData);
 
@@ -14,18 +16,30 @@ export function DisplayCurrentUserInfo() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="flex flex-col justify-evenly items-center">
-              <div className="flex flex-row h-5 items-center justify-evenly mb-4">
-                <div className="p-1 w-2 h-2 m-2">
-                  <Avatar url={user.avatar_url} />
-                </div>
-                <div className="flex flex-col mb-auto">
-                  <p className="font-medium">{user.user_name}</p>
-                </div>
+            <div className="w-32 h-15 flex flex-col items-center">
+              <div className="w-4 h-10">
+                <Avatar url={user.avatar_url} />
               </div>
-
-              <p>{user.phone === undefined || user.phone === '' ? null : user.phone}</p>
-              <p>{user.email === undefined || user.email === '' ? null : user.email}</p>
+              {!isIconOnly && (
+                <div className="flex flex-col items-start mt-3">
+                  <div className="flex items-center mt-1">
+                    <span className="font-medium mr-2">Username:</span>
+                    <span>{user.user_name}</span>
+                  </div>
+                  <div className="flex items-center mt-1">
+                    <span className="font-medium mr-2">Email:</span>
+                    <span>
+                      {user.email === undefined || user.email === '' ? 'N/A' : user.email}
+                    </span>
+                  </div>
+                  <div className="flex items-center mt-1">
+                    <span className="font-medium mr-2">Phone:</span>
+                    <span>
+                      {user.phone === undefined || user.phone === '' ? 'N/A' : user.phone}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           );
         }}

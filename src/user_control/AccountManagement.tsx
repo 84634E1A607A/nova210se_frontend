@@ -208,7 +208,8 @@ export function AccountManagement() {
       </form>
       <div className="flex flex-col pt-6 space-y-2 items-center">
         <button
-          className="w-fit"
+          className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
+          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
           style={{ backgroundColor: theme.tertiary_container }}
           onClick={() => {
             logout();
@@ -218,8 +219,9 @@ export function AccountManagement() {
           Logout
         </button>
         <button
-          className="w-fit"
-          style={{ backgroundColor: theme.error_container }}
+          className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
+          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+          style={{ backgroundColor: theme.error }}
           onClick={() => {
             const confirmDelete = window.confirm('Are you sure you want to delete your account?');
             if (!confirmDelete) return;
