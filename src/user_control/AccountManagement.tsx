@@ -20,7 +20,7 @@ export function AccountManagement() {
     setError,
     formState: { errors, dirtyFields },
     setValue,
-  } = useForm<EdittingInfo>({
+  } = useForm<EditingInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: {
@@ -33,7 +33,7 @@ export function AccountManagement() {
     },
   });
 
-  const onSubmit = async (info: EdittingInfo) => {
+  const onSubmit = async (info: EditingInfo) => {
     if (
       info.new_password === '' &&
       info.avatar_url === '' &&
@@ -237,7 +237,7 @@ export function AccountManagement() {
   );
 }
 
-export type EdittingInfo = {
+export type EditingInfo = {
   old_password?: string;
   new_password?: string;
   avatar_url?: string;
