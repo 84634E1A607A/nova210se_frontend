@@ -3,13 +3,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { LeastFriendInfo } from '../../utils/types';
+import { ChatRelatedWithCorrespondingCurrentUser, LeastFriendInfo } from '../../utils/types';
 import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsGroupsData } from '../../utils/queryRouterLoaderAsserts';
 import { assertIsFriendsList } from '../../utils/asserts';
 import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { createGroupChat } from '../createGroupChat';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function CreateGroupChat() {
   const toast = useRef<Toast | null>(null);
@@ -41,7 +42,6 @@ export function CreateGroupChat() {
       chatName: groupName,
       chatMembers: friends.map((friend) => friend.userId),
     });
-    // console.log(createdGroupChat);
 
     if (!createdGroupChat) {
       toast.current!.show({ severity: 'error', summary: `Group chat creation failure` });
@@ -56,7 +56,26 @@ export function CreateGroupChat() {
 
     toast.current!.show({ severity: 'success', summary: `${groupName} created`, detail });
     reset();
+    return {
+      chat: createdGroupChat,
+      nickname: '',
+      unread_count: 0,
+    } as ChatRelatedWithCorrespondingCurrentUser;
   };
+
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: mutateAgent,
+    onSuccess: (createdGroupChat: ChatRelatedWithCorrespondingCurrentUser | undefined) => {
+      if (createdGroupChat !== undefined)
+        queryClient.setQueryData<ChatRelatedWithCorrespondingCurrentUser[]>(
+          ['chats_related_with_current_user'],
+          (oldChats) => {
+            return [...oldChats!, createdGroupChat];
+          },
+        );
+    },
+  });
 
   const getFormErrorMessage = (name: 'friends' | 'groupName') => {
     return errors[name] ? (
@@ -81,7 +100,7 @@ export function CreateGroupChat() {
           return (
             <div className="card flex content-center">
               <form
-                onSubmit={handleSubmit(mutateAgent)}
+                onSubmit={handleSubmit((form) => mutate(form))}
                 className="flex flex-col items-center gap-2"
               >
                 <Toast ref={toast} />

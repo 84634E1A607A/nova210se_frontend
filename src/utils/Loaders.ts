@@ -52,12 +52,12 @@ export async function UserLoader(queryClient: QueryClient) {
   });
 }
 
-export async function ChatsLoader(queryClient: QueryClient) {
-  const existingData = queryClient.getQueryData(['chats']);
-  if (existingData) return defer({ chats: existingData });
+export async function ChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
+  const existingData = queryClient.getQueryData(['chats_related_with_current_user']);
+  if (existingData) return defer({ chatsRelatedWithCurrentUser: existingData });
   return defer({
-    chats: queryClient.fetchQuery({
-      queryKey: ['chats'],
+    chatsRelatedWithCurrentUser: queryClient.fetchQuery({
+      queryKey: ['chats_related_with_current_user'],
       queryFn: getChats,
     }),
   });

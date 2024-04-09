@@ -1,4 +1,13 @@
-import { Chat, Friend, Group, Invitation, InvitationSourceType, Message } from './types';
+import {
+  Chat,
+  ChatRelatedWithCorrespondingCurrentUser,
+  DetailedMessage,
+  Friend,
+  Group,
+  Invitation,
+  InvitationSourceType,
+  Message,
+} from './types';
 import { LeastUserInfo } from './types';
 
 export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is LeastUserInfo {
@@ -99,10 +108,10 @@ export function assertIsMessage(data: unknown): asserts data is Message {
   if (data === null) throw new Error('Null');
   if (!('message_id' in data)) throw new Error('Missing message_id');
   if (typeof data.message_id !== 'number') throw new Error('message_id is not a number');
+  if (!('chat_id' in data)) throw new Error('Missing chat_id');
+  if (typeof data.chat_id !== 'number') throw new Error('chat_id is not a number');
   if (!('message' in data)) throw new Error('Missing message');
   if (typeof data.message !== 'string') throw new Error('message is not a string');
-  if (!('sender' in data)) throw new Error('Missing sender');
-  assertIsLeastUserInfo(data.sender);
   if (!('send_time' in data)) throw new Error('Missing send_time');
   if (typeof data.send_time === 'string') {
     // convert from iso time stamp to number
@@ -110,9 +119,22 @@ export function assertIsMessage(data: unknown): asserts data is Message {
     if (typeof data.send_time !== 'number' || isNaN(data.send_time))
       throw new Error('send_time is not valid');
   } else if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
+  if (!('sender' in data)) throw new Error('Missing sender');
+  assertIsLeastUserInfo(data.sender);
+}
+export function assertIsMessages(data: unknown): asserts data is Message[] {
+  if (!Array.isArray(data)) throw new Error('Not an array');
+  for (const message of data) assertIsMessage(message);
+}
+
+export function assertIsDetailedMessage(data: unknown): asserts data is DetailedMessage {
+  assertIsMessage(data);
   if (!('reply_to' in data)) throw new Error('Missing reply_to');
-  if (data.reply_to !== null && typeof data.reply_to !== 'number')
-    throw new Error('reply_to is not a number');
+  if (data.reply_to !== null) assertIsMessage(data.reply_to);
+  if (!('read_users' in data)) throw new Error('Missing read_users');
+  assertIsLeastUserInfoList(data.read_users);
+  if (!('replied_by' in data)) throw new Error('Missing replied_by');
+  assertIsMessages(data.replied_by);
 }
 
 export function assertIsChat(data: unknown): asserts data is Chat {
@@ -130,4 +152,24 @@ export function assertIsChat(data: unknown): asserts data is Chat {
   assertIsLeastUserInfoList(data.chat_members);
   if (!('last_message' in data)) throw new Error('Missing last_message');
   assertIsMessage(data.last_message);
+}
+
+export function assertIsChatRelatedWithCorrespondingCurrentUser(
+  data: unknown,
+): asserts data is ChatRelatedWithCorrespondingCurrentUser {
+  if (typeof data !== 'object') throw new Error('Not an object');
+  if (data === null) throw new Error('Null');
+  if (!('chat' in data)) throw new Error('Missing chat');
+  assertIsChat(data.chat);
+  if (!('nickname' in data)) throw new Error('Missing nickname');
+  if (typeof data.nickname !== 'string') throw new Error('nickname is not a string');
+  if (!('unread_count' in data)) throw new Error('Missing unread_count');
+  if (typeof data.unread_count !== 'number') throw new Error('unread_count is not a number');
+}
+
+export function assertIsChatsRelatedWithCurrentUser(
+  data: unknown,
+): asserts data is ChatRelatedWithCorrespondingCurrentUser[] {
+  if (!Array.isArray(data)) throw new Error('Not an array');
+  for (const chat of data) assertIsChatRelatedWithCorrespondingCurrentUser(chat);
 }

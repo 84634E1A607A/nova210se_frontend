@@ -47,12 +47,16 @@ export type UrlParams = { user_name: string; friend_user_id?: string; group_id?:
 
 export type Message = {
   message_id: number;
+  chat_id: number;
   message: string;
-  sender: LeastUserInfo;
   send_time: number;
-  reply_to: number | null;
-  // unread_users: LeastUserInfo[];
-  // replied_by: Message[];
+  sender: LeastUserInfo;
+};
+
+export type DetailedMessage = Message & {
+  reply_to: Message | null;
+  read_users: LeastUserInfo[];
+  replied_by: Message[];
 };
 
 export type Chat = {
@@ -63,6 +67,12 @@ export type Chat = {
   chat_members: LeastUserInfo[];
   last_message: Message;
 };
+
+export interface ChatRelatedWithCorrespondingCurrentUser {
+  chat: Chat;
+  nickname: string;
+  unread_count: number;
+}
 
 /**
  * @description The info needed to display a friend. Only for front-end use.
