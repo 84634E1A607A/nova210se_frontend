@@ -255,9 +255,5 @@ function getHiddenOrVisibleEditorStyle(
   phoneExists: boolean | undefined,
   emailExists: boolean | undefined,
 ) {
-  console.log(newPasswordExists, phoneExists, emailExists);
-  if (!newPasswordExists && !phoneExists && !emailExists) {
-    console.log('hidden');
-    return 'hidden';
-  }
+  if (!newPasswordExists && !phoneExists && !emailExists) return 'hidden';
 }
