@@ -113,12 +113,7 @@ export function assertIsMessage(data: unknown): asserts data is Message {
   if (!('message' in data)) throw new Error('Missing message');
   if (typeof data.message !== 'string') throw new Error('message is not a string');
   if (!('send_time' in data)) throw new Error('Missing send_time');
-  if (typeof data.send_time === 'string') {
-    // convert from iso time stamp to number
-    data.send_time = new Date(data.send_time).getTime();
-    if (typeof data.send_time !== 'number' || isNaN(data.send_time))
-      throw new Error('send_time is not valid');
-  } else if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
+  if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
   if (!('sender' in data)) throw new Error('Missing sender');
   assertIsLeastUserInfo(data.sender);
 }
