@@ -72,8 +72,7 @@ export function Login() {
               className={`${getEditorStyle(errors.user_name)} mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
                 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
                 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
-                invalid:border-pink-500 invalid:text-pink-600
-                focus:invalid:border-pink-500 focus:invalid:ring-pink-500`}
+               `}
             />
             <ValidationError fieldError={errors.user_name} />
           </label>
@@ -96,13 +95,12 @@ export function Login() {
               className={`${getEditorStyle(errors.password)} mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
                 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
                 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
-                invalid:border-pink-500 invalid:text-pink-600
-                focus:invalid:border-pink-500 focus:invalid:ring-pink-500`}
+                `}
             />
             <ValidationError fieldError={errors.password} />
           </label>
         </div>
-        <div className="flex justify-between w-full mt-7">
+        <div className="flex justify-between w-full mt-5">
           <button
             className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
               focus:outline-none focus:shadow-outline focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
