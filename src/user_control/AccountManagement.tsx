@@ -18,7 +18,7 @@ export function AccountManagement() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, dirtyFields, defaultValues },
+    formState: { errors, dirtyFields },
     setValue,
     reset,
   } = useForm<EditingInfo>({
