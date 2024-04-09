@@ -18,8 +18,9 @@ export function AccountManagement() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, defaultValues },
     setValue,
+    reset,
   } = useForm<EditingInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -85,7 +86,10 @@ export function AccountManagement() {
       queryClient.setQueryData<LeastUserInfo>(['user'], () => {
         return { ...nowUser };
       });
-      navigate(`/${nowUser.user_name}/account_management`);
+
+      reset(); // setValue('old_password', defaultValues?.old_password) is useless. Maybe because render in batch so no effect
+      navigate(`/${nowUser.user_name}/account_management`); // can't use redirect because maybe it doesn't reload data
+      window.alert('User info updated');
     },
   });
 
@@ -251,5 +255,9 @@ function getHiddenOrVisibleEditorStyle(
   phoneExists: boolean | undefined,
   emailExists: boolean | undefined,
 ) {
-  if (!newPasswordExists && !phoneExists && !emailExists) return 'hidden';
+  console.log(newPasswordExists, phoneExists, emailExists);
+  if (!newPasswordExists && !phoneExists && !emailExists) {
+    console.log('hidden');
+    return 'hidden';
+  }
 }
