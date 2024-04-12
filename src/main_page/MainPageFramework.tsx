@@ -1,4 +1,3 @@
-// import { DisplayCurrentUserInfo } from '../user_control/DisplayCurrentUserInfo';
 import { Outlet } from 'react-router-dom';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
@@ -36,13 +35,14 @@ export function MainPageFramework() {
               <i className="mx-auto">{<DisplayCurrentUserInfo />}</i>
             </button>
             {isInfoBoxVisible && (
-              <div className="absolute left-10 bg-white shadow-md p-4 rounded-md h-46 w-72 mt-40 ms-20 box-border border-4 flex items-center justify-center">
+              /** `left-10` means the absolute position of the pop-up user-info window */
+              <div className="absolute left-10 bg-white shadow-md p-4 rounded-md h-48 w-72 mt-40 ms-20 box-border border-4 flex items-center justify-center">
                 <DisplayCurrentUserInfo isIconOnly={false} />
               </div>
             )}
           </li>
           <SidebarLink
-            to={`/${userName}`}
+            to={`/${userName}/chats`}
             title="Chat"
             icon={<HomeIcon className="fill-current h-7 w-7" />}
           />

@@ -1,6 +1,6 @@
 import {
   Chat,
-  ChatRelatedWithCorrespondingCurrentUser,
+  ChatRelatedWithCurrentUser,
   DetailedMessage,
   Friend,
   Group,
@@ -149,13 +149,14 @@ export function assertIsChat(data: unknown): asserts data is Chat {
   assertIsMessage(data.last_message);
 }
 
-export function assertIsChatRelatedWithCorrespondingCurrentUser(
-  data: unknown,
-): asserts data is ChatRelatedWithCorrespondingCurrentUser {
+export function assertIsChatRelatedWithCurrentUser(
+  data: any,
+): asserts data is ChatRelatedWithCurrentUser {
   if (typeof data !== 'object') throw new Error('Not an object');
   if (data === null) throw new Error('Null');
   if (!('chat' in data)) throw new Error('Missing chat');
   assertIsChat(data.chat);
+  if (!('chat_id' in data)) data.chat_id = data.chat.chat_id; // copy the id for convenient use
   if (!('nickname' in data)) throw new Error('Missing nickname');
   if (typeof data.nickname !== 'string') throw new Error('nickname is not a string');
   if (!('unread_count' in data)) throw new Error('Missing unread_count');
@@ -164,7 +165,7 @@ export function assertIsChatRelatedWithCorrespondingCurrentUser(
 
 export function assertIsChatsRelatedWithCurrentUser(
   data: unknown,
-): asserts data is ChatRelatedWithCorrespondingCurrentUser[] {
+): asserts data is ChatRelatedWithCurrentUser[] {
   if (!Array.isArray(data)) throw new Error('Not an array');
-  for (const chat of data) assertIsChatRelatedWithCorrespondingCurrentUser(chat);
+  for (const chat of data) assertIsChatRelatedWithCurrentUser(chat);
 }

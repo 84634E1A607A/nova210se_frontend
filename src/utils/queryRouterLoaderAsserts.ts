@@ -3,7 +3,7 @@
  * The function names are exactly the types asserted to be.
  */
 
-import { Friend, Group, Invitation, LeastUserInfo } from './types';
+import { ChatRelatedWithCurrentUser, Friend, Group, Invitation, LeastUserInfo } from './types';
 
 export function assertIsFriendsData(data: unknown): asserts data is { friends: Friend[] } {
   if (typeof data !== 'object') throw new Error('Server response is not an object');
@@ -30,4 +30,13 @@ export function assertIsUserData(data: unknown): asserts data is { user: LeastUs
   if (typeof data !== 'object') throw new Error('Server response is not an object');
   if (data === null) throw new Error('Server response is null');
   if (!('user' in data)) throw new Error('Server response does not contain user');
+}
+
+export function assertIsChatsRelatedWithCurrentUserData(
+  data: unknown,
+): asserts data is { chatsRelatedWithCurrentUser: ChatRelatedWithCurrentUser[] } {
+  if (typeof data !== 'object') throw new Error('Server response is not an object');
+  if (data === null) throw new Error('Server response is null');
+  if (!('chatsRelatedWithCurrentUser' in data))
+    throw new Error('Server response does not contain chatsRelatedWithCurrentUser');
 }

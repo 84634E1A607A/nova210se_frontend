@@ -1,5 +1,5 @@
 import { assertIsChatsRelatedWithCurrentUser } from '../utils/asserts';
-import { ChatRelatedWithCorrespondingCurrentUser } from '../utils/types';
+import { ChatRelatedWithCurrentUser } from '../utils/types';
 
 /**
  * @description List all chats of the current user. If failed, return an empty array list.
@@ -20,6 +20,6 @@ export async function getChats() {
     return chats;
   } catch (e) {
     console.error(e);
-    return [] as Array<ChatRelatedWithCorrespondingCurrentUser>;
+    return [] as Array<ChatRelatedWithCurrentUser>;
   }
 }

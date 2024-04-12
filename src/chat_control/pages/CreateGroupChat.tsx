@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { ChatRelatedWithCorrespondingCurrentUser, LeastFriendInfo } from '../../utils/types';
+import { ChatRelatedWithCurrentUser, LeastFriendInfo } from '../../utils/types';
 import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsGroupsData } from '../../utils/queryRouterLoaderAsserts';
 import { assertIsFriendsList } from '../../utils/asserts';
@@ -60,15 +60,15 @@ export function CreateGroupChat() {
       chat: createdGroupChat,
       nickname: '',
       unread_count: 0,
-    } as ChatRelatedWithCorrespondingCurrentUser;
+    } as ChatRelatedWithCurrentUser;
   };
 
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: mutateAgent,
-    onSuccess: (createdGroupChat: ChatRelatedWithCorrespondingCurrentUser | undefined) => {
+    onSuccess: (createdGroupChat: ChatRelatedWithCurrentUser | undefined) => {
       if (createdGroupChat !== undefined)
-        queryClient.setQueryData<ChatRelatedWithCorrespondingCurrentUser[]>(
+        queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
           ['chats_related_with_current_user'],
           (oldChats) => {
             return [...oldChats!, createdGroupChat];

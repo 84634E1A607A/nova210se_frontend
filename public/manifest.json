@@ -3,17 +3,17 @@
   "name": "Create React App Sample",
   "icons": [
     {
-      "src": "OIP.jpg",
+      "src": "Aflutter_icon.jpg",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "OIP.jpg",
+      "src": "Aflutter_icon.jpg",
       "type": "image/jpg",
       "sizes": "192x192"
     },
     {
-      "src": "OIP.jpg",
+      "src": "Aflutter_icon.jpg",
       "type": "image/jpg",
       "sizes": "512x512"
     }

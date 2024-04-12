@@ -47,6 +47,5 @@ export function DisplayCurrentUserInfo({ isIconOnly = true }: Props) {
         }}
       </Await>
     </Suspense>
-    // <div>user</div>
   );
 }

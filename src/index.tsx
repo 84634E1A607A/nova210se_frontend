@@ -13,9 +13,17 @@ import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { groupSettingAction } from './friend_control/GroupSetting';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
-import { FriendsGroupsLoader, FriendsLoader, InvitationsLoader, UserLoader } from './utils/Loaders';
+import {
+  ChatsRelatedWithCurrentUserLoader,
+  FriendsGroupsLoader,
+  FriendsLoader,
+  InvitationsLoader,
+  UserLoader,
+} from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
 import { CreateGroupChat } from './chat_control/pages/CreateGroupChat';
+import { ChatMainPageFramework } from './chat_control/pages/ChatMainPageFramework';
+import { SingleChatMain } from './chat_control/pages/SingleChatMain';
 
 const queryClient = new QueryClient();
 
@@ -33,8 +41,18 @@ const router = createBrowserRouter([
         path: ':user_name',
         element: <MainPageFramework />,
         loader: async () => UserLoader(queryClient),
-        // has a loader to load chats and group chats
         children: [
+          {
+            path: 'chats',
+            element: <ChatMainPageFramework />,
+            loader: async () => ChatsRelatedWithCurrentUserLoader(queryClient),
+            children: [
+              {
+                path: ':chat_id',
+                element: <SingleChatMain />,
+              },
+            ],
+          },
           {
             path: 'friends',
             element: <FriendsPage />,

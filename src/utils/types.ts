@@ -1,5 +1,4 @@
 // the leftmost list's item type, for example, friends and group chats belonged to the current user
-
 export type LoginInfo = {
   user_name: string;
   password: string;
@@ -34,14 +33,6 @@ export type Group = { group_id: number; group_name: string };
 
 export type Friend = { friend: LeastUserInfo; nickname: string; group: Group };
 
-export type ListItem = {
-  name: string;
-  avatar_url: string;
-  last_message: string | undefined;
-  has_unread: boolean;
-  unread_count: number; // the requirement document mandates this field to be shown
-};
-
 // maybe some field names are wrong
 export type UrlParams = { user_name: string; friend_user_id?: string; group_id?: string };
 
@@ -68,17 +59,24 @@ export type Chat = {
   last_message: Message;
 };
 
-export interface ChatRelatedWithCorrespondingCurrentUser {
+/**
+ * @field chat: the basic chat
+ * @field nickname: the nickname (to display) of the chat that is set by the current user. Can be empty string.
+ * Can be set to empty string.
+ * @field chat_id: for front-end's convenience, assert chat_id === chat.chat_id
+ */
+export type ChatRelatedWithCurrentUser = {
   chat: Chat;
+  chat_id: number;
   nickname: string;
   unread_count: number;
-}
+};
 
 /**
- * @description The info needed to display a friend. Only for front-end use.
+ * @description The info needed to display a friend (when creating a new group). Only for front-end use. So camel case is used.
  */
-export interface LeastFriendInfo {
+export type LeastFriendInfo = {
   displayName: string;
   userId: number;
   avatarUrl: string | undefined;
-}
+};
