@@ -3,6 +3,7 @@ import { ChatRelatedWithCurrentUser } from '../utils/types';
 
 /**
  * @description List all chats of the current user. If failed, return an empty array list.
+ * @returns List of chats, the chats are detailed chats (with `nickname`, etc. related with the current user )
  */
 export async function getChats() {
   try {
