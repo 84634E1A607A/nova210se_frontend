@@ -54,58 +54,13 @@ export async function ChatsRelatedWithCurrentUserLoader(queryClient: QueryClient
   });
 }
 
-// export async function FriendsGroupsLoader(queryClient: QueryClient) {
-//   const existingData = queryClient.getQueryData(['friends', 'groups']);
-//   if (existingData) {
-//     assertIsFriendsGroupsData(existingData);
-//     return defer({ friends: existingData.friends, groups: existingData.groups });
-//   }
-//   return defer({
-//     friends: queryClient.fetchQuery({ queryKey: ['friends'], queryFn: getFriendsList }),
-//     groups: queryClient.fetchQuery({ queryKey: ['groups'], queryFn: getGroupsList }),
-//   });
-// }
-
-// export async function FriendsLoader(queryClient: QueryClient) {
-//   const existingData = queryClient.getQueryData(['friends']);
-//   if (existingData) return defer({ friends: existingData });
-//   return defer({
-//     friends: queryClient.fetchQuery({
-//       queryKey: ['friends'],
-//       queryFn: getFriendsList,
-//     }),
-//   });
-// }
-
-// export async function InvitationsLoader(queryClient: QueryClient) {
-//   const existingData = queryClient.getQueryData(['invitations']);
-//   if (existingData) return defer({ invitaions: existingData });
-//   return defer({
-//     invitaions: queryClient.fetchQuery({
-//       queryKey: ['invitations'],
-//       queryFn: getInvitations,
-//     }),
-//   });
-// }
-
-// export async function UserLoader(queryClient: QueryClient) {
-//   const existingData = queryClient.getQueryData(['user']);
-//   if (existingData) return defer({ user: existingData });
-//   return defer({
-//     user: queryClient.fetchQuery({
-//       queryKey: ['user'],
-//       queryFn: getUserInfo,
-//     }),
-//   });
-// }
-
-// export async function ChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
-//   const existingData = queryClient.getQueryData(['chats_related_with_current_user']);
-//   if (existingData) return defer({ chatsRelatedWithCurrentUser: existingData });
-//   return defer({
-//     chatsRelatedWithCurrentUser: queryClient.fetchQuery({
-//       queryKey: ['chats_related_with_current_user'],
-//       queryFn: getChats,
-//     }),
-//   });
-// }
+export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
+  return defer({
+    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
+    chatsRelatedWithCurrentUser: fetchDataForLoaders(
+      queryClient,
+      ['chats_related_with_current_user'],
+      getChats,
+    ),
+  });
+}

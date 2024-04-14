@@ -161,6 +161,8 @@ export function assertIsChatRelatedWithCurrentUser(
   if (typeof data.nickname !== 'string') throw new Error('nickname is not a string');
   if (!('unread_count' in data)) throw new Error('Missing unread_count');
   if (typeof data.unread_count !== 'number') throw new Error('unread_count is not a number');
+  if ('chatName' in data && typeof data.chatName !== 'string')
+    throw new Error('chatName is not a string');
 }
 
 export function assertIsChatsRelatedWithCurrentUser(

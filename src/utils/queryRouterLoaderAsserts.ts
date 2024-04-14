@@ -40,3 +40,11 @@ export function assertIsChatsRelatedWithCurrentUserData(
   if (!('chatsRelatedWithCurrentUser' in data))
     throw new Error('Server response does not contain chatsRelatedWithCurrentUser');
 }
+
+export function assertIsFriendsAndChatsRelatedWithCurrentUserData(data: unknown): asserts data is {
+  friends: Friend[];
+  chatsRelatedWithCurrentUser: ChatRelatedWithCurrentUser[];
+} {
+  assertIsFriendsData(data);
+  assertIsChatsRelatedWithCurrentUserData(data);
+}

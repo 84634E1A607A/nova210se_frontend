@@ -13,7 +13,7 @@ import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
-  ChatsRelatedWithCurrentUserLoader,
+  FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsLoader,
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
           {
             path: 'chats',
             element: <ChatMainPageFramework />,
-            loader: async () => ChatsRelatedWithCurrentUserLoader(queryClient),
+            loader: async () => FriendsAndChatsRelatedWithCurrentUserLoader(queryClient),
             children: [
               {
                 path: ':chat_id',

@@ -33,9 +33,6 @@ export type Group = { group_id: number; group_name: string };
 
 export type Friend = { friend: LeastUserInfo; nickname: string; group: Group };
 
-// maybe some field names are wrong
-export type UrlParams = { user_name: string; friend_user_id?: string; group_id?: string };
-
 export type Message = {
   message_id: number;
   chat_id: number;
@@ -60,16 +57,19 @@ export type Chat = {
 };
 
 /**
+ * @description This structure is fetched directly from the backend API return except for the `chatName` field.
  * @field chat: the basic chat
  * @field nickname: the nickname (to display) of the chat that is set by the current user. Can be empty string.
  * Can be set to empty string.
- * @field chat_id: for front-end's convenience, assert chat_id === chat.chat_id
+ * @field chat_id: for front-end's convenience, assert chat_id === chat.chat_id. The backend API return doesn't contain this field.
+ * @field chatName: The name of the chat that should be displayed directly. It is created using `parseChatName`.
  */
 export type ChatRelatedWithCurrentUser = {
   chat: Chat;
   chat_id: number;
   nickname: string;
   unread_count: number;
+  chatName?: string;
 };
 
 /**
@@ -77,6 +77,6 @@ export type ChatRelatedWithCurrentUser = {
  */
 export type LeastFriendInfo = {
   displayName: string;
-  userId: number;
+  userId: number; // this friend's user ID
   avatarUrl: string | undefined;
 };

@@ -28,9 +28,9 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
           className={`${group.group_name === '' ? 'hidden' : ''} inline-block w-10 cursor-pointer items-center`}
         >
           {isExpanded ? (
-            <Folddown className="fill-teal-900 w-6 h-6" />
-          ) : (
             <Foldup className="fill-teal-900 w-6 h-6" />
+          ) : (
+            <Folddown className="fill-teal-900 w-6 h-6" />
           )}
         </span>
       </div>

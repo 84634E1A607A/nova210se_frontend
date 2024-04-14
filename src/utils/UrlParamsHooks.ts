@@ -1,12 +1,12 @@
 import { useParams } from 'react-router-dom';
-import { UrlParams } from './types';
+
+type UrlParams = { user_name: string; chat_id?: string };
 
 function useUrlParams() {
   const params = useParams<UrlParams>();
   const userName = params.user_name!;
-  const friendUserId = params.friend_user_id ? parseInt(params.friend_user_id) : undefined;
-  const groupId = params.group_id ? parseInt(params.group_id) : undefined;
-  return { userName, friendUserId, groupId };
+  const chatId = params.chat_id ? parseInt(params.chat_id) : undefined;
+  return { userName, chatId };
 }
 
 export function useUserName() {
@@ -14,12 +14,7 @@ export function useUserName() {
   return userName;
 }
 
-export function useFriendUserId() {
-  const { friendUserId } = useUrlParams();
-  return friendUserId!;
-}
-
-export function useGroupId() {
-  const { groupId } = useUrlParams();
-  return groupId!;
+export function useChatId() {
+  const { chatId } = useUrlParams();
+  return chatId!;
 }
