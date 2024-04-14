@@ -1,6 +1,6 @@
 /**
  * @description Asserts for data types when useing react-router's loader and react-query together.
- * The function names are exactly the types asserted to be.
+ * The function names are exactly the types asserted to be. They all have data as suffix.
  */
 
 import { ChatRelatedWithCurrentUser, Friend, Group, Invitation, LeastUserInfo } from './types';

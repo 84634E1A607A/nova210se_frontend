@@ -10,7 +10,6 @@ import { FriendsPage } from './friend_control/FriendsPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchNewFriend } from './friend_control/SearchNewFriend';
 import { InviteFriendPage } from './friend_control/InviteFriendPage';
-import { groupSettingAction } from './friend_control/GroupSetting';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
@@ -57,7 +56,6 @@ const router = createBrowserRouter([
             path: 'friends',
             element: <FriendsPage />,
             loader: async () => FriendsGroupsLoader(queryClient),
-            action: groupSettingAction,
           },
           {
             path: 'search_friend',
