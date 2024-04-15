@@ -5,6 +5,7 @@ export function isValidPath(path: string, userName: string) {
     `^/${userName}/?$`,
     `^/${userName}/chats/?$`,
     `^/${userName}/chats/[0-9]+/?$`,
+    `^/${userName}/chats/[0-9]+/more/?$`,
     `^/${userName}/friends/?$`,
     `^/${userName}/search_friend/?$`,
     `^/${userName}/invite/?$`,

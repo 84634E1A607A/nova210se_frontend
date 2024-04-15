@@ -11,7 +11,7 @@ export function ChatHeader({ chat }: Props) {
     <div className="flex flex-row place-content-center">
       <h2>{chat.chatName}</h2>
       <span className="ml-2 mt-0.5">
-        <Link to={`/`}>
+        <Link to="more" state={{ chat: chat }}>
           <MoreDetails className="max-w-6 max-h-6" />
         </Link>
       </span>

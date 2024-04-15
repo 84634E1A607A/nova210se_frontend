@@ -48,3 +48,11 @@ export function assertIsFriendsAndChatsRelatedWithCurrentUserData(data: unknown)
   assertIsFriendsData(data);
   assertIsChatsRelatedWithCurrentUserData(data);
 }
+
+export function assertIsUserAndFriendsData(data: unknown): asserts data is {
+  user: LeastUserInfo;
+  friends: Friend[];
+} {
+  assertIsUserData(data);
+  assertIsFriendsData(data);
+}

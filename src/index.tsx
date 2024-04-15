@@ -17,12 +17,14 @@ import {
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsLoader,
+  UserAndFriendsLoader,
   UserLoader,
 } from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
 import { CreateGroupChat } from './chat_control/pages/CreateGroupChat';
 import { ChatMainPageFramework } from './chat_control/pages/ChatMainPageFramework';
 import { SingleChatMain } from './chat_control/pages/SingleChatMain';
+import { MoreOfChat } from './chat_control/pages/MoreOfChat';
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,11 @@ const router = createBrowserRouter([
               {
                 path: ':chat_id',
                 element: <SingleChatMain />,
+              },
+              {
+                path: ':chat_id/more',
+                element: <MoreOfChat />,
+                loader: async () => UserAndFriendsLoader(queryClient),
               },
             ],
           },

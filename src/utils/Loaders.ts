@@ -64,3 +64,10 @@ export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: Q
     ),
   });
 }
+
+export async function UserAndFriendsLoader(queryClient: QueryClient) {
+  return defer({
+    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
+    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
+  });
+}

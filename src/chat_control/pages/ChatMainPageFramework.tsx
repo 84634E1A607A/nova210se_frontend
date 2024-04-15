@@ -40,7 +40,7 @@ export function ChatMainPageFramework() {
                   </div>
 
                   {/* main page for chat apiece */}
-                  <div className="ml-2 w-4/5">
+                  <div className="ml-2 border-r-2 w-4/5 felx-wrap">
                     <Outlet
                       context={
                         {
