@@ -1,15 +1,23 @@
 export async function editGroupName(newName: string, groupId: number) {
   try {
-    await fetch(process.env.REACT_APP_API_URL!.concat(`/friend/group/${groupId}`), {
-      method: 'PATCH',
-      body: JSON.stringify({ group_name: newName }),
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      process.env.REACT_APP_API_URL!.concat(`/friend/group/${groupId}`),
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ group_name: newName }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       },
-      credentials: 'include',
-    });
+    );
+    if (!response.ok) {
+      throw new Error('Failed to edit group name');
+    }
+    return true;
   } catch (e) {
     console.error(e);
     window.alert('Failed to edit group name');
+    return false;
   }
 }

@@ -27,6 +27,7 @@ export function Avatar({ url }: Props) {
   return (
     <img
       src={urlState}
+      style={{ borderRadius: '30%', width: '100%', height: '100%' }}
       onError={handleImageError}
       onLoad={() => setIsLoading(false)}
       alt="avatar"

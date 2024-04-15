@@ -22,7 +22,7 @@ export function SearchNewFriend() {
     <div className="grow">
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="searchParam">Search for new friend</label>
+          <label htmlFor="searchParam">Search for others</label>
           <input
             type="text"
             id="searchParam"

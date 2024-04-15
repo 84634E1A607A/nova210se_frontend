@@ -1,5 +1,5 @@
 import { assertIsApiError, assertIsLeastUserInfo } from '../utils/asserts';
-import { EdittingInfo } from './AccountManagement';
+import { EditingInfo } from './AccountManagement';
 
 /**
  *
@@ -19,7 +19,7 @@ export async function editUserInfo(
 ) {
   const avatarUrlInRequestBody = avatar_url === '' ? {} : { avatar_url };
   const userNameInRequestBody = user_name === '' ? {} : { user_name };
-  let requestBody: EdittingInfo = { ...avatarUrlInRequestBody, ...userNameInRequestBody };
+  let requestBody: EditingInfo = { ...avatarUrlInRequestBody, ...userNameInRequestBody };
   if (!(phone === '' && new_password === '' && email === '')) {
     requestBody = { ...requestBody, old_password };
     if (phone !== '') requestBody = { ...requestBody, phone };
