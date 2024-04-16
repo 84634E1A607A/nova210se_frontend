@@ -9,9 +9,9 @@ interface Props {
 }
 
 /**
- * @description For a tab to simply display a user in details/more of a chat, like that of `Command` in `https://primereact.org/contextmenu/`.
- * It can be right-clicked to manipulate this user (a stranger or a friend).
- * @warning The caller must ensure that the user is not undefined.
+ * @description For a tab to simply display a member in details/more of a chat, like that of `#Command` in `https://primereact.org/contextmenu/`.
+ * It can be right-clicked to manipulate this member (a stranger or a friend).
+ * @warning The caller must ensure that the param `user` is not undefined.
  */
 export function SingleUserTab({ user }: Props) {
   const purview = user.isOwner ? 'Owner' : user.isAdmin ? 'Admin' : '';
