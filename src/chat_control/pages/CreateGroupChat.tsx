@@ -59,7 +59,7 @@ export function CreateGroupChat() {
     return {
       chat: createdGroupChat,
       nickname: '',
-      unread_count: 0,
+      unread_count: 1,
     } as ChatRelatedWithCurrentUser;
   };
 
