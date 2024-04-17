@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { getGroupsList } from './getGroupsList';
 import { createGroup } from './createGroup';
-import { addFriendForGroup } from './addFriendForGroup';
+import { updateFriend } from './updateFriend';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
 import { useUserName } from '../utils/UrlParamsHooks';
@@ -12,7 +12,7 @@ import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { DeleteFriendButton } from './DeleteFriendButton';
 
-type GroupForm = { target_group_name: string };
+type GroupForm = { target_group_name: string; nickname: string };
 type Props = { friendUserId: number };
 
 export function SingleFriendSetting({ friendUserId }: Props) {
@@ -22,9 +22,14 @@ export function SingleFriendSetting({ friendUserId }: Props) {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
+    setError,
   } = useForm<GroupForm>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
+    defaultValues: {
+      target_group_name: '',
+      nickname: '',
+    },
   });
 
   const handleChangedGroupOfFriend: (_form: GroupForm) => Promise<{
@@ -32,28 +37,45 @@ export function SingleFriendSetting({ friendUserId }: Props) {
     newGroupEstablished: boolean;
     changingGroup: Group | undefined;
     friendOfConcern: Friend | undefined;
-  }> = async ({ target_group_name }) => {
+    nickname: string | undefined;
+  }> = async ({ target_group_name, nickname }) => {
     const noChangingReturnBody = {
       changeSuccessful: false,
       newGroupEstablished: false,
       changingGroup: undefined,
       friendOfConcern: undefined,
+      nickname: undefined,
     };
+    if (target_group_name === '' && nickname === '') {
+      setError('target_group_name', {
+        message: 'At least one field should be filled',
+      });
+      setError('nickname', { message: 'At least one field should be filled' });
+      return Promise.resolve(noChangingReturnBody);
+    }
+
     const friend = await getFriendInfo(friendUserId);
-    if (!friend) return Promise.resolve(noChangingReturnBody);
+    if (!friend) {
+      window.alert('Friend not found');
+      return Promise.resolve(noChangingReturnBody);
+    }
 
     const currentGroupName = friend.group.group_name;
     if (target_group_name === 'default' && currentGroupName === '') {
       window.alert('Friend already in default group');
       return Promise.resolve(noChangingReturnBody);
     }
+    if (friend.nickname === nickname) {
+      window.alert('Nickname must be changed if you modify this field');
+      return Promise.resolve(noChangingReturnBody);
+    }
     let createNewGroupSuccessful = false;
     let groupId;
-    let groupOfConcern: Group;
+    let groupOfConcern: Group | undefined = undefined;
     if (target_group_name === 'default') {
       groupOfConcern = await getDefaultGroup();
       groupId = groupOfConcern!.group_id;
-    } else {
+    } else if (target_group_name !== '') {
       const groups = await getGroupsList();
       const group = groups.find((group) => group.group_name === target_group_name);
 
@@ -74,12 +96,16 @@ export function SingleFriendSetting({ friendUserId }: Props) {
         groupOfConcern = group;
       }
     }
-    await addFriendForGroup(groupId, friendUserId);
+    let changeSuccessful: boolean;
+    if (target_group_name === '')
+      changeSuccessful = await updateFriend(nickname, undefined, friendUserId);
+    else changeSuccessful = await updateFriend(nickname, groupId, friendUserId);
     return {
-      changeSuccessful: true,
+      changeSuccessful,
       newGroupEstablished: createNewGroupSuccessful,
       changingGroup: groupOfConcern,
       friendOfConcern: friend,
+      nickname: nickname === '' ? undefined : nickname,
     };
   };
 
@@ -90,7 +116,13 @@ export function SingleFriendSetting({ friendUserId }: Props) {
 
   const { mutate } = useMutation({
     mutationFn: handleChangedGroupOfFriend,
-    onSuccess: ({ changeSuccessful, newGroupEstablished, changingGroup, friendOfConcern }) => {
+    onSuccess: ({
+      changeSuccessful,
+      newGroupEstablished,
+      changingGroup,
+      friendOfConcern,
+      nickname,
+    }) => {
       queryClient.setQueryData<Group[]>(['groups'], (oldGroups) => {
         if (newGroupEstablished) return [...oldGroups!, changingGroup!]; // default must exist
         return [...oldGroups!];
@@ -98,18 +130,20 @@ export function SingleFriendSetting({ friendUserId }: Props) {
       queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
         if (!changeSuccessful) return [...oldFriends!];
         return oldFriends!.map((friend) => {
-          if (friend.friend.id === friendOfConcern!.friend.id)
-            return { ...friend, group: changingGroup! };
+          if (friend.friend.id === friendOfConcern!.friend.id) {
+            let groupBeingSet = friend.group;
+            const oldNickname = friend.nickname;
+            if (changingGroup !== undefined) groupBeingSet = changingGroup;
+            return {
+              ...friend,
+              group: groupBeingSet,
+              nickname: nickname === undefined ? oldNickname : nickname,
+            };
+          }
           return { ...friend };
         });
       });
-      if (changeSuccessful) {
-        if (newGroupEstablished) window.alert(`New group ${changingGroup!.group_name} created`);
-        window.alert(
-          `Friend ${friendOfConcern!.friend.user_name} moved to group ${changingGroup!.group_name === '' ? 'default' : changingGroup!.group_name}`,
-        );
-        navigate(`/${userName}/friends`);
-      }
+      if (changeSuccessful) navigate(`/${userName}/friends`);
     },
   });
 
@@ -124,14 +158,25 @@ export function SingleFriendSetting({ friendUserId }: Props) {
             type="text"
             id="target_group_name"
             {...register('target_group_name', {
-              required: true,
               pattern: /^[\w@+\-.]+$/,
               maxLength: 19,
-              minLength: 1,
             })}
             className={getEditorStyle(errors.target_group_name)}
           />
           <ValidationError fieldError={errors.target_group_name} />
+        </div>
+        <div>
+          <label htmlFor="nickname">Change nickname</label>
+          <input
+            type="text"
+            id="nickname"
+            {...register('nickname', {
+              pattern: /^[\w@+\-.]+$/,
+              maxLength: 99,
+            })}
+            className={getEditorStyle(errors.nickname)}
+          />
+          <ValidationError fieldError={errors.nickname} />
         </div>
         <div>
           <button type="submit" disabled={isSubmitting}>

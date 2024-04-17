@@ -1,8 +1,6 @@
 import { Tag } from 'primereact/tag';
 import { Avatar } from '../../utils/ui/Avatar';
 import { DetailedMemberInfo } from '../pages/MoreOfChat';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 
 interface Props {
   user: DetailedMemberInfo;

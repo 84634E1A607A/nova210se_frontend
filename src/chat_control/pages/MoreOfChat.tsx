@@ -11,11 +11,12 @@ import { ContextMenu } from 'primereact/contextmenu';
 import { LeastUserInfo } from '../../utils/types';
 import { Toast } from 'primereact/toast';
 import { useUserName } from '../../utils/UrlParamsHooks';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setAdmin } from '../setAdmin';
 import { getChatInfo } from '../getChatInfo';
+import { transferOwner } from '../transferOwner';
+import { kickoutMember } from '../kickoutMember';
+import { leaveChat } from '../leaveChat';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -35,20 +36,113 @@ export function MoreOfChat() {
   const userName = useUserName();
   const queryClient = useQueryClient();
 
-  const { mutate: toggleAdmin } = useMutation({
+  const updateChatState = async () => {
+    const newChat = await getChatInfo({ chatId: chat.chat_id });
+    if (!newChat) {
+      navigate(`/${userName}/chats`);
+      toast.current?.show({
+        severity: 'warn',
+        summary: 'Error in updating chat info',
+        detail: 'redirect to chats page',
+        life: 2000,
+      });
+      return undefined;
+    } else return newChat;
+  };
+
+  const { mutate: mutateAdmin } = useMutation({
     mutationFn: setAdmin,
     onSuccess: async ({ isSuccessful }) => {
       if (isSuccessful) {
         queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] }); // prevent too-complicated cache setting
-        const newChat = await getChatInfo({ chatId: chat.chat_id });
-        if (!newChat) {
-          navigate(`/${userName}`);
-          window.alert('Error in getting chat info');
-          return;
-        }
-        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: newChat } });
-        window.alert('Successfully toggle admin');
-      } else window.alert('Failed to toggle admin');
+        const updatedChat = await updateChatState();
+        if (!updatedChat) return;
+        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Successfully toggled admin',
+          life: 1500,
+        });
+      } else
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Failed to toggle admin',
+          life: 2000,
+        });
+    },
+  });
+
+  const { mutate: mutateOwner } = useMutation({
+    mutationFn: transferOwner,
+    onSuccess: async ({ isSuccessful }) => {
+      if (isSuccessful) {
+        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+        const updatedChat = await updateChatState();
+        if (!updatedChat) return;
+        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Successfully transferred owner',
+          life: 1500,
+        });
+      } else
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Failed to transfer owner',
+          life: 2000,
+        });
+    },
+  });
+
+  const { mutate: mutateKickoutMember } = useMutation({
+    mutationFn: kickoutMember,
+    onSuccess: async ({ isSuccessful }) => {
+      if (isSuccessful) {
+        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+        const updatedChat = await updateChatState();
+        if (!updatedChat) return;
+        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Successfully kicked out member',
+          life: 1500,
+        });
+      } else {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Failed to kick out member',
+          life: 2000,
+        });
+      }
+    },
+  });
+
+  const { mutate: mutateLeaveChat } = useMutation({
+    mutationFn: leaveChat,
+    onSuccess: ({ isSuccessful }) => {
+      if (isSuccessful) {
+        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+        navigate(`/${userName}/chats`);
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Successfully left chat',
+          life: 1500,
+        });
+      } else {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Failed to leave chat',
+          life: 2000,
+        });
+      }
     },
   });
 
@@ -56,6 +150,13 @@ export function MoreOfChat() {
   const [selectedMember, setSelectedMember] = useState<DetailedMemberInfo | undefined>();
   const toast = useRef<Toast | null>(null);
   const currentUserRef = useRef<LeastUserInfo | undefined>();
+
+  // at first the following two varaibles are both false because ref is undefined. When the
+  // component rerenders (sth new), the changed currentUserRef is applied and the following
+  // two variables are updated to the desired value
+  const currentUserIsOwner = chat.chat.chat_owner.id === currentUserRef.current?.id;
+  const currentUserIsAdmin =
+    chat.chat.chat_admins.find((admin) => admin.id === currentUserRef.current?.id) !== undefined;
 
   const inviteFriendContextMenuItem = {
     label: 'Invite',
@@ -78,26 +179,19 @@ export function MoreOfChat() {
   const setAdminContextMenuItem = {
     label: 'Toggle Admin',
     command: () => {
-      const currentUserIsOwner = chat.chat.chat_owner.id === currentUserRef.current!.id;
-      const currentUserIsAdmin =
-        chat.chat.chat_admins.find((admin) => admin.id === currentUserRef.current!.id) !==
-        undefined;
       let isAbleToToggle = false;
       let errorDetail = '';
-      if (!currentUserIsOwner && !currentUserIsAdmin) {
-        errorDetail = 'You are neither an admin nor the owner';
+      if (selectedMember!.isMe) {
+        errorDetail = 'You cannot change your own admin state';
       }
-      if (selectedMember!.isAdmin && !currentUserIsOwner && !selectedMember?.isMe) {
-        errorDetail = 'Only the owner or yourself can remove an admin';
-      }
-      if (selectedMember!.isOwner) {
-        errorDetail = 'You cannot change the owner hold using admin setting button';
+      if (!currentUserIsOwner) {
+        errorDetail = 'Only an owner can toggle admin';
       }
       if (errorDetail === '') {
         isAbleToToggle = true;
       }
       if (isAbleToToggle) {
-        toggleAdmin({
+        mutateAdmin({
           chatId: chat.chat_id,
           memberId: selectedMember!.id,
           setToAdmin: !selectedMember!.isAdmin,
@@ -117,16 +211,50 @@ export function MoreOfChat() {
   const transferOwnerContextMenuItem = {
     label: 'Transfer Owner',
     command: () => {
-      // TODO
-      console.log('transfer owner');
+      if (currentUserIsOwner && !selectedMember!.isMe) {
+        mutateOwner({ chatId: chat.chat_id, newOwnerId: selectedMember!.id });
+      } else {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: selectedMember!.isMe
+            ? 'You cannot transfer owner to yourself'
+            : 'You are not the owner',
+          life: 2000,
+        });
+      }
     },
   };
 
   const removeMemberContextMenuItem = {
     label: 'Remove Member',
     command: () => {
-      // TODO
-      console.log('remove member');
+      if (selectedMember!.isMe && !selectedMember!.isOwner) {
+        mutateLeaveChat({ chatId: chat.chat_id });
+      } else if (selectedMember!.isOwner) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'You cannot remove the owner',
+          life: 2000,
+        });
+      } else if (selectedMember!.isAdmin && !currentUserIsOwner) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Only the owner can remove an admin',
+          life: 2000,
+        });
+      } else if (!currentUserIsAdmin && !currentUserIsOwner) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'You are not an admin',
+          life: 2000,
+        });
+      } else {
+        mutateKickoutMember({ chatId: chat.chat_id, memberId: selectedMember!.id });
+      }
     },
   };
 
@@ -145,15 +273,10 @@ export function MoreOfChat() {
     inviteFriendContextMenuItem,
   ];
 
-  const onRightClick = (
-    event: React.MouseEvent,
-    member: DetailedMemberInfo,
-    currentUser: LeastUserInfo,
-  ) => {
+  const onRightClick = (event: React.MouseEvent, member: DetailedMemberInfo) => {
     if (cm.current) {
       setSelectedMember(member);
       cm.current.show(event);
-      currentUserRef.current = currentUser;
     }
   };
 
@@ -174,6 +297,7 @@ export function MoreOfChat() {
               <Await resolve={userAndFriendsLoaderData.friends}>
                 {(friends) => {
                   assertIsLeastUserInfo(currentUser);
+                  currentUserRef.current = currentUser;
                   assertIsFriendsList(friends);
                   // parse the name to display for each user
                   const membersToDisplay = !isPrivateChat
@@ -203,9 +327,7 @@ export function MoreOfChat() {
                           return (
                             <li
                               key={detailedMember.id}
-                              onContextMenu={(event) =>
-                                onRightClick(event, detailedMember, currentUser)
-                              }
+                              onContextMenu={(event) => onRightClick(event, detailedMember)}
                               className={`p-2 hover:surface-hover border-round border-1 border-transparent transition-all transition-duration-200 
                               flex align-items-center justify-content-between ${selectedMember?.id === detailedMember.id && 'border-primary'}`}
                             >
@@ -214,13 +336,15 @@ export function MoreOfChat() {
                           );
                         })}
                       </ul>
-                      <ContextMenu
-                        ref={cm}
-                        model={contextMenuItems}
-                        onHide={() => {
-                          setSelectedMember(undefined);
-                        }}
-                      />
+                      {isPrivateChat ? null : (
+                        <ContextMenu
+                          ref={cm}
+                          model={contextMenuItems}
+                          onHide={() => {
+                            setSelectedMember(undefined);
+                          }}
+                        />
+                      )}
                     </div>
                   );
                 }}
