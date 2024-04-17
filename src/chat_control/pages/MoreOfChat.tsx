@@ -17,6 +17,9 @@ import { getChatInfo } from '../getChatInfo';
 import { transferOwner } from '../transferOwner';
 import { kickoutMember } from '../kickoutMember';
 import { leaveChat } from '../leaveChat';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Button } from 'primereact/button';
+import { deleteChat } from '../deleteChat';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -126,15 +129,12 @@ export function MoreOfChat() {
   const { mutate: mutateLeaveChat } = useMutation({
     mutationFn: leaveChat,
     onSuccess: ({ isSuccessful }) => {
+      console.log('left chat');
       if (isSuccessful) {
         queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
         navigate(`/${userName}/chats`);
-        toast.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully left chat',
-          life: 1500,
-        });
+        navigate(`/${userName}/chats`);
+        window.alert('Chat left');
       } else {
         toast.current?.show({
           severity: 'error',
@@ -149,10 +149,13 @@ export function MoreOfChat() {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMember, setSelectedMember] = useState<DetailedMemberInfo | undefined>();
   const toast = useRef<Toast | null>(null);
-  const currentUserRef = useRef<LeastUserInfo | undefined>();
 
-  // at first the following two varaibles are both false because ref is undefined. When the
-  // component rerenders (sth new), the changed currentUserRef is applied and the following
+  // sswybd: Can't use useState because setState in Await is not good and may cause unexpected behavior. There's a warn if I use it.
+  const currentUserRef = useRef<LeastUserInfo | undefined>(undefined);
+
+  // At first the following two varaibles are both false because ref is undefined.
+  // After loading and changing the ref, the following two variables will not be updated.
+  // When the component rerenders (sth new), the changed currentUserRef is applied and the following
   // two variables are updated to the desired value
   const currentUserIsOwner = chat.chat.chat_owner.id === currentUserRef.current?.id;
   const currentUserIsAdmin =
@@ -280,6 +283,43 @@ export function MoreOfChat() {
     }
   };
 
+  const { mutate: acceptDeleteChat } = useMutation({
+    mutationFn: deleteChat,
+    onSuccess: ({ isSuccessful }) => {
+      if (isSuccessful) {
+        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'], exact: true });
+        navigate(`/${userName}/chats`); // without it the time is so short, and the loader can't reload new chats data. don't know why
+        navigate(`/${userName}/chats`);
+        window.alert('Chat deleted'); // there is no toast left
+      } else
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Failed to delete chat',
+          life: 2000,
+        });
+    },
+  });
+
+  const confirmDeleteChat = (chatId: number) => {
+    confirmDialog({
+      message: 'Are you sure you want to delete the chat?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      defaultFocus: 'accept',
+      acceptClassName: 'ml-4 p-button-danger ',
+      accept: () => acceptDeleteChat(chatId),
+      reject: () => {
+        toast.current?.show({
+          severity: 'info',
+          summary: 'Rejected',
+          detail: 'You have cancelled the deletion',
+          life: 2000,
+        });
+      },
+    });
+  };
+
   return (
     <div className="flex flex-col ml-3">
       {/** two types of name, one is absolute name, which can be set by admins. Nickname can be arbitrarily set */}
@@ -297,7 +337,9 @@ export function MoreOfChat() {
               <Await resolve={userAndFriendsLoaderData.friends}>
                 {(friends) => {
                   assertIsLeastUserInfo(currentUser);
-                  currentUserRef.current = currentUser;
+                  // if (currentUser !== currentUserStoredState)
+                  // setCurrentUserStoredState(currentUser);
+                  if (currentUserRef.current !== currentUser) currentUserRef.current = currentUser;
                   assertIsFriendsList(friends);
                   // parse the name to display for each user
                   const membersToDisplay = !isPrivateChat
@@ -311,7 +353,7 @@ export function MoreOfChat() {
                     }
                   });
                   return (
-                    <div className="card flex md:justify-content-center">
+                    <div className="card flex flex-col md:justify-content-center">
                       <ul className="m-0 p-0 list-none border-1 surface-border border-round flex flex-column gap-2 w-full md:w-30rem">
                         {membersToDisplay.map((member) => {
                           const detailedMember: DetailedMemberInfo = {
@@ -345,6 +387,18 @@ export function MoreOfChat() {
                           }}
                         />
                       )}
+
+                      <ConfirmDialog />
+                      {chat.chat.chat_owner.id === currentUser.id && !isPrivateChat ? (
+                        <div className="card flex flex-wrap gap-2 justify-content-center">
+                          <Button
+                            onClick={() => confirmDeleteChat(chat.chat_id)}
+                            icon="pi pi-check"
+                            label="Delete chat"
+                            className="mr-2"
+                          ></Button>
+                        </div>
+                      ) : null}
                     </div>
                   );
                 }}
