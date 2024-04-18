@@ -27,8 +27,8 @@ import { MoreOfChat } from './chat_control/pages/MoreOfChat';
 import './index.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
 const queryClient = new QueryClient();
 

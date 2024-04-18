@@ -288,7 +288,7 @@ export function MoreOfChat() {
     onSuccess: ({ isSuccessful }) => {
       if (isSuccessful) {
         queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'], exact: true });
-        navigate(`/${userName}/chats`); // without it the time is so short, and the loader can't reload new chats data. don't know why
+        navigate(`/${userName}/chats`); // without it time is so short, and the loader won't reload. don't know why
         navigate(`/${userName}/chats`);
         window.alert('Chat deleted'); // there is no toast left
       } else
@@ -353,7 +353,7 @@ export function MoreOfChat() {
                     }
                   });
                   return (
-                    <div className="card flex flex-col md:justify-content-center">
+                    <div className="card flex flex-col md:justify-content-center items-center">
                       <ul className="m-0 p-0 list-none border-1 surface-border border-round flex flex-column gap-2 w-full md:w-30rem">
                         {membersToDisplay.map((member) => {
                           const detailedMember: DetailedMemberInfo = {
