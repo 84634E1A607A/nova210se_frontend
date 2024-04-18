@@ -3,243 +3,140 @@ import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { editUserInfo } from './editUserInfo';
 import { logout } from './logout';
 import { deleteAccount } from './deleteAccount';
-import { useNavigate } from 'react-router-dom';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 import { theme } from '../utils/ui/themes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { LeastUserInfo } from '../utils/Types';
-import { maxlengthOption, pattern } from './utils/userNameFormOptions';
-import { validateUserName } from './utils/validateUserName';
+import { LeastUserInfo } from '../utils/types';
+import 'primeicons/primeicons.css';
+import { Button } from 'primereact/button';
+import { info } from 'console';
+import { Suspense } from 'react';
+import { assertIsUserData } from '../utils/AssertsForRouterLoader';
+import userEvent from '@testing-library/user-event';
+import { assertIsLeastUserInfo } from '../utils/Asserts';
+import { Avatar } from '../utils/ui/Avatar';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Toast } from 'primereact/toast';
+import React, { useRef } from 'react';
+import { settingConfirmDialog } from './Components/settingConfirm';
+import { SettingConfirmDialog } from './Components/SettingConfirmDialog';
 
 /**
  * For changing username, avatar_url, password etc. To change e-mail and phone number. Or to logout, delete account, etc.
  * @returns JSX.Element
  */
 export function AccountManagement() {
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors, dirtyFields },
-    setValue,
-    reset,
-  } = useForm<EditingInfo>({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-    defaultValues: {
-      old_password: '',
-      new_password: '',
-      avatar_url: '',
-      phone: '',
-      email: '',
-      user_name: '',
-    },
-  });
-
-  const onSubmit = async (info: EditingInfo) => {
-    if (
-      info.new_password === '' &&
-      info.avatar_url === '' &&
-      info.phone === '' &&
-      info.email === '' &&
-      info.user_name === ''
-    ) {
-      const errorMessageForNoFieldAtAll = 'At least one field must be filled in';
-      setError('new_password', { message: errorMessageForNoFieldAtAll });
-      setError('avatar_url', { message: errorMessageForNoFieldAtAll });
-      setError('phone', { message: errorMessageForNoFieldAtAll });
-      setError('email', { message: errorMessageForNoFieldAtAll });
-      setError('user_name', { message: errorMessageForNoFieldAtAll });
-      return;
-    }
-    if (
-      (info.new_password !== '' || info.phone !== '' || info.email !== '') &&
-      info.old_password === ''
-    ) {
-      const errorMessageForNoOldPassword =
-        'If you want to change your password or phone number or email, you must provide your old password';
-      setError('old_password', { message: errorMessageForNoOldPassword });
-      if (info.new_password !== '')
-        setError('new_password', { message: errorMessageForNoOldPassword });
-      if (info.phone !== '') setError('phone', { message: errorMessageForNoOldPassword });
-      if (info.email !== '') setError('email', { message: errorMessageForNoOldPassword });
-      return;
-    }
-
-    return await editUserInfo(
-      info.old_password!,
-      info.new_password!,
-      info.avatar_url!,
-      info.phone!,
-      info.email!,
-      info.user_name!,
-    ).then((user) => {
-      if (user === undefined) setError('old_password', { message: 'Old password is incorrect' });
-      return user;
-    });
-  };
-
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: onSubmit,
-    onSuccess: (nowUser) => {
-      if (nowUser === undefined) return;
-      queryClient.setQueryData<LeastUserInfo>(['user'], () => {
-        return { ...nowUser };
-      });
 
-      reset(); // setValue('old_password', defaultValues?.old_password) is useless. Maybe because render in batch so no effect
-      navigate(`/${nowUser.user_name}/account_management`); // can't use redirect because maybe it doesn't reload data
-      window.alert('User info updated');
-    },
-  });
+  const loaderData = useLoaderData();
+  assertIsUserData(loaderData);
 
   return (
-    <div className="grow flex-col">
-      <form noValidate onSubmit={handleSubmit((form) => mutate(form))}>
-        <div>
-          <label htmlFor="user_name">New User Name</label>
-          <input
-            type="text"
-            id="user_name"
-            {...register('user_name', {
-              maxLength: maxlengthOption,
-              pattern: pattern,
-              validate: (value) => {
-                if (value) return validateUserName(value);
-              },
-            })}
-            className={getEditorStyle(errors.user_name)}
-          />
-          <ValidationError fieldError={errors.user_name} />
-        </div>
-        <div>
-          <label htmlFor="avatar_url">New Avatar URL</label>
-          <input
-            type="text"
-            id="avatar_url"
-            {...register('avatar_url', {
-              maxLength: { value: 490, message: 'User name must be at most 490 characters long' },
-              pattern: {
-                // start with http(s)://
-                value: /^(http|https):\/\/.*$/,
-                message: 'Invalid URL: it must start with http:// or https://',
-              },
-            })}
-            className={getEditorStyle(errors.avatar_url)}
-            placeholder="https://dummy-example.com/yourDummy.png"
-          />
-          <ValidationError fieldError={errors.avatar_url} />
-        </div>
-        <div>
-          <label htmlFor="new_password">New Password</label>
-          <input
-            type="password"
-            id="new_password"
-            {...register('new_password', {
-              maxLength: { value: 100, message: 'Password must be at most 100 characters long' },
-              minLength: { value: 6, message: 'Password must be at least 6 characters long' },
-              pattern: {
-                value: /^[^\s]*$/,
-                message: 'Password cannot contain blank spaces',
-              },
-            })}
-            className={getEditorStyle(errors.new_password)}
-          />
-          <ValidationError fieldError={errors.new_password} />
-        </div>
-        <div>
-          <label htmlFor="phone">New phone number</label>
-          <input
-            type="tel"
-            id="phone"
-            {...register('phone', {
-              maxLength: { value: 11, message: 'Too long' },
-              minLength: { value: 11, message: 'Too short' },
-              pattern: {
-                value: /^[0-9]*$/,
-                message: 'Phone number must contain only digits',
-              },
-            })}
-            className={getEditorStyle(errors.phone)}
-          />
-          <ValidationError fieldError={errors.phone} />
-        </div>
-        <div>
-          <label htmlFor="email">New email</label>
-          <input
-            type="email"
-            id="email"
-            {...register('email', {
-              maxLength: { value: 100, message: 'Email must be at most 100 characters long' },
-              pattern: {
-                value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                message: 'Email pattern should be correct',
-              },
-            })}
-            className={getEditorStyle(errors.email)}
-          />
-          <ValidationError fieldError={errors.email} />
-        </div>
-        <div
-          className={`${getHiddenOrVisibleEditorStyle(dirtyFields.new_password, dirtyFields.phone, dirtyFields.email)}`}
-        >
-          <label htmlFor="old_password">Old Password</label>
-          <input
-            type="password"
-            id="old_password"
-            {...register('old_password', {
-              maxLength: { value: 100, message: 'Password must be at most 100 characters long' },
-              minLength: { value: 6, message: 'Password must be at least 6 characters long' },
-              pattern: {
-                value: /^[^\s]*$/,
-                message: 'Password cannot contain blank spaces',
-              },
-            })}
-            className={`${getEditorStyle(errors.old_password)}`}
-          />
-          <ValidationError fieldError={errors.old_password} />
-        </div>
-        <div>
-          <button
-            type="submit"
-            onClick={() => {
-              if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email)
-                setValue('old_password', '');
-            }}
-          >
-            Submit
-          </button>
-        </div>
-      </form>
-      <div className="flex flex-col items-center space-y-2 pt-6">
-        <button
-          className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600 
-          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          style={{ backgroundColor: theme.tertiary_container }}
-          onClick={() => {
-            logout();
-            navigate('/');
-          }}
-        >
-          Logout
-        </button>
-        <button
-          className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
-          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          style={{ backgroundColor: theme.error }}
-          onClick={() => {
-            const confirmDelete = window.confirm('Are you sure you want to delete your account?');
-            if (!confirmDelete) return;
-            deleteAccount();
-            navigate('/');
-            window.alert('Account deleted');
-          }}
-        >
-          Delete account
-        </button>
-      </div>
-    </div>
+    <Suspense>
+      <Await resolve={loaderData.user}>
+        {(user) => {
+          assertIsLeastUserInfo(user);
+          return (
+            <div className="flex flex-col flex-grow mt-3">
+              <div className="surface-0">
+                <div className="font-medium text-3xl text-900 mb-2">User Information</div>
+                <div className="text-500">You can modify your current info here.</div>
+                <div className="text-500 mb-5">
+                  If you want to edit your email, phone number, or password, you have to provide
+                  your old password.
+                </div>
+                <div className="parent-container w-full">
+                  <ul className="list-none px-10 m-0">
+                    <li className="flex h-52 align-items-center py-3 px-2 border-top-1 border-300">
+                      <div className="text-500 w-6 md:w-2 font-medium">Avatar</div>
+                      <div className="flex p-4 md:w-8 md:flex-order-0 flex-order-1 flex-grow justify-center items-center">
+                        <div className="h-32 w-32 ">
+                          <Avatar url={user.avatar_url} />
+                        </div>
+                      </div>
+                      <div className="w-6 md:w-2 flex justify-content-end">
+                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
+                      </div>
+                    </li>
+                    <li className="flex  align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
+                      <div className="text-500 w-6 md:w-2 font-medium">User Name</div>
+                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{`${user.user_name}`}</div>
+                      <div className="w-6 md:w-2 flex justify-content-end">
+                        <SettingConfirmDialog changeField="User Name" />
+                        <Button
+                          label="Edit"
+                          icon="pi pi-pencil"
+                          className="p-button-text"
+                          onClick={(event) =>
+                            settingConfirmDialog({ changeField: 'Username', event: event })
+                          }
+                        />
+                      </div>
+                    </li>
+                    <li className="flex align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
+                      <div className="text-500 w-6 md:w-2 font-medium">Email</div>
+                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                        {`${user.email}`}
+                      </div>
+                      <div className="w-6 md:w-2 flex justify-content-end">
+                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
+                      </div>
+                    </li>
+                    <li className="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 border-300 flex-wrap">
+                      <div className="text-500 w-6 md:w-2 font-medium">Phone</div>
+                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1 line-height-3">
+                        {`${user.phone}`}
+                      </div>
+                      <div className="w-6 md:w-2 flex justify-content-end">
+                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
+                      </div>
+                    </li>
+                    <li className="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 border-300 flex-wrap">
+                      <div className="text-500 w-6 md:w-2 font-medium">Password</div>
+                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1 line-height-3">
+                        ************
+                      </div>
+                      <div className="w-6 md:w-2 flex justify-content-end">
+                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div className="flex flex-col pt-6 space-y-2 items-center">
+                <button
+                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
+          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  style={{ backgroundColor: theme.tertiary_container }}
+                  onClick={() => {
+                    logout();
+                    navigate('/');
+                  }}
+                >
+                  Logout
+                </button>
+                <button
+                  className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
+          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  style={{ backgroundColor: theme.error }}
+                  onClick={() => {
+                    const confirmDelete = window.confirm(
+                      'Are you sure you want to delete your account?',
+                    );
+                    if (!confirmDelete) return;
+                    deleteAccount();
+                    navigate('/');
+                    window.alert('Account deleted');
+                  }}
+                >
+                  Delete account
+                </button>
+              </div>
+            </div>
+          );
+        }}
+      </Await>
+    </Suspense>
   );
 }
 

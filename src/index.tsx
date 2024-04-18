@@ -90,7 +90,7 @@ const router = createBrowserRouter([
           {
             path: 'account_management',
             element: <AccountManagement />,
-            id: 'account',
+            loader: async () => UserLoader(queryClient),
           },
           {
             path: 'invitation_list',
