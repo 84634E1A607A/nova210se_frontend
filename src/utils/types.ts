@@ -80,3 +80,5 @@ export type LeastFriendInfo = {
   userId: number; // this friend's user ID
   avatarUrl: string | undefined;
 };
+
+export type ChatPurview = 'Owner' | 'Admin' | 'Member';

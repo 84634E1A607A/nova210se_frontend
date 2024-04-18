@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -25,6 +24,11 @@ import { CreateGroupChat } from './chat_control/pages/CreateGroupChat';
 import { ChatMainPageFramework } from './chat_control/pages/ChatMainPageFramework';
 import { SingleChatMain } from './chat_control/pages/SingleChatMain';
 import { MoreOfChat } from './chat_control/pages/MoreOfChat';
+import './index.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
 const queryClient = new QueryClient();
 

@@ -1,4 +1,4 @@
-import { assertIsChat } from '../utils/asserts';
+import { assertIsChatRelatedWithCurrentUser } from '../utils/asserts';
 
 interface Params {
   chatId: number;
@@ -16,7 +16,7 @@ export async function getChatInfo({ chatId }: Params) {
     if (!response.ok) throw new Error('Failed to get chat info!');
     const data = await response.json();
     const chatInfo = data.data;
-    assertIsChat(chatInfo);
+    assertIsChatRelatedWithCurrentUser(chatInfo);
     return chatInfo;
   } catch (e) {
     console.error(e);

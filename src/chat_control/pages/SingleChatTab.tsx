@@ -1,8 +1,5 @@
 import { Badge } from 'primereact/badge';
 import { ChatRelatedWithCurrentUser } from '../../utils/types';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
 import { Link } from 'react-router-dom';
 import { useUserName } from '../../utils/UrlParamsHooks';
 

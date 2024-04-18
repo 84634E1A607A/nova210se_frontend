@@ -11,6 +11,7 @@ import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend'
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { createGroupChat } from '../createGroupChat';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Avatar } from '../../utils/ui/Avatar';
 
 export function CreateGroupChat() {
   const toast = useRef<Toast | null>(null);
@@ -59,7 +60,7 @@ export function CreateGroupChat() {
     return {
       chat: createdGroupChat,
       nickname: '',
-      unread_count: 0,
+      unread_count: 1,
     } as ChatRelatedWithCurrentUser;
   };
 
@@ -82,6 +83,17 @@ export function CreateGroupChat() {
       <small className="p-error">{errors[name]!.message}</small>
     ) : (
       <small className="p-error">&nbsp;</small>
+    );
+  };
+
+  const friendTabTemplate = (friend: LeastFriendInfo) => {
+    return (
+      <div className="flex align-items-center">
+        <div className="mr-2" style={{ width: '18px' }}>
+          <Avatar url={friend.avatarUrl} />
+        </div>
+        <div>{friend.displayName}</div>
+      </div>
     );
   };
 
@@ -117,6 +129,8 @@ export function CreateGroupChat() {
                   />
                   {getFormErrorMessage('groupName')}
                 </div>
+
+                {/** Without `optionLabel`, when you click one item, there will be runtime error*/}
                 <Controller
                   name="friends"
                   control={control}
@@ -132,6 +146,8 @@ export function CreateGroupChat() {
                       placeholder="Select Friends"
                       maxSelectedLabels={4}
                       className="w-full md:w-20rem bg-green-200"
+                      display="chip"
+                      itemTemplate={friendTabTemplate}
                     />
                   )}
                 />
