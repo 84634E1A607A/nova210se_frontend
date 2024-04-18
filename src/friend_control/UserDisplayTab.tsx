@@ -51,7 +51,18 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
     <div>
       <div className="flex flex-row h-fit justify-evenly items-center bg-gray-300 rounded-lg p-2">
         <div className="h-11 p-1 flex">
-          <Avatar url={leastUserInfo.avatar_url} />
+          <Avatar
+            url={leastUserInfo.avatar_url}
+            enablePopup={true}
+            detailedInfo={{
+              user_name: leastUserInfo.user_name,
+              id: leastUserInfo.id,
+              email: leastUserInfo.email,
+              phone: leastUserInfo.phone,
+              nickname: friend?.nickname,
+              avatar_url: leastUserInfo.avatar_url,
+            }}
+          />
         </div>
 
         <div className="flex flex-col">

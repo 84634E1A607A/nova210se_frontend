@@ -3,7 +3,6 @@ import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { SidebarLink } from './SideBarLink';
 import { DisplayCurrentUserInfo } from '../user_control/DisplayCurrentUserInfo';
-import { useState } from 'react';
 import { ReactComponent as HomeIcon } from '../svg/nav-home-icon.svg';
 import { ReactComponent as FriendIcon } from '../svg/nav-friend-icon.svg';
 import { ReactComponent as SettingIcon } from '../svg/nav-setting-icon.svg';
@@ -11,7 +10,6 @@ import { ReactComponent as UpcomingIcon } from '../svg/nav-upcoming-icon.svg';
 
 export function MainPageFramework() {
   const userName = useUserName();
-  const [isInfoBoxVisible, setIsInfoBoxVisible] = useState(false);
 
   return (
     <div className="flex flex-row h-screen w-screen flex-wrap">
@@ -28,18 +26,9 @@ export function MainPageFramework() {
               style={{
                 transition: 'background-color 0.3s, color 0.3s',
               }}
-              onClick={() => {
-                setIsInfoBoxVisible(!isInfoBoxVisible);
-              }}
             >
               <i className="mx-auto">{<DisplayCurrentUserInfo />}</i>
             </button>
-            {isInfoBoxVisible && (
-              /** `left-10` means the absolute position of the pop-up user-info window */
-              <div className="absolute left-10 bg-white shadow-md p-4 rounded-md h-48 w-72 mt-40 ms-20 box-border border-4 flex items-center justify-center">
-                <DisplayCurrentUserInfo isIconOnly={false} />
-              </div>
-            )}
           </li>
           <SidebarLink
             to={`/${userName}/chats`}
