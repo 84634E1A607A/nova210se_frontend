@@ -20,6 +20,10 @@ export type LeastUserInfo = {
   email?: string;
 };
 
+export type DetailedUserInfo = LeastUserInfo & {
+  nickname?: string;
+};
+
 export type InvitationSourceType = 'search' | number;
 
 export type Invitation = {

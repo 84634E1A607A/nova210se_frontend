@@ -1,6 +1,7 @@
 import { Tag } from 'primereact/tag';
 import { Avatar } from '../../utils/ui/Avatar';
 import { DetailedMemberInfo } from '../pages/MoreOfChat';
+import { parseDisplayName } from '../../friend_control/utils/parseDisplayName';
 
 interface Props {
   user: DetailedMemberInfo;
@@ -25,10 +26,12 @@ export function SingleUserTab({ user }: Props) {
     <>
       <div className="flex align-items-center gap-2">
         <div className="w-8 h-8">
-          <Avatar url={user.avatar_url} />
+          <Avatar url={user.avatar_url} enablePopup={true} detailedInfo={user} />
         </div>
         <div className="flex flex-row ">
-          <span className="font-bold">{user.user_name}</span>
+          <span className="font-bold">
+            {parseDisplayName({ nickname: user.nickname, userName: user.user_name })}
+          </span>
           <span className="ml-3 text-slate-400">{user.isMe ? 'Me' : '  '}</span>
         </div>
       </div>

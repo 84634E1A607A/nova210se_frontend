@@ -8,7 +8,7 @@ import { SingleUserTab } from '../components/SIngleUserTab';
 import { Suspense, useRef, useState } from 'react';
 import { assertIsUserAndFriendsData } from '../../utils/queryRouterLoaderAsserts';
 import { ContextMenu } from 'primereact/contextmenu';
-import { LeastUserInfo } from '../../utils/types';
+import { DetailedUserInfo, LeastUserInfo } from '../../utils/types';
 import { Toast } from 'primereact/toast';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -337,21 +337,21 @@ export function MoreOfChat() {
               <Await resolve={userAndFriendsLoaderData.friends}>
                 {(friends) => {
                   assertIsLeastUserInfo(currentUser);
-                  // if (currentUser !== currentUserStoredState)
-                  // setCurrentUserStoredState(currentUser);
                   if (currentUserRef.current !== currentUser) currentUserRef.current = currentUser;
                   assertIsFriendsList(friends);
-                  // parse the name to display for each user
-                  const membersToDisplay = !isPrivateChat
+                  const membersForUse = !isPrivateChat
                     ? chat.chat.chat_members
                     : chat.chat.chat_members.filter((member) => member.id !== currentUser.id);
-                  membersToDisplay.forEach((member, index) => {
+                  const membersToDisplay: DetailedUserInfo[] = membersForUse.map((member) => {
                     const friend = friends.find((friend) => friend.friend.id === member.id);
-                    if (friend) {
-                      membersToDisplay[index].user_name =
-                        friend.nickname === '' ? friend.friend.user_name : friend.nickname;
-                    }
+                    if (friend)
+                      return {
+                        ...member,
+                        nickname: friend.nickname,
+                      };
+                    else return member;
                   });
+
                   return (
                     <div className="card flex flex-col md:justify-content-center items-center">
                       <ul className="m-0 p-0 list-none border-1 surface-border border-round flex flex-column gap-2 w-full md:w-30rem">
@@ -364,8 +364,6 @@ export function MoreOfChat() {
                             isFriend: friends.some((friend) => friend.friend.id === member.id),
                           };
 
-                          // some of the following classNames are from primeflex, not tailwind, don't delete them unless
-                          // you transform some of them to tailwind to make the code more consistent
                           return (
                             <li
                               key={detailedMember.id}
@@ -412,7 +410,7 @@ export function MoreOfChat() {
   );
 }
 
-export type DetailedMemberInfo = LeastUserInfo & {
+export type DetailedMemberInfo = DetailedUserInfo & {
   isOwner: boolean;
   isAdmin: boolean;
   isMe: boolean;
