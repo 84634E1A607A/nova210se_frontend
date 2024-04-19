@@ -17,6 +17,8 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
     queryFn: getDefaultGroup,
   });
 
+  const isDefaultGroup = group.group_name === '';
+
   return (
     <div className="flex flex-col m-2">
       <div className="font-medium p-1" style={{ backgroundColor: theme.secondary_container }}>
@@ -27,14 +29,14 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
           aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
           className={`${group.group_name === '' ? 'hidden' : ''} inline-block w-10 cursor-pointer items-center`}
         >
-          {isExpanded ? (
+          {isDefaultGroup ? null : isExpanded ? (
             <Foldup className="fill-teal-900 w-6 h-6" />
           ) : (
             <Folddown className="fill-teal-900 w-6 h-6" />
           )}
         </span>
       </div>
-      <div {...getCollapseProps()} className={`grow ${group.group_name === '' ? 'hidden' : ''}`}>
+      <div {...getCollapseProps()} className={`grow ${isDefaultGroup ? 'hidden' : ''}`}>
         {isLoading ? (
           <p>is loading</p>
         ) : (

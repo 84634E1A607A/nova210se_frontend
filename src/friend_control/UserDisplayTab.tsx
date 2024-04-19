@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
@@ -35,21 +35,17 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   }
 
   const userName = useUserName();
-  const location = useLocation();
 
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
 
-  let source: InvitationSourceType = 'search';
-
-  // TODO: chat group id source is not implemented
-
-  if (!location.pathname.includes(`${userName}/search_friend`)) {
-    /* give it a group number */
-  }
+  const source: InvitationSourceType = 'search';
 
   return (
     <div>
-      <div className="flex flex-row h-fit justify-evenly items-center bg-gray-300 rounded-lg p-2">
+      <div
+        className="flex flex-row h-fit justify-evenly
+                   items-center bg-gray-300 rounded-lg p-2"
+      >
         <div className="h-11 p-1 flex">
           <Avatar
             url={leastUserInfo.avatar_url}
@@ -67,11 +63,15 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
         <div className="flex flex-col">
           <p>{userNameToDisplay}</p>
-          <p>
-            {groupName === undefined || groupName === null || groupName === ''
-              ? 'default group'
-              : groupName}
-          </p>
+
+          {isFriend ? (
+            <p>
+              {groupName === undefined || groupName === null || groupName === ''
+                ? 'default group'
+                : groupName}
+            </p>
+          ) : null}
+
           <p>
             {leastUserInfo.phone === undefined || leastUserInfo.phone === ''
               ? null

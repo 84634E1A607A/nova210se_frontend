@@ -19,7 +19,9 @@ function App() {
     <PrimeReactProvider value={{ unstyled: false }}>
       <div className="App">
         <RouterGuard />
+        {/*<div className="min-w-[50rem]">*/}
         <Outlet />
+        {/*</div>*/}
       </div>
     </PrimeReactProvider>
   );
