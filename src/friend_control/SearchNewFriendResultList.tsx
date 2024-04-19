@@ -7,8 +7,6 @@ import { assertIsFriendsList } from '../utils/asserts';
 import { Suspense } from 'react';
 import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
 
-// type Params = { user_name: string; search_param: string };
-
 export function SearchNewFriendResultList() {
   const [searchParams] = useSearchParams();
   const search_param = searchParams.get('search_param');

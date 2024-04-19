@@ -148,11 +148,15 @@ export function SingleFriendSetting({ friendUserId }: Props) {
   });
 
   return (
-    <div>
+    <div className="m-4">
       <form onSubmit={handleSubmit((form) => mutate(form))}>
         <div>
-          <label htmlFor="target_group_name">
-            Change group, if not existed, will create one. Type 'default' to switch to default group
+          <label
+            htmlFor="target_group_name"
+            title="Type in 'default' to switch to default group'"
+            className="mr-4"
+          >
+            Change or create group
           </label>
           <input
             type="text"
@@ -166,7 +170,9 @@ export function SingleFriendSetting({ friendUserId }: Props) {
           <ValidationError fieldError={errors.target_group_name} />
         </div>
         <div>
-          <label htmlFor="nickname">Change nickname</label>
+          <label htmlFor="nickname" className="mr-4">
+            Nickname
+          </label>
           <input
             type="text"
             id="nickname"
