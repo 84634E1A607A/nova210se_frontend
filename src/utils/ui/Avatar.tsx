@@ -10,22 +10,26 @@ type Props = { url?: string; enablePopup?: boolean; detailedInfo?: DetailedUserI
  * @warning If enablePopup is true, detailedInfo must be provided
  */
 export function Avatar({ url, enablePopup, detailedInfo }: Props) {
+  const defaultUrl = process.env.REACT_APP_DEFAULT_AVATAR_URL!;
   let urlForDisplay = url;
   if (urlForDisplay === undefined || urlForDisplay === null || urlForDisplay === '')
-    urlForDisplay = process.env.REACT_APP_DEFAULT_AVATAR_URL!;
+    urlForDisplay = defaultUrl;
   const [urlState, setUrlState] = useState(urlForDisplay);
+
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleImageError = () => {
-    setUrlState(process.env.REACT_APP_DEFAULT_AVATAR_URL!);
-  };
+  useEffect(() => {
+    setIsLoading(true);
+    if (url === undefined || url === null || url === '') setUrlState(defaultUrl);
+    else setUrlState(url);
+  }, [defaultUrl, url]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (isLoading) handleImageError();
+      if (isLoading) setUrlState(defaultUrl);
     }, 400);
     return () => clearTimeout(timeoutId);
-  }, [isLoading]);
+  }, [setUrlState, isLoading, url, defaultUrl]);
 
   // I truly don't know the exact type of e
   const showTemplate = (e: any) => {
@@ -43,7 +47,7 @@ export function Avatar({ url, enablePopup, detailedInfo }: Props) {
       <img
         src={urlState}
         style={{ borderRadius: '30%', width: '100%', height: '100%' }}
-        onError={handleImageError}
+        onError={() => setUrlState(defaultUrl)}
         onLoad={() => setIsLoading(false)}
         alt="avatar"
         onClick={(e) => {
