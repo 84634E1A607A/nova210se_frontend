@@ -23,6 +23,7 @@ export function SingleFriendSetting({ friendUserId }: Props) {
     handleSubmit,
     formState: { isSubmitting, errors },
     setError,
+    reset,
   } = useForm<GroupForm>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -65,8 +66,8 @@ export function SingleFriendSetting({ friendUserId }: Props) {
       window.alert('Friend already in default group');
       return Promise.resolve(noChangingReturnBody);
     }
-    if (friend.nickname === nickname) {
-      window.alert('Nickname must be changed if you modify this field');
+    if (friend.nickname === nickname && nickname !== '') {
+      window.alert('Nickname must be changed if you modify nickname field');
       return Promise.resolve(noChangingReturnBody);
     }
     let createNewGroupSuccessful = false;
@@ -143,7 +144,10 @@ export function SingleFriendSetting({ friendUserId }: Props) {
           return { ...friend };
         });
       });
-      if (changeSuccessful) navigate(`/${userName}/friends`);
+      if (changeSuccessful) {
+        navigate(`/${userName}/friends`);
+        reset();
+      }
     },
   });
 
