@@ -16,9 +16,9 @@ export function SingleUserTab({ user }: Props) {
   const purview = user.isOwner ? 'Owner' : user.isAdmin ? 'Admin' : '';
 
   // to be polished, don't know what's the meaning
-  const getBadge = (user: DetailedMemberInfo) => {
-    if ((user.isOwner || user.isAdmin) && !user.isFriend) return 'warning';
-    else if (user.isFriend) return 'info';
+  const getBadge = (member: DetailedMemberInfo) => {
+    if ((member.isOwner || member.isAdmin) && !member.isFriend) return 'warning';
+    else if (member.isFriend) return 'info';
     else return null;
   };
 

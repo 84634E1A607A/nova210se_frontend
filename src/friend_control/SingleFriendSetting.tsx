@@ -75,7 +75,7 @@ export function SingleFriendSetting({ friendUserId }: Props) {
     let groupOfConcern: Group | undefined = undefined;
     if (target_group_name === 'default') {
       groupOfConcern = await getDefaultGroup();
-      groupId = groupOfConcern!.group_id;
+      groupId = groupOfConcern.group_id;
     } else if (target_group_name !== '') {
       const groups = await getGroupsList();
       const group = groups.find((group) => group.group_name === target_group_name);

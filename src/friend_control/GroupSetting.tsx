@@ -28,8 +28,8 @@ export function GroupSetting({ group, defaultGroup }: Props) {
   }> = async (data) => {
     const newGroupName = data.new_group_name;
     const groups = await getGroupsList();
-    const group = groups.find((group) => group.group_name === newGroupName);
-    if (group) {
+    const groupFound = groups.find((item) => item.group_name === newGroupName);
+    if (groupFound) {
       window.alert('Group name already exists');
       return { changeSuccessful: false, newGroupName };
     }
