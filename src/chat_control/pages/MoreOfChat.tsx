@@ -67,13 +67,14 @@ export function MoreOfChat() {
           detail: 'Successfully toggled admin',
           life: 1500,
         });
-      } else
+      } else {
         toast.current?.show({
           severity: 'error',
           summary: 'Failed',
           detail: 'Failed to toggle admin',
           life: 2000,
         });
+      }
     },
   });
 
@@ -91,13 +92,14 @@ export function MoreOfChat() {
           detail: 'Successfully transferred owner',
           life: 1500,
         });
-      } else
+      } else {
         toast.current?.show({
           severity: 'error',
           summary: 'Failed',
           detail: 'Failed to transfer owner',
           life: 2000,
         });
+      }
     },
   });
 
@@ -172,10 +174,11 @@ export function MoreOfChat() {
           detail: selectedMember!.isFriend ? "Can't invite a friend" : "Can't invite yourself",
           life: 2000,
         });
-      else
+      else {
         navigate(`/${userName}/invite`, {
           state: { source: chat.chat_id, id: selectedMember!.id },
         });
+      }
     },
   };
 
@@ -291,13 +294,14 @@ export function MoreOfChat() {
         navigate(`/${userName}/chats`); // without it time is so short, and the loader won't reload. don't know why
         navigate(`/${userName}/chats`);
         window.alert('Chat deleted'); // there is no toast left
-      } else
+      } else {
         toast.current?.show({
           severity: 'error',
           summary: 'Failed',
           detail: 'Failed to delete chat',
           life: 2000,
         });
+      }
     },
   });
 
@@ -343,7 +347,7 @@ export function MoreOfChat() {
                     ? chat.chat.chat_members
                     : chat.chat.chat_members.filter((member) => member.id !== currentUser.id);
                   const membersToDisplay: DetailedUserInfo[] = membersForUse.map((member) => {
-                    const friend = friends.find((friend) => friend.friend.id === member.id);
+                    const friend = friends.find((item) => item.friend.id === member.id);
                     if (friend)
                       return {
                         ...member,
