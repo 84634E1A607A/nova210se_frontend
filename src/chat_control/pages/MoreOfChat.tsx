@@ -53,98 +53,98 @@ export function MoreOfChat() {
     } else return newChat;
   };
 
+  /**
+   * @description Function called for `onSuccess` in `useMutation`, for the components in which
+   * when the mutation is successful, the page will be redirected to the parent page, not staying
+   * in the current page.
+   */
+  const onMutateSuccessToParentPage = (
+    isSuccessful: boolean,
+    successMessage: string,
+    failedMessage: string,
+  ) => {
+    if (isSuccessful) {
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+      navigate(`/${userName}/chats`); // without it time is so short, and the loader won't reload. don't know why
+      navigate(`/${userName}/chats`);
+      window.alert(successMessage); // there is no toast left if it returns to the parent page
+    } else {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Failed',
+        detail: failedMessage,
+        life: 2000,
+      });
+    }
+  };
+
+  /**
+   * @description Function called for `onSuccess` in `useMutation`, for the components in which
+   * when the mutation is successful, the page will be reloaded in the current page.
+   */
+  const onMutateSuccessStayStill = async (
+    isSuccessful: boolean,
+    successMessage: string,
+    failedMessage: string,
+  ) => {
+    if (isSuccessful) {
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] }); // prevent too-complicated cache setting
+      const updatedChat = await updateChatState();
+      if (!updatedChat) return;
+      navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
+      toast.current?.show({
+        severity: 'success',
+        summary: 'Success',
+        detail: successMessage,
+        life: 1500,
+      });
+    } else {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Failed',
+        detail: failedMessage,
+        life: 2000,
+      });
+    }
+  };
+
   const { mutate: mutateAdmin } = useMutation({
     mutationFn: setAdmin,
     onSuccess: async ({ isSuccessful }) => {
-      if (isSuccessful) {
-        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] }); // prevent too-complicated cache setting
-        const updatedChat = await updateChatState();
-        if (!updatedChat) return;
-        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
-        toast.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully toggled admin',
-          life: 1500,
-        });
-      } else {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Failed',
-          detail: 'Failed to toggle admin',
-          life: 2000,
-        });
-      }
+      await onMutateSuccessStayStill(
+        isSuccessful,
+        'Successfully changed admin state',
+        'Failed to change admin state',
+      );
     },
   });
 
   const { mutate: mutateOwner } = useMutation({
     mutationFn: transferOwner,
     onSuccess: async ({ isSuccessful }) => {
-      if (isSuccessful) {
-        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-        const updatedChat = await updateChatState();
-        if (!updatedChat) return;
-        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
-        toast.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully transferred owner',
-          life: 1500,
-        });
-      } else {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Failed',
-          detail: 'Failed to transfer owner',
-          life: 2000,
-        });
-      }
+      await onMutateSuccessStayStill(
+        isSuccessful,
+        'Successfully transferred owner',
+        'Failed to transfer owner',
+      );
     },
   });
 
   const { mutate: mutateKickoutMember } = useMutation({
     mutationFn: kickoutMember,
     onSuccess: async ({ isSuccessful }) => {
-      if (isSuccessful) {
-        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-        const updatedChat = await updateChatState();
-        if (!updatedChat) return;
-        navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
-        toast.current?.show({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully kicked out member',
-          life: 1500,
-        });
-      } else {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Failed',
-          detail: 'Failed to kick out member',
-          life: 2000,
-        });
-      }
+      await onMutateSuccessStayStill(
+        isSuccessful,
+        'Successfully kicked out member',
+        'Failed to kick out member',
+      );
     },
   });
 
   const { mutate: mutateLeaveChat } = useMutation({
     mutationFn: leaveChat,
     onSuccess: ({ isSuccessful }) => {
-      console.log('left chat');
-      if (isSuccessful) {
-        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-        navigate(`/${userName}/chats`);
-        navigate(`/${userName}/chats`);
-        window.alert('Chat left');
-      } else {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Failed',
-          detail: 'Failed to leave chat',
-          life: 2000,
-        });
-      }
+      onMutateSuccessToParentPage(isSuccessful, 'Successfully left chat', 'Failed to leave chat');
     },
   });
 
@@ -279,6 +279,9 @@ export function MoreOfChat() {
     inviteFriendContextMenuItem,
   ];
 
+  /**
+   * @description When right-click on a member of a group chat, show the context menu
+   */
   const onRightClick = (event: React.MouseEvent, member: DetailedMemberInfo) => {
     if (cm.current) {
       setSelectedMember(member);
@@ -289,19 +292,11 @@ export function MoreOfChat() {
   const { mutate: acceptDeleteChat } = useMutation({
     mutationFn: deleteChat,
     onSuccess: ({ isSuccessful }) => {
-      if (isSuccessful) {
-        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'], exact: true });
-        navigate(`/${userName}/chats`); // without it time is so short, and the loader won't reload. don't know why
-        navigate(`/${userName}/chats`);
-        window.alert('Chat deleted'); // there is no toast left
-      } else {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Failed',
-          detail: 'Failed to delete chat',
-          life: 2000,
-        });
-      }
+      onMutateSuccessToParentPage(
+        isSuccessful,
+        'Successfully deleted chat',
+        'Failed to delete chat',
+      );
     },
   });
 
