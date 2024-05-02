@@ -1,4 +1,4 @@
-import { assertIsGroup } from '../utils/asserts';
+import { assertIsGroup } from '../utils/Asserts';
 
 /* For now, group can only be created in a friend's setting */
 export async function createGroup(group_name: string) {

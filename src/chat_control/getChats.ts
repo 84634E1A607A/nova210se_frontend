@@ -1,4 +1,4 @@
-import { assertIsChatsRelatedWithCurrentUser } from '../utils/asserts';
+import { assertIsChatsRelatedWithCurrentUser } from '../utils/Asserts';
 import { ChatRelatedWithCurrentUser } from '../utils/types';
 
 /**

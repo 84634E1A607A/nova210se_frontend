@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { Await, useLoaderData } from 'react-router-dom';
-import { assertIsFriendsList, assertIsGroupsList } from '../utils/asserts';
+import { assertIsFriendsList, assertIsGroupsList } from '../utils/Asserts';
 import { FriendsList } from './FriendsList';
-import { assertIsFriendsGroupsData } from '../utils/queryRouterLoaderAsserts';
+import { assertIsFriendsGroupsData } from '../utils/AssertsForRouterLoader';
 
 /**
  * @description for listing all the friends and chat groups, categorized by friend group.

@@ -12,6 +12,7 @@ import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
+  DetailedMessagesLoader,
   FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
               {
                 path: ':chat_id',
                 element: <SingleChatMain />,
+                loader: async ({ params }) => DetailedMessagesLoader(queryClient, params.chat_id!),
               },
               {
                 path: ':chat_id/more',
@@ -90,7 +92,7 @@ const router = createBrowserRouter([
             path: 'create_group_chat',
             element: <CreateGroupChat />,
             loader: async () => FriendsGroupsLoader(queryClient),
-            // If I want to divide friends into groups when display in multiselect, the loader should load 'groups' in addition.
+            // If dividing friends into groups when display in multiselect is required, the loader should load 'groups' in addition.
           },
         ],
       },

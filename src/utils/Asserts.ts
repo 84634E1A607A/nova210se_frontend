@@ -132,6 +132,11 @@ export function assertIsDetailedMessage(data: unknown): asserts data is Detailed
   assertIsMessages(data.replied_by);
 }
 
+export function assertIsDetailedMessages(data: unknown): asserts data is DetailedMessage[] {
+  if (!Array.isArray(data)) throw new Error('Not an array');
+  for (const message of data) assertIsDetailedMessage(message);
+}
+
 export function assertIsChat(data: unknown): asserts data is Chat {
   if (typeof data !== 'object') throw new Error('Not an object');
   if (data === null) throw new Error('Null');

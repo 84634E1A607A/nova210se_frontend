@@ -1,4 +1,4 @@
-import { assertIsInvitationList } from '../utils/asserts';
+import { assertIsInvitationList } from '../utils/Asserts';
 import { Invitation } from '../utils/types';
 
 export async function getInvitations(): Promise<Invitation[]> {

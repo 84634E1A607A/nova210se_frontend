@@ -3,6 +3,7 @@ import { ChatHeader } from './ChatHeader';
 import { useChatsRelatedContext } from './ChatMainPageFramework';
 import { DialogBox } from './DialogBox';
 import { Dialogs } from './Dialogs';
+import { RecalledMessageProvider } from '../states/RecalledMessageProvider';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -19,8 +20,10 @@ export function SingleChatMain() {
   return (
     <div className="flex flex-col">
       <ChatHeader chat={currentChat!} />
-      <Dialogs />
-      <DialogBox />
+      <RecalledMessageProvider>
+        <Dialogs chat={currentChat!} />
+        <DialogBox chat={currentChat!} />
+      </RecalledMessageProvider>
     </div>
   );
 }

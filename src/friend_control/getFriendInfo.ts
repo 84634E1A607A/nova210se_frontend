@@ -1,4 +1,4 @@
-import { assertIsFriend } from '../utils/asserts';
+import { assertIsFriend } from '../utils/Asserts';
 
 export async function getFriendInfo(friend_user_id: number) {
   try {

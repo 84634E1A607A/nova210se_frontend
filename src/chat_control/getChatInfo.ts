@@ -1,4 +1,4 @@
-import { assertIsChatRelatedWithCurrentUser } from '../utils/asserts';
+import { assertIsChatRelatedWithCurrentUser } from '../utils/Asserts';
 
 interface Params {
   chatId: number;
