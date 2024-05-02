@@ -23,9 +23,12 @@ export function DialogBox({ chat }: SingleChatProps) {
   });
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col absolute bottom-0">
       {/** The recalled message, which can be canceled. */}
-      <div className="flex flex-row pb-2 text-gray-500" title={recalledMessageToShow}>
+      <div
+        className="flex flex-row pb-2 text-gray-500 place-content-center"
+        title={recalledMessageToShow}
+      >
         <p className="truncate">{recalledMessageToShow}</p>
         {recalledMessage ? (
           <button
@@ -56,8 +59,9 @@ export function DialogBox({ chat }: SingleChatProps) {
             data: sentData,
           });
           reset();
+          setRecalledMessage(null);
         })}
-        className="flex flex-col absolute bottom-0 max-w-[50rem] min-w-[50rem]"
+        className="flex flex-col max-w-[50rem] min-w-[50rem]"
       >
         <textarea
           id="content"

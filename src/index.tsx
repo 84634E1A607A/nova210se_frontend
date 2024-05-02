@@ -12,11 +12,11 @@ import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
-  DetailedMessagesLoader,
   FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsLoader,
+  UserAndFriendsAndDetailedMessagesLoader,
   UserAndFriendsLoader,
   UserLoader,
 } from './utils/Loaders';
@@ -56,7 +56,8 @@ const router = createBrowserRouter([
               {
                 path: ':chat_id',
                 element: <SingleChatMain />,
-                loader: async ({ params }) => DetailedMessagesLoader(queryClient, params.chat_id!),
+                loader: async ({ params }) =>
+                  UserAndFriendsAndDetailedMessagesLoader(queryClient, params.chat_id!),
               },
               {
                 path: ':chat_id/more',

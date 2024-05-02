@@ -8,8 +8,12 @@ import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
 import { ChooseLoginType } from '../utils/types';
 import { theme } from '../utils/ui/themes';
 import { useQueryClient } from '@tanstack/react-query';
-import { maxUserNameLength } from '../utils/ConstValues';
+import { validateUserName } from './utils/validateUserName';
+import { maxlengthOption, pattern } from './utils/userNameFormOptions';
 
+/**
+ * @description The user_name can't be #SYSTEM etc. But nickname can be.
+ */
 export function Login() {
   const {
     register,
@@ -59,15 +63,9 @@ export function Login() {
               id="user_name"
               {...register('user_name', {
                 required: 'You must enter your user_name',
-                maxLength: {
-                  value: maxUserNameLength,
-                  message: `User name must be at most ${maxUserNameLength} characters long`,
-                },
-                pattern: {
-                  value: /^[a-zA-Z0-9-_()@.]+$/,
-                  message:
-                    'Invalid user name. Only a-z A-Z 0-9 - _ ( ) @ . are allowed. At least 1 character.',
-                },
+                maxLength: maxlengthOption,
+                pattern: pattern,
+                validate: (value) => validateUserName(value),
               })}
               className={`${getEditorStyle(errors.user_name)} mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
                 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500

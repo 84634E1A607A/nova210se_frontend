@@ -73,9 +73,13 @@ export async function UserAndFriendsLoader(queryClient: QueryClient) {
   });
 }
 
-// use the chat_id to fetch the detailed messages
-export async function DetailedMessagesLoader(queryClient: QueryClient, chat_id: string) {
+export async function UserAndFriendsAndDetailedMessagesLoader(
+  queryClient: QueryClient,
+  chat_id: string,
+) {
   return defer({
+    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
+    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
     detailedMessages: fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
       getDetailedMessages(Number(chat_id)),
     ),
