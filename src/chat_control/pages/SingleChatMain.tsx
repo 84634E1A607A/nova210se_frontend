@@ -5,6 +5,7 @@ import { DialogBox } from './DialogBox';
 import { Dialogs } from './Dialogs';
 import { RepliedMessageProvider } from '../states/RepliedMessageProvider';
 import { MessageRefsProvider } from '../states/MessageRefsProvider';
+import { DialogBoxRefProvider } from '../states/DialogBoxRefProvider';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -22,10 +23,12 @@ export function SingleChatMain() {
     <div className="flex flex-col">
       <ChatHeader chat={currentChat!} />
       <RepliedMessageProvider>
-        <MessageRefsProvider>
-          <Dialogs chat={currentChat!} />
-        </MessageRefsProvider>
-        <DialogBox chat={currentChat!} />
+        <DialogBoxRefProvider>
+          <MessageRefsProvider>
+            <Dialogs chat={currentChat!} />
+          </MessageRefsProvider>
+          <DialogBox chat={currentChat!} />
+        </DialogBoxRefProvider>
       </RepliedMessageProvider>
     </div>
   );

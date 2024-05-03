@@ -1,6 +1,6 @@
 import { systemMessages } from '../../utils/ConstValues';
 
-export function parseSystemMessage(message: String) {
+export function parseSystemMessage(message: string) {
   const splitMessage = message.split(' ');
   let result: splitPair[] = [];
   if (message.match(systemMessages[0]) !== null) {

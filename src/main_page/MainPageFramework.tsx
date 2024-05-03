@@ -12,7 +12,7 @@ export function MainPageFramework() {
   const userName = useUserName();
 
   return (
-    <div className="flex flex-row h-screen w-screen flex-wrap min-w-[60rem]">
+    <div className="flex flex-row h-screen w-screen flex-wrap min-w-[75rem] overflow-x-hidden">
       <nav
         aria-label="side bar"
         className="flex-none flex flex-col items-center text-center bg-teal-900 text-gray-400 border-r"

@@ -11,6 +11,10 @@ import { basicTextTailwind } from '../../utils/ui/TailwindConsts';
 /**
  * @description The whole message tab, including the avatar of the sender, the message content,
  * the replied message, if any, etc.
+ * @param detailedMessage The detailed message.
+ * @param isSelf Whether the sender is the current user.
+ * @param name The name of the sender to directly display.
+ * @param onRightClick For context menu.
  */
 export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Props) {
   const { refs } = useMessageRefsContext();
@@ -83,12 +87,6 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
   );
 }
 
-/**
- * @param detailedMessage The detailed message.
- * @param isSelf Whether the sender is the current user.
- * @param name The name of the sender to directly display.
- * @param onRightClick For context menu.
- */
 interface Props {
   detailedMessage: DetailedMessage;
   isSelf: boolean;

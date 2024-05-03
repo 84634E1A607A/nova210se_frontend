@@ -2,7 +2,7 @@ import { MessageContent } from './MessageContent';
 import { useMessageRefsContext } from '../states/MessageRefsProvider';
 
 /**
- * @description To show the replied message if exists under the message tab.
+ * @description To show the replied message (if exists) under the message tab.
  * It can be clicked to jump to the replied message as required.
  */
 export function RepliedMessageTab({ message, senderName, messageId }: Props) {

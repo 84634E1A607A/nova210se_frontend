@@ -13,16 +13,21 @@ import { DetailedMessage, Message } from '../../utils/types';
 import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
+import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 
 export function Dialogs({ chat }: SingleChatProps) {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();
   const { setRepliedMessage } = useRepliedMessageContext();
+  const { ref: dialogBoxRef } = useDialogBoxRefContext();
 
   const replyMessageContextMenuItem = {
     label: 'Reply',
     icon: 'pi pi-reply',
-    command: () => setRepliedMessage(selectedMessage!),
+    command: () => {
+      setRepliedMessage(selectedMessage!);
+      dialogBoxRef[0].current?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+    },
   };
 
   const contextMenuItems = [replyMessageContextMenuItem];
