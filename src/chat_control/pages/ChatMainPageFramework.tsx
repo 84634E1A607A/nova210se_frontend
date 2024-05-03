@@ -28,8 +28,8 @@ export function ChatMainPageFramework() {
               });
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               return (
-                <div className="flex flex-row flex-grow">
-                  <div className="flex flex-col w-1/5 max-w-72 ml-2">
+                <div className="flex flex-grow flex-row">
+                  <div className="ml-2 flex w-1/5 max-w-72 flex-col">
                     <ul>
                       {chatsRelatedWithCurrentUser.map((chat) => (
                         <li key={chat.chat_id}>
@@ -40,7 +40,7 @@ export function ChatMainPageFramework() {
                   </div>
 
                   {/* main page for chat apiece */}
-                  <div className="ml-2 border-r-2 w-4/5 felx-wrap">
+                  <div className="felx-wrap ml-2 w-4/5 border-r-2">
                     <Outlet
                       context={
                         {

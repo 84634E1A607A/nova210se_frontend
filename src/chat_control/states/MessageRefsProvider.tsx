@@ -20,7 +20,7 @@ export function MessageRefsProvider({ children }: ContextProviderChildrenProp) {
 
 export const useMessageRefsContext = () => useContext(MessageRefsContext);
 
-export interface MessageRef {
+interface MessageRef {
   messageId: number;
   ref: React.RefObject<HTMLDivElement>;
 }

@@ -5,41 +5,41 @@ export function DetailedInfoPopup({
   detailedInfo: { user_name, id, email, phone, nickname, avatar_url },
 }: Props) {
   return (
-    <div className="w-32 h-15 m-4 flex flex-col items-center">
-      <div className="w-4 h-10">
+    <div className="h-15 m-4 flex w-32 flex-col items-center ">
+      <div className="h-10 w-4">
         <Avatar url={avatar_url} enablePopup={false} />
       </div>
 
-      <div className="items-start m-3" style={{ maxWidth: 250 }}>
-        <div className="flex items-center mt-1 mr-2">
-          <span className="font-medium mr-2 ml-2">ID:</span>
-          <span className="truncate block mr-2" title={`${id}`}>
+      <div className="m-3 items-start" style={{ maxWidth: 250 }}>
+        <div className="mr-2 mt-1 flex items-center">
+          <span className="ml-2 mr-2 font-medium">ID:</span>
+          <span className="mr-2 block truncate" title={`${id}`}>
             {id}
           </span>
         </div>
-        <div className="flex items-center mt-1 mr-2">
-          <span className="font-medium mr-2 ml-2">Username:</span>
-          <span className="truncate block mr-2" title={`${user_name}`}>
+        <div className="mr-2 mt-1 flex items-center">
+          <span className="ml-2 mr-2 font-medium">Username:</span>
+          <span className="mr-2 block truncate" title={`${user_name}`}>
             {user_name}
           </span>
         </div>
         {nickname !== undefined && (
-          <div className="flex items-center mt-1 mr-2">
-            <span className="font-medium mr-2 ml-2">Nickname:</span>
-            <span className="truncate block mr-2" title={`${nickname}`}>
+          <div className="mr-2 mt-1 flex items-center">
+            <span className="ml-2 mr-2 font-medium">Nickname:</span>
+            <span className="mr-2 block truncate" title={`${nickname}`}>
               {nickname}
             </span>
           </div>
         )}
-        <div className="flex items-center mt-1 mr-2" style={{ maxWidth: 250 }}>
-          <span className="font-medium mr-2 ml-2">Email:</span>
-          <span className="truncate block mr-2" title={`${email}`}>
+        <div className="mr-2 mt-1 flex items-center" style={{ maxWidth: 250 }}>
+          <span className="ml-2 mr-2 font-medium">Email:</span>
+          <span className="mr-2 block truncate" title={`${email}`}>
             {email === undefined || email === '' ? 'N/A' : email}
           </span>
         </div>
-        <div className="flex items-center mt-1 mr-2" style={{ maxWidth: 250 }}>
-          <span className="font-medium mr-2 ml-2">Phone:</span>
-          <span className="truncate block mr-2" title={`${phone}`}>
+        <div className="mr-2 mt-1 flex items-center" style={{ maxWidth: 250 }}>
+          <span className="ml-2 mr-2 font-medium">Phone:</span>
+          <span className="mr-2 block truncate" title={`${phone}`}>
             {phone === undefined || phone === '' ? 'N/A' : phone}
           </span>
         </div>

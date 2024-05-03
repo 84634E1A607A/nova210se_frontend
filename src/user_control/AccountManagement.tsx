@@ -212,10 +212,10 @@ export function AccountManagement() {
           </button>
         </div>
       </form>
-      <div className="flex flex-col pt-6 space-y-2 items-center">
+      <div className="flex flex-col items-center space-y-2 pt-6">
         <button
-          className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
-          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+          className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600 
+          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           style={{ backgroundColor: theme.tertiary_container }}
           onClick={() => {
             logout();
@@ -225,8 +225,8 @@ export function AccountManagement() {
           Logout
         </button>
         <button
-          className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
-          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+          className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
           style={{ backgroundColor: theme.error }}
           onClick={() => {
             const confirmDelete = window.confirm('Are you sure you want to delete your account?');

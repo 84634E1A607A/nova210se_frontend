@@ -20,8 +20,8 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
   const isDefaultGroup = group.group_name === '';
 
   return (
-    <div className="flex flex-col m-2">
-      <div className="font-medium p-1" style={{ backgroundColor: theme.secondary_container }}>
+    <div className="m-2 flex flex-col">
+      <div className="p-1 font-medium" style={{ backgroundColor: theme.secondary_container }}>
         <p>{group.group_name === '' ? 'default' : group.group_name}</p>
         <span
           {...getToggleProps()}
@@ -30,9 +30,9 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
           className={`${group.group_name === '' ? 'hidden' : ''} inline-block w-10 cursor-pointer items-center`}
         >
           {isDefaultGroup ? null : isExpanded ? (
-            <Foldup className="fill-teal-900 w-6 h-6" />
+            <Foldup className="h-6 w-6 fill-teal-900" />
           ) : (
-            <Folddown className="fill-teal-900 w-6 h-6" />
+            <Folddown className="h-6 w-6 fill-teal-900" />
           )}
         </span>
       </div>

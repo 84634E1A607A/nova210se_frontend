@@ -51,7 +51,7 @@ export function Login() {
 
   return (
     <div
-      className="box-border p-4 border-4 w-80 h-80 flex items-center justify-center shadow-lg mx-auto mt-20"
+      className="mx-auto mt-20 box-border flex h-80 w-80 items-center justify-center border-4 p-4 shadow-lg"
       style={{ backgroundColor: theme.background }}
     >
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -67,16 +67,18 @@ export function Login() {
                 pattern: pattern,
                 validate: (value) => validateUserName(value),
               })}
-              className={`${getEditorStyle(errors.user_name)} mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-                disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+              className={`${getEditorStyle(errors.user_name)} mt-1 block w-60 rounded-md border 
+                border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
+                disabled:shadow-none
                `}
             />
             <ValidationError fieldError={errors.user_name} />
           </label>
         </div>
         <div>
-          <label htmlFor="password" className="block text-left mt-5">
+          <label htmlFor="password" className="mt-5 block text-left">
             <span className="block text-sm font-medium text-slate-700">Password</span>
             <input
               type="password"
@@ -90,18 +92,18 @@ export function Login() {
                   message: 'Password cannot contain blank spaces',
                 },
               })}
-              className={`${getEditorStyle(errors.password)} mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-                disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+              className={`${getEditorStyle(errors.password)} mt-1 block w-60 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                 `}
             />
             <ValidationError fieldError={errors.password} />
           </label>
         </div>
-        <div className="flex justify-between w-full mt-5">
+        <div className="mt-5 flex w-full justify-between">
           <button
-            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
-              focus:outline-none focus:shadow-outline focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            className="focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white 
+              hover:bg-teal-600 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             type="submit"
             onClick={() => (buttonTypeRef.current = 'register')}
             disabled={isSubmitting}
@@ -109,8 +111,8 @@ export function Login() {
             Register
           </button>
           <button
-            className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
-              focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+            className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+              focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             type="submit"
             onClick={() => (buttonTypeRef.current = 'login')}
             disabled={isSubmitting}
@@ -123,7 +125,7 @@ export function Login() {
         {isWrongSubmit && (
           <div
             role="alert"
-            className="absolute top-0 left-0 w-full p-4 text-white text-center"
+            className="absolute left-0 top-0 w-full p-4 text-center text-white"
             style={{ backgroundColor: theme.error }}
           >
             {wrongMessage || 'Error during login, please try again!'}

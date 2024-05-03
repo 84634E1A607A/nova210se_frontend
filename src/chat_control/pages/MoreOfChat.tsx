@@ -320,7 +320,7 @@ export function MoreOfChat() {
   };
 
   return (
-    <div className="flex flex-col ml-3">
+    <div className="ml-3 flex flex-col">
       {/** two types of name, one is absolute name, which can be set by admins. Nickname can be arbitrarily set */}
       <span className="p-1">
         {`${isPrivateChat ? 'Private' : 'Group'} chat name: ${chat.chatName}`}
@@ -352,8 +352,8 @@ export function MoreOfChat() {
                   });
 
                   return (
-                    <div className="card flex flex-col md:justify-content-center items-center">
-                      <ul className="m-0 p-0 list-none border-1 surface-border border-round flex flex-column gap-2 w-full md:w-30rem">
+                    <div className="card md:justify-content-center flex flex-col items-center">
+                      <ul className="border-1 surface-border border-round flex-column md:w-30rem m-0 flex w-full list-none gap-2 p-0">
                         {membersToDisplay.map((member) => {
                           const detailedMember: DetailedMemberInfo = {
                             ...member,
@@ -367,8 +367,8 @@ export function MoreOfChat() {
                             <li
                               key={detailedMember.id}
                               onContextMenu={(event) => onRightClick(event, detailedMember)}
-                              className={`p-2 hover:surface-hover border-round border-1 border-transparent transition-all transition-duration-200 
-                              flex align-items-center justify-content-between ${selectedMember?.id === detailedMember.id && 'border-primary'}`}
+                              className={`hover:surface-hover border-round border-1 transition-duration-200 align-items-center justify-content-between flex 
+                              border-transparent p-2 transition-all ${selectedMember?.id === detailedMember.id && 'border-primary'}`}
                             >
                               <SingleUserTab user={detailedMember} isPrivateChat={isPrivateChat} />
                             </li>
@@ -387,7 +387,7 @@ export function MoreOfChat() {
 
                       <ConfirmDialog />
                       {chat.chat.chat_owner.id === currentUser.id && !isPrivateChat ? (
-                        <div className="card flex flex-wrap gap-2 justify-content-center">
+                        <div className="card justify-content-center flex flex-wrap gap-2">
                           <Button
                             onClick={() => confirmDeleteChat(chat.chat_id)}
                             icon="pi pi-check"

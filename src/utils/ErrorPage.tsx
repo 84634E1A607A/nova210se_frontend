@@ -11,7 +11,7 @@ export function ErrorPage() {
   if (userInfo === undefined) return <Navigate to="/login" />;
   return (
     <>
-      <div className="text-center p-5 text-xl">
+      <div className="p-5 text-center text-xl">
         <h1 className="text-xl text-slate-900">Sorry, an error has occurred</h1>
         {isError(error) && <p className="text-base text-slate-700">{error.statusText}</p>}
         <nav>

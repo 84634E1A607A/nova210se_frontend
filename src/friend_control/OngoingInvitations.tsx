@@ -52,7 +52,7 @@ export function OngoingInvitations() {
   });
 
   return (
-    <div className="grow flex flex-col">
+    <div className="flex grow flex-col">
       <h1>Ongoing Invitations</h1>
       <Suspense fallback={<div>Loading invitaions...</div>}>
         <Await resolve={data.invitaions}>
@@ -64,7 +64,7 @@ export function OngoingInvitations() {
                   {inviations.map((invitation) => (
                     <li key={invitation.id}>
                       <div
-                        className="p-2 m-1"
+                        className="m-1 p-2"
                         style={{ backgroundColor: theme.secondary_container }}
                       >
                         <p>
@@ -77,7 +77,7 @@ export function OngoingInvitations() {
                           <p>Invitation message: {invitation.comment}</p>
                         )}
                         <UserDisplayTabInInvitations leastUserInfo={invitation.sender} />
-                        <div className="flex flex-row place-items-center place-content-evenly">
+                        <div className="flex flex-row place-content-evenly place-items-center">
                           <button
                             type="button"
                             onClick={() => accept(invitation.id)}

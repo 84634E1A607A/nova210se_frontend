@@ -88,7 +88,7 @@ export function CreateGroupChat() {
 
   const friendTabTemplate = (friend: LeastFriendInfo) => {
     return (
-      <div className="flex align-items-center">
+      <div className="align-items-center flex">
         <div className="mr-2" style={{ width: '18px' }}>
           <Avatar url={friend.avatarUrl} />
         </div>
@@ -145,7 +145,7 @@ export function CreateGroupChat() {
                       optionLabel="displayName"
                       placeholder="Select Friends"
                       maxSelectedLabels={4}
-                      className="w-full md:w-20rem bg-green-200"
+                      className="md:w-20rem w-full bg-green-200"
                       display="chip"
                       itemTemplate={friendTabTemplate}
                     />

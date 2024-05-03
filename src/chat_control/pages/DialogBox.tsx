@@ -4,6 +4,8 @@ import { ValidationError } from '../../utils/ValidationError';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 import { ReactComponent as CancelReply } from '../../svg/cancel-svgrepo-com.svg';
 import useWebSocket from 'react-use-websocket';
+import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
+import { useEffect, useRef } from 'react';
 
 export function DialogBox({ chat }: SingleChatProps) {
   const {
@@ -18,25 +20,39 @@ export function DialogBox({ chat }: SingleChatProps) {
     ? `${repliedMessage.sender.user_name}: ${repliedMessage.message}`
     : '';
 
+  const { ref: dialogBoxRefContext } = useDialogBoxRefContext();
+  const trueDialogBoxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (dialogBoxRefContext.length === 0) {
+      dialogBoxRefContext.push(trueDialogBoxRef);
+    }
+    return () => {
+      dialogBoxRefContext.splice(
+        dialogBoxRefContext.findIndex((r) => r === trueDialogBoxRef),
+        1,
+      );
+    };
+  }, [trueDialogBoxRef, dialogBoxRefContext]);
+
   const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     share: true,
   });
 
   return (
-    <div className="flex flex-col static bottom-0">
+    <div className="static bottom-0 flex flex-col" ref={trueDialogBoxRef}>
       {/** The replied message, which can be canceled. */}
       <div
-        className="flex flex-row pb-2 text-gray-500 place-content-center"
+        className="flex flex-row place-content-center pb-2 text-gray-500"
         title={repliedMessageToShow}
       >
-        <p className="truncate max-w-[32rem]">{repliedMessageToShow}</p>
+        <p className="max-w-[32rem] truncate">{repliedMessageToShow}</p>
         {repliedMessage ? (
           <button
             onClick={() => {
               setRepliedMessage(null);
             }}
           >
-            <CancelReply className="max-w-4 max-h-4" />
+            <CancelReply className="max-h-4 max-w-4" />
           </button>
         ) : null}
       </div>
@@ -61,7 +77,7 @@ export function DialogBox({ chat }: SingleChatProps) {
           reset();
           setRepliedMessage(null);
         })}
-        className="flex flex-col max-w-[50rem] min-w-[50rem]"
+        className="flex min-w-[50rem] max-w-[50rem] flex-col"
       >
         <textarea
           id="content"

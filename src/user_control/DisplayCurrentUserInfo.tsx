@@ -14,8 +14,8 @@ export function DisplayCurrentUserInfo() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="w-32 h-15 flex flex-col items-center">
-              <div className="w-4 h-10">
+            <div className="h-15 flex w-32 flex-col items-center">
+              <div className="h-10 w-4">
                 <Avatar
                   url={user.avatar_url}
                   enablePopup={true}
