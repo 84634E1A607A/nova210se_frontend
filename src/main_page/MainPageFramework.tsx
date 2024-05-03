@@ -12,16 +12,16 @@ export function MainPageFramework() {
   const userName = useUserName();
 
   return (
-    <div className="flex flex-row h-screen w-screen flex-wrap min-w-[75rem] overflow-x-hidden">
+    <div className="flex h-screen w-screen min-w-[75rem] flex-row flex-wrap overflow-x-hidden">
       <nav
         aria-label="side bar"
-        className="flex-none flex flex-col items-center text-center bg-teal-900 text-gray-400 border-r"
+        className="flex flex-none flex-col items-center border-r bg-teal-900 text-center text-gray-400"
         style={{ backgroundColor: theme.background }}
       >
         <ul>
-          <li className="flex justify-center items-center">
+          <li className="flex items-center justify-center">
             <button
-              className={`h-20 w-32 px-6 flex justify-center items-center hover:text-white`}
+              className={`flex h-20 w-32 items-center justify-center px-6 hover:text-white`}
               title={`${userName}`}
               style={{
                 transition: 'background-color 0.3s, color 0.3s',
@@ -33,17 +33,17 @@ export function MainPageFramework() {
           <SidebarLink
             to={`/${userName}/chats`}
             title="Chat"
-            icon={<HomeIcon className="fill-current h-7 w-7" />}
+            icon={<HomeIcon className="h-7 w-7 fill-current" />}
           />
           <SidebarLink
             to={`/${userName}/friends`}
             title="Friends"
-            icon={<FriendIcon className="fill-current h-7 w-7" />}
+            icon={<FriendIcon className="h-7 w-7 fill-current" />}
           />
           <SidebarLink
             to={`/${userName}/account_management`}
             title="Setting"
-            icon={<SettingIcon className="fill-current h-7 w-7" />}
+            icon={<SettingIcon className="h-7 w-7 fill-current" />}
           />
           <SidebarLink
             to={`/${userName}/search_friend`}

@@ -63,16 +63,16 @@ export function Dialogs({ chat }: SingleChatProps) {
                         return detailedMessageParam.sender.id === currentUser.id;
                       };
                       return (
-                        <div className="flex felx-col overflow-auto">
+                        <div className="felx-col flex overflow-auto">
                           {/*For future, will remove*/}
                           <p>{chat.chatName}</p>
 
-                          <ul className="flex flex-col m-2">
+                          <ul className="m-2 flex flex-col">
                             {detailedMessages.map((detailedMessage) => {
                               return (
                                 <li
                                   key={detailedMessage.message_id}
-                                  className="flex m-1 bg-amber-50 rounded-1xl pr-2 pb-0.5 w-[39rem]"
+                                  className="rounded-1xl m-1 flex w-[39rem] bg-amber-50 pb-0.5 pr-2"
                                 >
                                   <MessageTab
                                     detailedMessage={detailedMessage}

@@ -19,10 +19,10 @@ export function RepliedMessageTab({ message, senderName, messageId }: Props) {
         const ref = refs.find((r) => r.messageId === messageId);
         if (ref) scrollToMessage(ref.ref);
       }}
-      className="flex flex-row ml-7 mb-2"
+      className="mb-2 ml-7 flex flex-row"
     >
       <div className="flex" title={senderName}>
-        <p className="truncate w-14 text-gray-400">{`${senderName}`}</p>
+        <p className="w-14 truncate text-gray-400">{`${senderName}`}</p>
         <p className="text-gray-400">:</p>
       </div>
       <div className="flex">

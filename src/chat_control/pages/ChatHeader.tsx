@@ -12,7 +12,7 @@ export function ChatHeader({ chat }: SingleChatProps) {
       <h2>{chat.chatName}</h2>
       <span className="ml-2 mt-0.5">
         <Link to="more" state={{ chat: chat }}>
-          <MoreDetails className="max-w-6 max-h-6" />
+          <MoreDetails className="max-h-6 max-w-6" />
         </Link>
       </span>
     </div>

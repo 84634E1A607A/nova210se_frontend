@@ -43,10 +43,10 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   return (
     <div>
       <div
-        className="flex flex-row h-fit justify-evenly
-                   items-center bg-gray-300 rounded-lg p-2"
+        className="flex h-fit flex-row items-center
+                   justify-evenly rounded-lg bg-gray-300 p-2"
       >
-        <div className="h-11 p-1 flex">
+        <div className="flex h-11 p-1">
           <Avatar
             url={leastUserInfo.avatar_url}
             enablePopup={true}
@@ -89,12 +89,12 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
             {...getToggleProps()}
             role="img"
             aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
-            className=" inline-block w-10 cursor-pointer items-center"
+            className="inline-block w-10 cursor-pointer items-center"
           >
             {isExpanded ? (
-              <Foldup className="fill-teal-900 w-6 h-6" />
+              <Foldup className="h-6 w-6 fill-teal-900" />
             ) : (
-              <Folddown className="fill-teal-900 w-6 h-6" />
+              <Folddown className="h-6 w-6 fill-teal-900" />
             )}
           </span>
         ) : (

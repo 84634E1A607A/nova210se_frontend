@@ -23,7 +23,7 @@ export function SearchNewFriendResultList() {
   assertIsFriendsData(data);
 
   if (isLoading || searchNewFriendResultList === undefined)
-    return <div className="w-96 mx-auto mt-6">Loading ...</div>;
+    return <div className="mx-auto mt-6 w-96">Loading ...</div>;
 
   return (
     <div>

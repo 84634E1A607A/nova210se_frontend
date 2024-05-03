@@ -19,11 +19,11 @@ export function SingleUserTab({ user, isPrivateChat }: Props) {
 
   return (
     <>
-      <div className="flex align-items-center gap-2">
-        <div className="w-8 h-8">
+      <div className="align-items-center flex gap-2">
+        <div className="h-8 w-8">
           <Avatar url={user.avatar_url} enablePopup={true} detailedInfo={user} />
         </div>
-        <div className="flex flex-row ">
+        <div className="flex flex-row">
           <span className="font-bold">
             {parseDisplayName({ nickname: user.nickname, userName: user.user_name })}
           </span>

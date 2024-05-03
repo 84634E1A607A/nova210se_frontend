@@ -6,7 +6,7 @@ type Props = {
 
 export function ValidationError({ fieldError }: Props) {
   return (
-    <div role="alert" className="text-red-500 text-xs mt-1">
+    <div role="alert" className="mt-1 text-xs text-red-500">
       {fieldError ? fieldError.message : '\u00A0'}
     </div>
   );

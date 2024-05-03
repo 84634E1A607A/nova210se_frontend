@@ -17,11 +17,11 @@ export function SidebarLink({ to, title, icon }: SidebarLinkProps) {
   }, [isActive]);
 
   return (
-    <li className="flex justify-center items-center">
+    <li className="flex items-center justify-center">
       <Link
         to={to}
         title={title}
-        className={`h-20 w-32 px-6 flex justify-center items-center ${isActive ? 'text-white bg-teal-800' : 'hover:text-white'}`}
+        className={`flex h-20 w-32 items-center justify-center px-6 ${isActive ? 'bg-teal-800 text-white' : 'hover:text-white'}`}
         style={{
           transition: 'background-color 0.3s, color 0.3s',
         }}

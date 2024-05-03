@@ -58,22 +58,22 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
   }
 
   return (
-    <div className="flex flex-col h-fit w-fit" ref={ref}>
+    <div className="flex h-fit w-fit flex-col" ref={ref}>
       <div className="flex flex-row">
-        <div className="flex flex-col w-20 h-9 left-0 ml-2 mt-2">
-          <div className="w-4 h-5">
+        <div className="left-0 ml-2 mt-2 flex h-9 w-20 flex-col">
+          <div className="h-5 w-4">
             <Avatar
               url={detailedMessage.sender.avatar_url}
               enablePopup={true}
               detailedInfo={detailedMessage.sender}
             />
           </div>
-          <p className="truncate text-gray-400 mt-0.5 w-5 text-left text-xs" title={name}>
+          <p className="mt-0.5 w-5 truncate text-left text-xs text-gray-400" title={name}>
             {name}
           </p>
         </div>
 
-        <div onContextMenu={(event) => onRightClick(event, detailedMessage)} className="flex my-2">
+        <div onContextMenu={(event) => onRightClick(event, detailedMessage)} className="my-2 flex">
           <MessageContent message={detailedMessage.message} isSelf={isSelf} />
         </div>
       </div>

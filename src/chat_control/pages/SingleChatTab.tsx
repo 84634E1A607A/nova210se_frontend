@@ -15,11 +15,11 @@ export function SingleChatTab({ chat }: Props) {
 
   return (
     <Link to={`/${userName}/chats/${chat.chat_id}`}>
-      <div className="p-d-flex p-ai-center h-10 mt-2">
-        <div className="flex flex-row ml-2">
+      <div className="p-d-flex p-ai-center mt-2 h-10">
+        <div className="ml-2 flex flex-row">
           <span className="p-mr-2">{chat.chatName}</span>
           {chat.unread_count > 0 && (
-            <Badge className="block w-min h-min" value={chat.unread_count} severity="danger" />
+            <Badge className="block h-min w-min" value={chat.unread_count} severity="danger" />
           )}
         </div>
         <span className="block max-w-36 truncate" title={chat.chat.last_message.message}>

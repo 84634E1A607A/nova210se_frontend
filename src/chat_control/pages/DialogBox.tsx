@@ -39,20 +39,20 @@ export function DialogBox({ chat }: SingleChatProps) {
   });
 
   return (
-    <div className="flex flex-col static bottom-0" ref={trueDialogBoxRef}>
+    <div className="static bottom-0 flex flex-col" ref={trueDialogBoxRef}>
       {/** The replied message, which can be canceled. */}
       <div
-        className="flex flex-row pb-2 text-gray-500 place-content-center"
+        className="flex flex-row place-content-center pb-2 text-gray-500"
         title={repliedMessageToShow}
       >
-        <p className="truncate max-w-[32rem]">{repliedMessageToShow}</p>
+        <p className="max-w-[32rem] truncate">{repliedMessageToShow}</p>
         {repliedMessage ? (
           <button
             onClick={() => {
               setRepliedMessage(null);
             }}
           >
-            <CancelReply className="max-w-4 max-h-4" />
+            <CancelReply className="max-h-4 max-w-4" />
           </button>
         ) : null}
       </div>
@@ -77,7 +77,7 @@ export function DialogBox({ chat }: SingleChatProps) {
           reset();
           setRepliedMessage(null);
         })}
-        className="flex flex-col max-w-[50rem] min-w-[50rem]"
+        className="flex min-w-[50rem] max-w-[50rem] flex-col"
       >
         <textarea
           id="content"
