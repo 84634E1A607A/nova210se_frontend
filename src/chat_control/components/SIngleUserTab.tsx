@@ -3,23 +3,18 @@ import { Avatar } from '../../utils/ui/Avatar';
 import { DetailedMemberInfo } from '../pages/MoreOfChat';
 import { parseDisplayName } from '../../friend_control/utils/parseDisplayName';
 
-interface Props {
-  user: DetailedMemberInfo;
-}
-
 /**
  * @description For a tab to simply display a member in details/more of a chat, like that of `#Command` in `https://primereact.org/contextmenu/`.
  * It can be right-clicked to manipulate this member (a stranger or a friend).
  * @warning The caller must ensure that the param `user` is not undefined.
  */
-export function SingleUserTab({ user }: Props) {
-  const purview = user.isOwner ? 'Owner' : user.isAdmin ? 'Admin' : '';
+export function SingleUserTab({ user, isPrivateChat }: Props) {
+  const purview = isPrivateChat ? 'Friend' : user.isOwner ? 'Owner' : user.isAdmin ? 'Admin' : '';
 
-  // to be polished, don't know what's the meaning
   const getBadge = (member: DetailedMemberInfo) => {
-    if ((member.isOwner || member.isAdmin) && !member.isFriend) return 'warning';
-    else if (member.isFriend) return 'info';
-    else return null;
+    if (member.isFriend || user.isMe) return 'success';
+    else if (member.isOwner || member.isAdmin) return 'info';
+    else return 'warning';
   };
 
   return (
@@ -38,4 +33,9 @@ export function SingleUserTab({ user }: Props) {
       <Tag value={purview === '' ? 'Member' : purview} severity={getBadge(user)} />
     </>
   );
+}
+
+interface Props {
+  user: DetailedMemberInfo;
+  isPrivateChat: boolean;
 }

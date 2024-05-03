@@ -65,7 +65,10 @@ export function Dialogs({ chat }: SingleChatProps) {
                           <ul className="flex flex-col m-2">
                             {detailedMessages.map((detailedMessage) => {
                               return (
-                                <li key={detailedMessage.message_id} className="flex m-2">
+                                <li
+                                  key={detailedMessage.message_id}
+                                  className="flex m-1 bg-amber-50 rounded-1xl pr-2 pb-0.5 w-[39rem]"
+                                >
                                   <MessageTab
                                     detailedMessage={detailedMessage}
                                     isSelf={getIsSelf(detailedMessage)}

@@ -5,6 +5,8 @@ import { systemUserName } from '../../utils/ConstValues';
 import { RepliedMessageTab } from './RepliedMessageTab';
 import { useMessageRefsContext } from '../states/MessageRefsProvider';
 import { useEffect, useRef } from 'react';
+import { parseSystemMessage } from '../utils/parseSystemMessage';
+import { basicTextTailwind } from '../../utils/ui/TailwindConsts';
 
 /**
  * @description The whole message tab, including the avatar of the sender, the message content,
@@ -28,12 +30,33 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
   }, [detailedMessage, ref, refs]);
 
   const isSystemInfo = detailedMessage.sender.user_name === systemUserName;
-  if (isSystemInfo) return <p className="m-2 text-gray-500">{detailedMessage.message}</p>;
+  if (isSystemInfo) {
+    const messagesList = parseSystemMessage(detailedMessage.message);
+    let id = 0;
+    const inlineStyle = 'text-gray-500 inline';
+    const messageComponents = messagesList.map((pair) => {
+      id++;
+      if (pair.shouldEmphasize) {
+        return (
+          <strong className={inlineStyle} id={`${id}`}>
+            {pair.wordMessage}
+          </strong>
+        );
+      } else {
+        return (
+          <p className={inlineStyle} id={`${id}`}>
+            {pair.wordMessage}
+          </p>
+        );
+      }
+    });
+    return <p className={`m-2 ${basicTextTailwind} max-w-[38rem]`}>{messageComponents}</p>;
+  }
 
   return (
     <div className="flex flex-col h-fit w-fit" ref={ref}>
       <div className="flex flex-row">
-        <div className="flex flex-col w-6 h-fit left-0">
+        <div className="flex flex-col w-20 h-9 left-0 ml-2 mt-2">
           <div className="w-4 h-5">
             <Avatar
               url={detailedMessage.sender.avatar_url}
