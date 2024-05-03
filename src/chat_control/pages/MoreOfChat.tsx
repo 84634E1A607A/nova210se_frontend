@@ -370,7 +370,7 @@ export function MoreOfChat() {
                               className={`p-2 hover:surface-hover border-round border-1 border-transparent transition-all transition-duration-200 
                               flex align-items-center justify-content-between ${selectedMember?.id === detailedMember.id && 'border-primary'}`}
                             >
-                              <SingleUserTab user={detailedMember} />
+                              <SingleUserTab user={detailedMember} isPrivateChat={isPrivateChat} />
                             </li>
                           );
                         })}
