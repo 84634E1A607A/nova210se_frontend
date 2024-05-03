@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
-import { assertIsFriendsList } from '../utils/asserts';
+import { assertIsFriendsList } from '../utils/Asserts';
 import { Avatar } from '../utils/ui/Avatar';
 import { SingleFriendSetting } from './SingleFriendSetting';
 import { useCollapse } from 'react-collapsed';

@@ -1,7 +1,7 @@
 import { Await, useLoaderData } from 'react-router-dom';
-import { assertIsUserData } from '../utils/queryRouterLoaderAsserts';
+import { assertIsUserData } from '../utils/AssertsForRouterLoader';
 import { Suspense } from 'react';
-import { assertIsLeastUserInfo } from '../utils/asserts';
+import { assertIsLeastUserInfo } from '../utils/Asserts';
 import { Avatar } from '../utils/ui/Avatar';
 
 export function DisplayCurrentUserInfo() {

@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { useLoaderData, Outlet, Await, useOutletContext } from 'react-router-dom';
-import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/queryRouterLoaderAsserts';
-import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/asserts';
+import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
+import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
 import { SingleChatTab } from './SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/UrlParamsHooks';

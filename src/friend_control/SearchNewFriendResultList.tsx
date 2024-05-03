@@ -3,9 +3,9 @@ import { Await, useLoaderData, useSearchParams } from 'react-router-dom';
 import { searchFriend } from './searchFriend';
 import { LeastUserInfo } from '../utils/types';
 import { UserDisplayTab } from './UserDisplayTab';
-import { assertIsFriendsList } from '../utils/asserts';
+import { assertIsFriendsList } from '../utils/Asserts';
 import { Suspense } from 'react';
-import { assertIsFriendsData } from '../utils/queryRouterLoaderAsserts';
+import { assertIsFriendsData } from '../utils/AssertsForRouterLoader';
 
 export function SearchNewFriendResultList() {
   const [searchParams] = useSearchParams();

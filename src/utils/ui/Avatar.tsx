@@ -8,6 +8,7 @@ type Props = { url?: string; enablePopup?: boolean; detailedInfo?: DetailedUserI
 /**
  * @description deals with displaying avatar, REACT_APP_DEFAULT_AVATAR_URL is the default avatar url if current url is invalid
  * @warning If enablePopup is true, detailedInfo must be provided
+ * @usage The caller should specify the height and width of the avatar
  */
 export function Avatar({ url, enablePopup, detailedInfo }: Props) {
   const defaultUrl = process.env.REACT_APP_DEFAULT_AVATAR_URL!;

@@ -1,4 +1,4 @@
-import { assertIsFriend } from '../utils/asserts';
+import { assertIsFriend } from '../utils/Asserts';
 
 /**
  *

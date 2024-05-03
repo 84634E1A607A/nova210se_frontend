@@ -1,4 +1,4 @@
-import { assertIsChat } from '../utils/asserts';
+import { assertIsChat } from '../utils/Asserts';
 
 interface Params {
   chatName: string;

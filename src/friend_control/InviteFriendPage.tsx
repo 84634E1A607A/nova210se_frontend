@@ -1,7 +1,7 @@
 import { invite } from './invite';
 import { Friend, InvitationSourceType } from '../utils/types';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { assertIsInvitationSourceType } from '../utils/asserts';
+import { assertIsInvitationSourceType } from '../utils/Asserts';
 import { useState } from 'react';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

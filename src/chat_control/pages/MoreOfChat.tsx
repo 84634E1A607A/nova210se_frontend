@@ -3,10 +3,10 @@ import {
   assertIsChatRelatedWithCurrentUser,
   assertIsFriendsList,
   assertIsLeastUserInfo,
-} from '../../utils/asserts';
+} from '../../utils/Asserts';
 import { SingleUserTab } from '../components/SIngleUserTab';
 import { Suspense, useRef, useState } from 'react';
-import { assertIsUserAndFriendsData } from '../../utils/queryRouterLoaderAsserts';
+import { assertIsUserAndFriendsData } from '../../utils/AssertsForRouterLoader';
 import { ContextMenu } from 'primereact/contextmenu';
 import { DetailedUserInfo, LeastUserInfo } from '../../utils/types';
 import { Toast } from 'primereact/toast';

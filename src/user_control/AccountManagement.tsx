@@ -5,9 +5,10 @@ import { logout } from './logout';
 import { deleteAccount } from './deleteAccount';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '../utils/ui/themes';
-import { maxUserNameLength } from '../utils/ConstValues';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LeastUserInfo } from '../utils/types';
+import { maxlengthOption, pattern } from './utils/userNameFormOptions';
+import { validateUserName } from './utils/validateUserName';
 
 /**
  * For changing username, avatar_url, password etc. To change e-mail and phone number. Or to logout, delete account, etc.
@@ -102,9 +103,10 @@ export function AccountManagement() {
             type="text"
             id="user_name"
             {...register('user_name', {
-              maxLength: {
-                value: maxUserNameLength,
-                message: `User name must be at most ${maxUserNameLength} characters long`,
+              maxLength: maxlengthOption,
+              pattern: pattern,
+              validate: (value) => {
+                if (value) return validateUserName(value);
               },
             })}
             className={getEditorStyle(errors.user_name)}

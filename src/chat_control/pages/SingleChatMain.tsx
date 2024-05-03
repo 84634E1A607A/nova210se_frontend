@@ -3,6 +3,8 @@ import { ChatHeader } from './ChatHeader';
 import { useChatsRelatedContext } from './ChatMainPageFramework';
 import { DialogBox } from './DialogBox';
 import { Dialogs } from './Dialogs';
+import { RepliedMessageProvider } from '../states/RepliedMessageProvider';
+import { MessageRefsProvider } from '../states/MessageRefsProvider';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -19,8 +21,12 @@ export function SingleChatMain() {
   return (
     <div className="flex flex-col">
       <ChatHeader chat={currentChat!} />
-      <Dialogs />
-      <DialogBox />
+      <RepliedMessageProvider>
+        <MessageRefsProvider>
+          <Dialogs chat={currentChat!} />
+        </MessageRefsProvider>
+        <DialogBox chat={currentChat!} />
+      </RepliedMessageProvider>
     </div>
   );
 }

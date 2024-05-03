@@ -1,7 +1,7 @@
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 import { Suspense } from 'react';
-import { assertIsInvitationsData } from '../utils/queryRouterLoaderAsserts';
-import { assertIsInvitationList } from '../utils/asserts';
+import { assertIsInvitationsData } from '../utils/AssertsForRouterLoader';
+import { assertIsInvitationList } from '../utils/Asserts';
 import { acceptInvitation } from './acceptInvitation';
 import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

@@ -1,4 +1,4 @@
-import { assertIsApiError, assertIsLeastUserInfo } from '../utils/asserts';
+import { assertIsApiError, assertIsLeastUserInfo } from '../utils/Asserts';
 import { EditingInfo } from './AccountManagement';
 
 /**

@@ -16,6 +16,7 @@ import {
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsLoader,
+  UserAndFriendsAndDetailedMessagesLoader,
   UserAndFriendsLoader,
   UserLoader,
 } from './utils/Loaders';
@@ -55,6 +56,8 @@ const router = createBrowserRouter([
               {
                 path: ':chat_id',
                 element: <SingleChatMain />,
+                loader: async ({ params }) =>
+                  UserAndFriendsAndDetailedMessagesLoader(queryClient, params.chat_id!),
               },
               {
                 path: ':chat_id/more',
@@ -90,7 +93,7 @@ const router = createBrowserRouter([
             path: 'create_group_chat',
             element: <CreateGroupChat />,
             loader: async () => FriendsGroupsLoader(queryClient),
-            // If I want to divide friends into groups when display in multiselect, the loader should load 'groups' in addition.
+            // If dividing friends into groups when display in multiselect is required, the loader should load 'groups' in addition.
           },
         ],
       },
