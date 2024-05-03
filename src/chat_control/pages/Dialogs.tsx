@@ -12,20 +12,20 @@ import { MessageTab } from '../components/MessageTab';
 import { DetailedMessage, Message } from '../../utils/types';
 import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
-import { useRecalledMessageContext } from '../states/RecalledMessageProvider';
+import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 
 export function Dialogs({ chat }: SingleChatProps) {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();
-  const { setRecalledMessage } = useRecalledMessageContext();
+  const { setRepliedMessage } = useRepliedMessageContext();
 
-  const recallMessageContextMenuItem = {
+  const replyMessageContextMenuItem = {
     label: 'Reply',
     icon: 'pi pi-reply',
-    command: () => setRecalledMessage(selectedMessage!),
+    command: () => setRepliedMessage(selectedMessage!),
   };
 
-  const contextMenuItems = [recallMessageContextMenuItem];
+  const contextMenuItems = [replyMessageContextMenuItem];
 
   /**
    * @description When right-click on a message, show the context menu
@@ -58,25 +58,22 @@ export function Dialogs({ chat }: SingleChatProps) {
                         return detailedMessageParam.sender.id === currentUser.id;
                       };
                       return (
-                        <div>
+                        <div className="flex felx-col overflow-auto">
                           {/*For future, will remove*/}
                           <p>{chat.chatName}</p>
 
-                          <ul>
+                          <ul className="flex flex-col m-2">
                             {detailedMessages.map((detailedMessage) => {
                               return (
-                                <li
-                                  key={detailedMessage.message_id}
-                                  onContextMenu={(event) => onRightClick(event, detailedMessage)}
-                                >
+                                <li key={detailedMessage.message_id} className="flex m-2">
                                   <MessageTab
-                                    message={detailedMessage.message}
+                                    detailedMessage={detailedMessage}
                                     isSelf={getIsSelf(detailedMessage)}
                                     name={parseAnyoneName({
                                       unknownUser: detailedMessage.sender,
                                       friends,
                                     })}
-                                    sender={detailedMessage.sender}
+                                    onRightClick={onRightClick}
                                   />
                                 </li>
                               );
