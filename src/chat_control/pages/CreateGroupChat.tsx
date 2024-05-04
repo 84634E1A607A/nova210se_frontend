@@ -11,7 +11,8 @@ import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend'
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { createGroupChat } from '../createGroupChat';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Avatar } from '../../utils/ui/Avatar';
+import { FriendTabTemplate } from '../components/FriendTabTemplate';
+import { multiselectElementStyle } from '../../utils/ui/TailwindConsts';
 
 export function CreateGroupChat() {
   const toast = useRef<Toast | null>(null);
@@ -86,17 +87,6 @@ export function CreateGroupChat() {
     );
   };
 
-  const friendTabTemplate = (friend: LeastFriendInfo) => {
-    return (
-      <div className="align-items-center flex">
-        <div className="mr-2" style={{ width: '18px' }}>
-          <Avatar url={friend.avatarUrl} />
-        </div>
-        <div>{friend.displayName}</div>
-      </div>
-    );
-  };
-
   return (
     <Suspense>
       <Await resolve={loaderData.friends}>
@@ -145,9 +135,9 @@ export function CreateGroupChat() {
                       optionLabel="displayName"
                       placeholder="Select Friends"
                       maxSelectedLabels={4}
-                      className="md:w-20rem w-full bg-green-200"
+                      className={multiselectElementStyle}
                       display="chip"
-                      itemTemplate={friendTabTemplate}
+                      itemTemplate={FriendTabTemplate}
                     />
                   )}
                 />

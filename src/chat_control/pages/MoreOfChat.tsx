@@ -20,6 +20,8 @@ import { leaveChat } from '../leaveChat';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Button } from 'primereact/button';
 import { deleteChat } from '../deleteChat';
+import { InviteFriendIntoChat } from '../components/InviteFriendIntoChat';
+import { getInvitableFriends } from '../utils/getInvitableFriends';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -350,6 +352,9 @@ export function MoreOfChat() {
                       };
                     else return member;
                   });
+                  const membersWithoutSelf = chat.chat.chat_members.filter(
+                    (member) => member.id !== currentUser.id,
+                  );
 
                   return (
                     <div className="card md:justify-content-center flex flex-col items-center">
@@ -396,6 +401,13 @@ export function MoreOfChat() {
                           ></Button>
                         </div>
                       ) : null}
+
+                      {isPrivateChat ? null : (
+                        <InviteFriendIntoChat
+                          toast={toast}
+                          invitableFriends={getInvitableFriends({ friends, membersWithoutSelf })}
+                        />
+                      )}
                     </div>
                   );
                 }}

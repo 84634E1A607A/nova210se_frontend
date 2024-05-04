@@ -77,7 +77,9 @@ export type ChatRelatedWithCurrentUser = {
 };
 
 /**
- * @description The info needed to display a friend (when creating a new group). Only for front-end use. So camel case is used.
+ * @description The info needed to display a friend (when creating a new group or invite friends
+ * into a group).
+ * Only for front-end use. So camel case is used.
  */
 export type LeastFriendInfo = {
   displayName: string;

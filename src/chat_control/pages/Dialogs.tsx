@@ -19,6 +19,7 @@ import { assertIsS2CMessage } from '../../websockets/AssertsWS';
 import { receiveMessageActionWS } from '../../websockets/Actions';
 import { useChatId, useUserName } from '../../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
+import { NoticesBar } from '../components/NoticesBar';
 
 export function Dialogs({ chat }: SingleChatProps) {
   const cm = useRef<ContextMenu | null>(null);
@@ -93,10 +94,8 @@ export function Dialogs({ chat }: SingleChatProps) {
                         return detailedMessageParam.sender.id === currentUser.id;
                       };
                       return (
-                        <div className="felx-col flex overflow-auto">
-                          {/*For future, will remove*/}
-                          <p>{chat.chatName}</p>
-
+                        <div className="flex flex-col overflow-auto">
+                          <NoticesBar chatName={chat.chatName} />
                           <ul className="m-2 flex flex-col">
                             {detailedMessages.map((detailedMessage) => {
                               return (

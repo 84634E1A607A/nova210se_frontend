@@ -33,6 +33,9 @@ export function parseSystemMessage(message: string) {
     result.push({ wordMessage: ' removed', shouldEmphasize: false });
     result.push({ wordMessage: ' ' + splitMessage[2], shouldEmphasize: true });
     result.push({ wordMessage: ' from the group', shouldEmphasize: false });
+  } else if (message.match(systemMessages[3]) !== null) {
+    result.push({ wordMessage: splitMessage[0], shouldEmphasize: true });
+    result.push({ wordMessage: ' left the chat', shouldEmphasize: false });
   } else {
     // The default case:
     result.push({ wordMessage: splitMessage[0], shouldEmphasize: false });

@@ -10,6 +10,10 @@ import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
 
+/**
+ * @description Friend applications and applications for entering group chat if the current
+ * user is admin or owner.
+ */
 export function OngoingInvitations() {
   const data = useLoaderData();
   assertIsInvitationsData(data);
