@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 import { DetailedInfoPopup } from '../../user_control/components/DetailedInfoPopup';
-import { DetailedUserInfo } from '../types';
+import { DetailedUserInfo } from '../Types';
 
 type Props = { url?: string; enablePopup?: boolean; detailedInfo?: DetailedUserInfo };
 

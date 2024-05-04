@@ -1,4 +1,4 @@
-import { Friend } from '../../utils/types';
+import { Friend } from '../../utils/Types';
 
 /**
  * @description Get the name to display of a friend. If the friend has a nickname, return the nickname, otherwise return the username.

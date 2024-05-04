@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { deleteFriend } from './deleteFriend';
 import { useNavigate } from 'react-router-dom';
-import { Friend } from '../utils/types';
+import { Friend } from '../utils/Types';
 
 type Props = { friendUserId: number };
 

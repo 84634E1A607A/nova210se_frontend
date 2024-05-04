@@ -1,4 +1,4 @@
-import { Group } from '../utils/types';
+import { Group } from '../utils/Types';
 import { getGroupsList } from './getGroupsList';
 
 export async function getDefaultGroup(): Promise<Group> {

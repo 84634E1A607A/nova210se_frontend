@@ -1,14 +1,15 @@
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 import { Suspense } from 'react';
-import { assertIsInvitationsData } from '../utils/AssertsForRouterLoader';
+import { assertIsInvitationsAndApplicationsForChatData } from '../utils/AssertsForRouterLoader';
 import { assertIsInvitationList } from '../utils/Asserts';
 import { acceptInvitation } from './acceptInvitation';
 import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Friend, Invitation } from '../utils/types';
+import { Friend, Invitation } from '../utils/Types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
+import { ApplicationsForChat } from '../chat_control/components/ApplicationsForChat';
 
 /**
  * @description Friend applications and applications for entering group chat if the current
@@ -16,7 +17,7 @@ import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
  */
 export function OngoingInvitations() {
   const data = useLoaderData();
-  assertIsInvitationsData(data);
+  assertIsInvitationsAndApplicationsForChatData(data);
 
   const navigate = useNavigate();
   const userName = useUserName();
@@ -56,56 +57,54 @@ export function OngoingInvitations() {
   });
 
   return (
-    <div className="flex grow flex-col">
-      <h1>Ongoing Invitations</h1>
-      <Suspense fallback={<div>Loading invitaions...</div>}>
-        <Await resolve={data.invitaions}>
-          {(inviations) => {
-            assertIsInvitationList(inviations);
-            return (
-              <div>
-                <ul>
-                  {inviations.map((invitation) => (
-                    <li key={invitation.id}>
-                      <div
-                        className="m-1 p-2"
-                        style={{ backgroundColor: theme.secondary_container }}
-                      >
-                        <p>
-                          From{' '}
-                          {invitation.source === 'search'
-                            ? ' search'
-                            : ` group with id: ${invitation.source}`}
-                        </p>
-                        {invitation.comment === '' ? null : (
-                          <p>Invitation message: {invitation.comment}</p>
-                        )}
-                        <UserDisplayTabInInvitations leastUserInfo={invitation.sender} />
-                        <div className="flex flex-row place-content-evenly place-items-center">
-                          <button
-                            type="button"
-                            onClick={() => accept(invitation.id)}
-                            className="text-green-600"
-                          >
-                            Accept
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => reject(invitation.id)}
-                            className="text-red-600"
-                          >
-                            Reject
-                          </button>
-                        </div>
+    <Suspense fallback={<div>Loading invitaions...</div>}>
+      <Await resolve={data.invitations}>
+        {(inviations) => {
+          assertIsInvitationList(inviations);
+          return (
+            <div className="flex flex-grow flex-col">
+              <strong className="m-2">Applications for friendship</strong>
+              <ul>
+                {inviations.map((invitation) => (
+                  <li key={invitation.id}>
+                    <div className="m-1 p-2" style={{ backgroundColor: theme.secondary_container }}>
+                      <p>
+                        From{' '}
+                        {invitation.source === 'search'
+                          ? ' search'
+                          : ` group with id: ${invitation.source}`}
+                      </p>
+                      {invitation.comment === '' ? null : (
+                        <p>Invitation message: {invitation.comment}</p>
+                      )}
+                      <UserDisplayTabInInvitations leastUserInfo={invitation.sender} />
+                      <div className="flex flex-row place-content-evenly place-items-center">
+                        <button
+                          type="button"
+                          onClick={() => accept(invitation.id)}
+                          className="text-green-600"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => reject(invitation.id)}
+                          className="text-red-600"
+                        >
+                          Reject
+                        </button>
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          }}
-        </Await>
-      </Suspense>
-    </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <strong className="m-2">Applications for chat</strong>
+              <ApplicationsForChat />
+            </div>
+          );
+        }}
+      </Await>
+    </Suspense>
   );
 }

@@ -2,10 +2,10 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useState } from 'react';
 
-import { LoginInfo } from '../utils/types';
+import { LoginInfo } from '../utils/Types';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';
 import { handleSubmittedLoginInfo } from './handleSubmittedLoginInfo';
-import { ChooseLoginType } from '../utils/types';
+import { ChooseLoginType } from '../utils/Types';
 import { theme } from '../utils/ui/themes';
 import { useQueryClient } from '@tanstack/react-query';
 import { validateUserName } from './utils/validateUserName';

@@ -15,7 +15,7 @@ import {
   FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
-  InvitationsLoader,
+  InvitationsAndApplicationsForChatLoader,
   UserAndFriendsAndDetailedMessagesLoader,
   UserAndFriendsLoader,
   UserLoader,
@@ -87,7 +87,7 @@ const router = createBrowserRouter([
           {
             path: 'invitation_list',
             element: <OngoingInvitations />,
-            loader: async () => InvitationsLoader(queryClient),
+            loader: async () => InvitationsAndApplicationsForChatLoader(queryClient),
           },
           {
             path: 'create_group_chat',

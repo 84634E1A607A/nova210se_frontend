@@ -1,5 +1,5 @@
 import { useCollapse } from 'react-collapsed';
-import { Friend, Group } from '../utils/types';
+import { Friend, Group } from '../utils/Types';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTab } from './UserDisplayTab';
 import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';

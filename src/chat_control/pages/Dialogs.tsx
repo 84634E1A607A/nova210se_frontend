@@ -9,7 +9,7 @@ import {
   assertIsMessage,
 } from '../../utils/Asserts';
 import { MessageTab } from '../components/MessageTab';
-import { DetailedMessage, Message } from '../../utils/types';
+import { DetailedMessage, Message } from '../../utils/Types';
 import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';

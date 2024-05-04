@@ -1,5 +1,5 @@
 import { invite } from './invite';
-import { Friend, InvitationSourceType } from '../utils/types';
+import { Friend, InvitationSourceType } from '../utils/Types';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { assertIsInvitationSourceType } from '../utils/Asserts';
 import { useState } from 'react';

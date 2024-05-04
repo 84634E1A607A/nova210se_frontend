@@ -8,7 +8,7 @@ import { SingleUserTab } from '../components/SIngleUserTab';
 import { Suspense, useRef, useState } from 'react';
 import { assertIsUserAndFriendsData } from '../../utils/AssertsForRouterLoader';
 import { ContextMenu } from 'primereact/contextmenu';
-import { DetailedUserInfo, LeastUserInfo } from '../../utils/types';
+import { DetailedUserInfo, LeastUserInfo } from '../../utils/Types';
 import { Toast } from 'primereact/toast';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

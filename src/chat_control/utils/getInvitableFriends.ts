@@ -1,4 +1,4 @@
-import { Friend, LeastFriendInfo, LeastUserInfo } from '../../utils/types';
+import { Friend, LeastFriendInfo, LeastUserInfo } from '../../utils/Types';
 import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
 
 /**

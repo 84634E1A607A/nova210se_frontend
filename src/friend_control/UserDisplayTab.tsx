@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/types';
+import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/Types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { assertIsFriendsList } from '../utils/Asserts';

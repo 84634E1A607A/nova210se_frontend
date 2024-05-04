@@ -1,6 +1,6 @@
 import { MutableRefObject } from 'react';
 import { Toast } from 'primereact/toast';
-import { LeastFriendInfo } from '../../utils/types';
+import { LeastFriendInfo } from '../../utils/Types';
 import { Controller, useForm } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import { FriendTabTemplate } from './FriendTabTemplate';

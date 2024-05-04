@@ -1,4 +1,4 @@
-import { LeastFriendInfo } from '../../utils/types';
+import { LeastFriendInfo } from '../../utils/Types';
 import { Avatar } from '../../utils/ui/Avatar';
 
 /**

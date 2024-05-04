@@ -1,4 +1,4 @@
-import { Friend, LeastUserInfo } from './types';
+import { Friend, LeastUserInfo } from './Types';
 
 export const alice: LeastUserInfo = {
   user_name: 'Alice',

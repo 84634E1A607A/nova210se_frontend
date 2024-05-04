@@ -1,4 +1,4 @@
-import { LeastUserInfo } from '../utils/types';
+import { LeastUserInfo } from '../utils/Types';
 import { Avatar } from '../utils/ui/Avatar';
 
 type Props = { leastUserInfo: LeastUserInfo };

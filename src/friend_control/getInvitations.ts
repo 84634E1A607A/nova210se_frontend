@@ -1,5 +1,5 @@
 import { assertIsInvitationList } from '../utils/Asserts';
-import { Invitation } from '../utils/types';
+import { Invitation } from '../utils/Types';
 
 export async function getInvitations(): Promise<Invitation[]> {
   try {
@@ -10,14 +10,13 @@ export async function getInvitations(): Promise<Invitation[]> {
       },
       credentials: 'include',
     });
+    if (!response.ok) throw new Error('Failed to get invitations!');
     const data = await response.json();
     const invitationList = data.data;
-    if (invitationList === undefined) throw new Error('Response does not contain invitation list');
     assertIsInvitationList(invitationList);
     return invitationList;
   } catch (e) {
     console.error(e);
-    window.alert('Failed to get invitation list');
     return [];
   }
 }

@@ -1,4 +1,4 @@
-import { ChatPurview } from '../utils/types';
+import { ChatPurview } from '../utils/Types';
 
 /**
  * @returns `ReturnType`: if the operation succeeds, the purview now of the user, and his user id.

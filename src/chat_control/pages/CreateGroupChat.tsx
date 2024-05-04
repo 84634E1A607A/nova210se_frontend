@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
-import { ChatRelatedWithCurrentUser, LeastFriendInfo } from '../../utils/types';
+import { ChatRelatedWithCurrentUser, LeastFriendInfo } from '../../utils/Types';
 import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsGroupsData } from '../../utils/AssertsForRouterLoader';
 import { assertIsFriendsList } from '../../utils/Asserts';

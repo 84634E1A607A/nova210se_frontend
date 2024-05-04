@@ -88,3 +88,14 @@ export type LeastFriendInfo = {
 };
 
 export type ChatPurview = 'Owner' | 'Admin' | 'Member';
+
+/**
+ * @description Corresponding to class `ChatInvitation` of backend.
+ */
+export type ApplicationForChat = {
+  invitation_id: number;
+  chat_id: number;
+  user: LeastUserInfo;
+  invited_by: LeastUserInfo;
+  created_at: number;
+};

@@ -1,5 +1,5 @@
 import { parseNameOfFriend } from '../friend_control/utils/parseNameOfFirend';
-import { ChatRelatedWithCurrentUser, Friend } from '../utils/types';
+import { ChatRelatedWithCurrentUser, Friend } from '../utils/Types';
 
 /**
  * @description Parse the chat name that should be displayed everywhere, such as in the chat list or in the header of a single chat.

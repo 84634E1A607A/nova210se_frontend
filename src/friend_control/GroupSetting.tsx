@@ -3,7 +3,7 @@ import { editGroupName } from './editGroupName';
 import { getGroupsList } from './getGroupsList';
 import { deleteGroup } from './deleteGroup';
 import { useUserName } from '../utils/UrlParamsHooks';
-import { Friend, Group } from '../utils/types';
+import { Friend, Group } from '../utils/Types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';

@@ -1,5 +1,5 @@
 import { assertIsLeastUserInfo } from '../utils/Asserts';
-import { LeastUserInfo } from '../utils/types';
+import { LeastUserInfo } from '../utils/Types';
 
 export async function searchFriend(searchParam: string): Promise<Array<LeastUserInfo>> {
   const userList: Array<LeastUserInfo> = [];

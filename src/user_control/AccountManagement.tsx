@@ -6,7 +6,7 @@ import { deleteAccount } from './deleteAccount';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '../utils/ui/themes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { LeastUserInfo } from '../utils/types';
+import { LeastUserInfo } from '../utils/Types';
 import { maxlengthOption, pattern } from './utils/userNameFormOptions';
 import { validateUserName } from './utils/validateUserName';
 
