@@ -36,25 +36,23 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
   const isSystemInfo = detailedMessage.sender.user_name === systemUserName;
   if (isSystemInfo) {
     const messagesList = parseSystemMessage(detailedMessage.message);
-    let id = 0;
     const inlineStyle = 'text-gray-500 inline';
-    const messageComponents = messagesList.map((pair) => {
-      id++;
+    const messageComponents = messagesList.map((pair, index) => {
       if (pair.shouldEmphasize) {
         return (
-          <strong className={inlineStyle} id={`${id}`}>
+          <strong className={inlineStyle} key={`${index}`}>
             {pair.wordMessage}
           </strong>
         );
       } else {
         return (
-          <p className={inlineStyle} id={`${id}`}>
+          <p className={inlineStyle} key={`${index}`}>
             {pair.wordMessage}
           </p>
         );
       }
     });
-    return <p className={`m-2 ${basicTextTailwind} max-w-[38rem]`}>{messageComponents}</p>;
+    return <div className={`m-2 ${basicTextTailwind} max-w-[38rem]`}>{messageComponents}</div>;
   }
 
   return (

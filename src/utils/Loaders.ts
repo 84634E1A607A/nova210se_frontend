@@ -45,16 +45,6 @@ export async function UserLoader(queryClient: QueryClient) {
   });
 }
 
-export async function ChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
-  return defer({
-    chatsRelatedWithCurrentUser: fetchDataForLoaders(
-      queryClient,
-      ['chats_related_with_current_user'],
-      getChats,
-    ),
-  });
-}
-
 export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
   return defer({
     friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
