@@ -18,8 +18,9 @@ import { Avatar } from '../utils/ui/Avatar';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import React, { useRef } from 'react';
-import { settingConfirmDialog } from './Components/settingConfirm';
-import { SettingConfirmDialog } from './Components/SettingConfirmDialog';
+import { SettingConfirmDialog } from './components/SettingConfirmDialog';
+import TestDialog from './components/EditDialog';
+import EditDialog from './components/EditDialog';
 
 /**
  * For changing username, avatar_url, password etc. To change e-mail and phone number. Or to logout, delete account, etc.
@@ -37,7 +38,7 @@ export function AccountManagement() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="flex flex-col flex-grow mt-3">
+            <div className="flex flex-col flex-grow mt-3 me-5">
               <div className="surface-0">
                 <div className="font-medium text-3xl text-900 mb-2">User Information</div>
                 <div className="text-500">You can modify your current info here.</div>
@@ -49,7 +50,7 @@ export function AccountManagement() {
                   <ul className="list-none px-10 m-0">
                     <li className="flex h-52 align-items-center py-3 px-2 border-top-1 border-300">
                       <div className="text-500 w-6 md:w-2 font-medium">Avatar</div>
-                      <div className="flex p-4 md:w-8 md:flex-order-0 flex-order-1 flex-grow justify-center items-center">
+                      <div className="flex md:w-8 md:flex-order-0 flex-order-1 flex-grow justify-center items-center">
                         <div className="h-32 w-32 ">
                           <Avatar url={user.avatar_url} />
                         </div>
@@ -61,17 +62,10 @@ export function AccountManagement() {
                     <li className="flex  align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
                       <div className="text-500 w-6 md:w-2 font-medium">User Name</div>
                       <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{`${user.user_name}`}</div>
-                      <div className="w-6 md:w-2 flex justify-content-end">
+                      <EditDialog field="User Name" />
+                      {/* <div className="w-6 md:w-2 flex justify-content-end">
                         <SettingConfirmDialog changeField="User Name" />
-                        <Button
-                          label="Edit"
-                          icon="pi pi-pencil"
-                          className="p-button-text"
-                          onClick={(event) =>
-                            settingConfirmDialog({ changeField: 'Username', event: event })
-                          }
-                        />
-                      </div>
+                      </div> */}
                     </li>
                     <li className="flex align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
                       <div className="text-500 w-6 md:w-2 font-medium">Email</div>
@@ -79,7 +73,7 @@ export function AccountManagement() {
                         {`${user.email}`}
                       </div>
                       <div className="w-6 md:w-2 flex justify-content-end">
-                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
+                        <SettingConfirmDialog changeField="Email" requireOldPassword={true} />
                       </div>
                     </li>
                     <li className="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 border-300 flex-wrap">
@@ -103,7 +97,7 @@ export function AccountManagement() {
                   </ul>
                 </div>
               </div>
-              <div className="flex flex-col pt-6 space-y-2 items-center">
+              <div className="flex flex-col pt-6 space-y-2 items-center mb-5">
                 <button
                   className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
           focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"

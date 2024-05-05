@@ -151,7 +151,7 @@ export function MoreOfChat() {
   // There's a warning if I use it.
   const currentUserRef = useRef<LeastUserInfo | undefined>(undefined);
 
-  // At first the following two varaibles are both false because ref is undefined.
+  // At first the following two variables are both false because ref is undefined.
   // After loading and changing the ref, the following two variables will not be updated.
   // When the component re-renders (sth new), the changed currentUserRef is applied and the following
   // two variables are updated to the desired value
