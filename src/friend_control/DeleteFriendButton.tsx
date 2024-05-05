@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { deleteFriend } from './deleteFriend';
 import { useNavigate } from 'react-router-dom';
-import { Friend } from '../utils/Types';
 
 type Props = { friendUserId: number };
 
@@ -23,9 +22,7 @@ export function DeleteFriendButton({ friendUserId }: Props) {
     mutationFn: onClick,
     onSuccess: (deleteSuccessful) => {
       if (deleteSuccessful) {
-        queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
-          return oldFriends!.filter((friend) => friend.friend.id !== friendUserId);
-        });
+        queryClient.removeQueries({ queryKey: ['friends', 'chats_related_with_current_user'] });
         navigate(`/${userName}/friends`);
       }
     },
