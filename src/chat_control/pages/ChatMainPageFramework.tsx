@@ -1,16 +1,19 @@
 import { Suspense } from 'react';
-import { useLoaderData, Outlet, Await, useOutletContext } from 'react-router-dom';
+import { useLoaderData, Outlet, Await, useOutletContext, useNavigate } from 'react-router-dom';
 import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
 import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
 import { SingleChatTab } from './SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { ChatRelatedWithCurrentUser, Friend } from '../../utils/Types';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function ChatMainPageFramework() {
   const friendsAndChatsRelatedWithCurrentUserData = useLoaderData();
   assertIsFriendsAndChatsRelatedWithCurrentUserData(friendsAndChatsRelatedWithCurrentUserData);
   const userName = useUserName();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return (
     <Suspense fallback={<p>Loading chats...</p>}>
@@ -20,12 +23,20 @@ export function ChatMainPageFramework() {
             {(friends) => {
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               assertIsFriendsList(friends);
-              chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
-                return {
-                  ...chat,
-                  chatName: parseChatName(chat, userName, friends),
-                };
-              });
+              try {
+                // `parseChatName` may throw an error if a new friend is added and the friends list
+                // is not reloaded, so when parse a private chat's name, it can't find the friend.
+                chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
+                  return {
+                    ...chat,
+                    chatName: parseChatName(chat, userName, friends),
+                  };
+                });
+              } catch (e) {
+                queryClient.removeQueries({ queryKey: ['friends'] });
+                navigate(`/${userName}/chats`);
+              }
+
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               return (
                 <div className="flex flex-grow flex-row">
