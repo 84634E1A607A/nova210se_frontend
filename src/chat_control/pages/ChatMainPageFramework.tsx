@@ -31,6 +31,7 @@ export function ChatMainPageFramework() {
                   // is not reloaded, so when parse a private chat's name, it can't find the friend.
                   chatName = parseChatName(chat, userName, friends);
                 } catch (e) {
+                  console.log('in catch', e);
                   queryClient.removeQueries({ queryKey: ['friends'] });
                   navigate(`/${userName}/chats`);
                 }
