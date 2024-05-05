@@ -10,19 +10,14 @@ export function DeleteFriendButton({ friendUserId }: Props) {
 
   const userName = useUserName();
 
-  const onClick = async () => {
-    const deleteSuccessful = await deleteFriend(friendUserId);
-    navigate(`/${userName}/friends`);
-    return deleteSuccessful;
-  };
-
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: onClick,
+    mutationFn: async () => await deleteFriend(friendUserId),
     onSuccess: (deleteSuccessful) => {
       if (deleteSuccessful) {
-        queryClient.removeQueries({ queryKey: ['friends', 'chats_related_with_current_user'] });
+        queryClient.removeQueries({ queryKey: ['friends'] });
+        queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
         navigate(`/${userName}/friends`);
       }
     },

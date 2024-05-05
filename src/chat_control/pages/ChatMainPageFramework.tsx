@@ -25,16 +25,9 @@ export function ChatMainPageFramework() {
               assertIsFriendsList(friends);
 
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
-                let chatName: string = chat.chat.chat_name;
-                try {
-                  // `parseChatName` may throw an error if a new friend is added and the friends list
-                  // is not reloaded, so when parse a private chat's name, it can't find the friend.
-                  chatName = parseChatName(chat, userName, friends);
-                } catch (e) {
-                  console.log('in catch', e);
-                  queryClient.removeQueries({ queryKey: ['friends'] });
-                  navigate(`/${userName}/chats`);
-                }
+                const chatName = parseChatName(chat, userName, friends);
+                queryClient.removeQueries({ queryKey: ['friends'] });
+                navigate(`/${userName}/chats`);
                 return {
                   ...chat,
                   chatName,
