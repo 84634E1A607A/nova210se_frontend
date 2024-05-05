@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Await, useLoaderData, useSearchParams } from 'react-router-dom';
 import { searchFriend } from './searchFriend';
-import { LeastUserInfo } from '../utils/types';
+import { LeastUserInfo } from '../utils/Types';
 import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/Asserts';
 import { Suspense } from 'react';

@@ -5,7 +5,7 @@ import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../
 import { SingleChatTab } from './SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/UrlParamsHooks';
-import { ChatRelatedWithCurrentUser, Friend } from '../../utils/types';
+import { ChatRelatedWithCurrentUser, Friend } from '../../utils/Types';
 
 export function ChatMainPageFramework() {
   const friendsAndChatsRelatedWithCurrentUserData = useLoaderData();

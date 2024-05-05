@@ -7,8 +7,9 @@ import {
   Invitation,
   InvitationSourceType,
   Message,
-} from './types';
-import { LeastUserInfo } from './types';
+  ApplicationForChat,
+} from './Types';
+import { LeastUserInfo } from './Types';
 
 export function assertIsLeastUserInfo(userInfo: unknown): asserts userInfo is LeastUserInfo {
   if (userInfo === null) throw new Error('Server response is null');
@@ -166,8 +167,8 @@ export function assertIsChatRelatedWithCurrentUser(
   if (typeof data.nickname !== 'string') throw new Error('nickname is not a string');
   if (!('unread_count' in data)) throw new Error('Missing unread_count');
   if (typeof data.unread_count !== 'number') throw new Error('unread_count is not a number');
-  if ('chatName' in data && typeof data.chatName !== 'string')
-    throw new Error('chatName is not a string');
+  if ('chat_name' in data && typeof data.chat_name !== 'string')
+    throw new Error('chat_name is not a string');
 }
 
 export function assertIsChatsRelatedWithCurrentUser(
@@ -175,4 +176,24 @@ export function assertIsChatsRelatedWithCurrentUser(
 ): asserts data is ChatRelatedWithCurrentUser[] {
   if (!Array.isArray(data)) throw new Error('Not an array');
   for (const chat of data) assertIsChatRelatedWithCurrentUser(chat);
+}
+
+export function assertIsApplicationForChat(data: unknown): asserts data is ApplicationForChat {
+  if (typeof data !== 'object') throw new Error('Not an object');
+  if (data === null) throw new Error('Null');
+  if (!('invitation_id' in data)) throw new Error('Missing invitation_id');
+  if (typeof data.invitation_id !== 'number') throw new Error('invitation_id is not a number');
+  if (!('chat_id' in data)) throw new Error('Missing chat_id');
+  if (typeof data.chat_id !== 'number') throw new Error('chat_id is not a number');
+  if (!('user' in data)) throw new Error('Missing user');
+  assertIsLeastUserInfo(data.user);
+  if (!('invited_by' in data)) throw new Error('Missing invited_by');
+  assertIsLeastUserInfo(data.invited_by);
+  if (!('created_at' in data)) throw new Error('Missing created_at');
+  if (typeof data.created_at !== 'number') throw new Error('created_at is not a number');
+}
+
+export function assertIsApplicationsForChat(data: unknown): asserts data is ApplicationForChat[] {
+  if (!Array.isArray(data)) throw new Error('Not an array');
+  for (const application of data) assertIsApplicationForChat(application);
 }

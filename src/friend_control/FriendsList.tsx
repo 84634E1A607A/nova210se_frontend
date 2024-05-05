@@ -1,4 +1,4 @@
-import { Friend, Group } from '../utils/types';
+import { Friend, Group } from '../utils/Types';
 import { FriendsForEachGroupList } from './FriendsForEachGroupList';
 
 type Props = { friends: Friend[]; groups: Group[] };

@@ -1,4 +1,4 @@
-import { Friend, InvitationSourceType } from '../utils/types';
+import { Friend, InvitationSourceType } from '../utils/Types';
 
 type InvitationParam = { id: number; source: InvitationSourceType; comment?: string };
 // backend requires that comment not be undefined or null

@@ -6,7 +6,7 @@ import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Friend, Group } from '../utils/types';
+import { Friend, Group } from '../utils/Types';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { assertIsFriendsData } from '../utils/AssertsForRouterLoader';
 import { ValidationError, getEditorStyle } from '../utils/ValidationError';

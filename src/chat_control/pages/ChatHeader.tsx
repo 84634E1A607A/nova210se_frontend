@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ChatRelatedWithCurrentUser } from '../../utils/types';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 import { ReactComponent as MoreDetails } from '../../svg/more-horizontal-square-svgrepo-com.svg';
 
 export interface SingleChatProps {

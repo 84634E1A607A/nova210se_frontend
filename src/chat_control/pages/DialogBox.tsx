@@ -6,7 +6,7 @@ import { ReactComponent as CancelReply } from '../../svg/cancel-svgrepo-com.svg'
 import useWebSocket from 'react-use-websocket';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 import { useEffect, useRef } from 'react';
-import { sendMessageActionWS } from '../../websockets/Actions';
+import { sendMessageC2SActionWS } from '../../websockets/Actions';
 
 export function DialogBox({ chat }: SingleChatProps) {
   const {
@@ -72,7 +72,7 @@ export function DialogBox({ chat }: SingleChatProps) {
                 chat_id: chat.chat_id,
               };
           sendJsonMessage({
-            action: sendMessageActionWS,
+            action: sendMessageC2SActionWS,
             data: sentData,
           });
           reset();

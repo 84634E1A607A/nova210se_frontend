@@ -1,4 +1,4 @@
-import { Chat, ChatRelatedWithCurrentUser, DetailedMessage } from '../utils/types';
+import { Chat, ChatRelatedWithCurrentUser, DetailedMessage } from '../utils/Types';
 import { assertIsDetailedMessages } from '../utils/Asserts';
 
 /**

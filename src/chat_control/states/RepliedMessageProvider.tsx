@@ -1,4 +1,4 @@
-import { Message } from '../../utils/types';
+import { Message } from '../../utils/Types';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 type RepliedMessageContextType = State & {

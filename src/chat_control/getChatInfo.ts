@@ -1,9 +1,5 @@
 import { assertIsChatRelatedWithCurrentUser } from '../utils/Asserts';
 
-interface Params {
-  chatId: number;
-}
-
 export async function getChatInfo({ chatId }: Params) {
   try {
     const response = await fetch(process.env.REACT_APP_API_URL!.concat(`/chat/${chatId}`), {
@@ -21,4 +17,8 @@ export async function getChatInfo({ chatId }: Params) {
   } catch (e) {
     console.error(e);
   }
+}
+
+interface Params {
+  chatId: number;
 }

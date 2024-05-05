@@ -1,5 +1,5 @@
 import { assertIsFriendsList } from '../utils/Asserts';
-import { Friend } from '../utils/types';
+import { Friend } from '../utils/Types';
 
 export async function getFriendsList(): Promise<Friend[]> {
   try {

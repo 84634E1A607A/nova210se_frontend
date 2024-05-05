@@ -1,4 +1,4 @@
-import { DetailedUserInfo } from '../../utils/types';
+import { DetailedUserInfo } from '../../utils/Types';
 import { Avatar } from '../../utils/ui/Avatar';
 
 export function DetailedInfoPopup({

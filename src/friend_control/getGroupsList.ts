@@ -1,5 +1,5 @@
 import { assertIsGroupsList } from '../utils/Asserts';
-import { Group } from '../utils/types';
+import { Group } from '../utils/Types';
 
 export async function getGroupsList(): Promise<Group[]> {
   try {

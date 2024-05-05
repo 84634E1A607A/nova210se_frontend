@@ -67,6 +67,7 @@ export type Chat = {
  * Can be set to empty string.
  * @field chat_id: for front-end's convenience, assert chat_id === chat.chat_id. The backend API return doesn't contain this field.
  * @field chatName: The name of the chat that should be displayed directly. It is created using `parseChatName`.
+ * **Not** from backend, so in camel case.
  */
 export type ChatRelatedWithCurrentUser = {
   chat: Chat;
@@ -77,7 +78,9 @@ export type ChatRelatedWithCurrentUser = {
 };
 
 /**
- * @description The info needed to display a friend (when creating a new group). Only for front-end use. So camel case is used.
+ * @description The info needed to display a friend (when creating a new group or invite friends
+ * into a group).
+ * Only for front-end use. So camel case is used.
  */
 export type LeastFriendInfo = {
   displayName: string;
@@ -86,3 +89,14 @@ export type LeastFriendInfo = {
 };
 
 export type ChatPurview = 'Owner' | 'Admin' | 'Member';
+
+/**
+ * @description Corresponding to class `ChatInvitation` of backend.
+ */
+export type ApplicationForChat = {
+  invitation_id: number;
+  chat_id: number;
+  user: LeastUserInfo;
+  invited_by: LeastUserInfo;
+  created_at: number;
+};

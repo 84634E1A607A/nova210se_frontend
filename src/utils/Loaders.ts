@@ -6,6 +6,7 @@ import { getInvitations } from '../friend_control/getInvitations';
 import { getUserInfo } from '../user_control/getUserInfo';
 import { getChats } from '../chat_control/getChats';
 import { getDetailedMessages } from '../chat_control/getDetailedMessages';
+import { listApplicationsForAllChats } from '../chat_control/listApplicationsForAllChats';
 
 async function fetchDataForLoaders<T>(
   queryClient: QueryClient,
@@ -33,9 +34,21 @@ export async function FriendsLoader(queryClient: QueryClient) {
   });
 }
 
-export async function InvitationsLoader(queryClient: QueryClient) {
+export async function InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader(
+  queryClient: QueryClient,
+) {
   return defer({
-    invitaions: fetchDataForLoaders(queryClient, ['invitations'], getInvitations),
+    invitations: fetchDataForLoaders(queryClient, ['invitations'], getInvitations),
+    applicationsForChat: fetchDataForLoaders(
+      queryClient,
+      ['applications_for_chat'],
+      listApplicationsForAllChats,
+    ),
+    chatsRelatedWithCurrentUser: fetchDataForLoaders(
+      queryClient,
+      ['chats_related_with_current_user'],
+      getChats,
+    ),
   });
 }
 

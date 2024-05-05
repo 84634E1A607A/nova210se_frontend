@@ -1,4 +1,4 @@
-import { maxUserNameLength } from '../../utils/ConstValues';
+import { maxUserNameLength } from '../../utils/consts/InputRestrictions';
 
 export const pattern = {
   value: /^[a-zA-Z0-9-_()@.]+$/,

@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { RouterGuard } from './user_control/RouterGuard';
 import { PrimeReactProvider } from 'primereact/api';
 import useWebSocket from 'react-use-websocket';
+import { UpdateDataCompanion } from './websockets/component/UpdateDataCompanion';
 
 function App() {
   const { lastJsonMessage, lastMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
@@ -20,6 +21,7 @@ function App() {
       <div className="App">
         <RouterGuard />
         <Outlet />
+        <UpdateDataCompanion />
       </div>
     </PrimeReactProvider>
   );

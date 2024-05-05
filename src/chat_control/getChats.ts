@@ -1,5 +1,5 @@
 import { assertIsChatsRelatedWithCurrentUser } from '../utils/Asserts';
-import { ChatRelatedWithCurrentUser } from '../utils/types';
+import { ChatRelatedWithCurrentUser } from '../utils/Types';
 
 /**
  * @description List all chats of the current user. If failed, return an empty array list.

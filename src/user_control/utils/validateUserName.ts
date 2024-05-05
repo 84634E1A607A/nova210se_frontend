@@ -1,4 +1,4 @@
-import { systemUserName } from '../../utils/ConstValues';
+import { systemUserName } from '../../utils/consts/SystemValues';
 
 /**
  * @description Check extra rules for user_name. Now backend and frontend don't allow # in user_name,

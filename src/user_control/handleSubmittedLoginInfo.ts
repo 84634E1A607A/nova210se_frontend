@@ -1,6 +1,6 @@
-import { LoginInfo } from '../utils/types';
-import { PostMethodReturn } from '../utils/types';
-import { ChooseLoginType } from '../utils/types';
+import { LoginInfo } from '../utils/Types';
+import { PostMethodReturn } from '../utils/Types';
+import { ChooseLoginType } from '../utils/Types';
 
 export async function handleSubmittedLoginInfo(
   contact: LoginInfo,

@@ -1,5 +1,5 @@
 import { assertIsGroup } from '../utils/Asserts';
-import { Group } from '../utils/types';
+import { Group } from '../utils/Types';
 
 export async function queryGroup(groupId: number): Promise<Group | undefined> {
   try {
