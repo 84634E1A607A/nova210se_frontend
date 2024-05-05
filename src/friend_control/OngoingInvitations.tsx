@@ -9,7 +9,7 @@ import {
 import { acceptInvitation } from './acceptInvitation';
 import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Friend, Invitation } from '../utils/Types';
+import { Invitation } from '../utils/Types';
 import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
@@ -36,14 +36,11 @@ export function OngoingInvitations() {
     mutationFn: handleAccept,
     onSuccess: (friend) => {
       if (friend === undefined) return;
-      queryClient.setQueryData<Friend[]>(['friends'], (oldFriends) => {
-        if (oldFriends === undefined) return [friend];
-        else return [...oldFriends, friend];
-      });
+      queryClient.removeQueries({ queryKey: ['friends'] });
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== acceptVar);
       });
-      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       navigate(`/${userName}/invitation_list`);
     },
   });
