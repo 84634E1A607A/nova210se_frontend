@@ -34,13 +34,20 @@ export async function FriendsLoader(queryClient: QueryClient) {
   });
 }
 
-export async function InvitationsAndApplicationsForChatLoader(queryClient: QueryClient) {
+export async function InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader(
+  queryClient: QueryClient,
+) {
   return defer({
     invitations: fetchDataForLoaders(queryClient, ['invitations'], getInvitations),
     applicationsForChat: fetchDataForLoaders(
       queryClient,
       ['applications_for_chat'],
       listApplicationsForAllChats,
+    ),
+    chatsRelatedWithCurrentUser: fetchDataForLoaders(
+      queryClient,
+      ['chats_related_with_current_user'],
+      getChats,
     ),
   });
 }

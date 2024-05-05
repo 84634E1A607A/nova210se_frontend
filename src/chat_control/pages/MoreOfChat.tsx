@@ -13,7 +13,6 @@ import { Toast } from 'primereact/toast';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setAdmin } from '../setAdmin';
-import { getChatInfo } from '../getChatInfo';
 import { transferOwner } from '../transferOwner';
 import { kickoutMember } from '../kickoutMember';
 import { leaveChat } from '../leaveChat';
@@ -22,6 +21,8 @@ import { Button } from 'primereact/button';
 import { deleteChat } from '../deleteChat';
 import { InviteFriendIntoChat } from '../components/InviteFriendIntoChat';
 import { getInvitableFriends } from '../utils/getInvitableFriends';
+import { updateChatState } from '../states/updateChatState';
+import { MouseEvent } from 'react';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -40,20 +41,6 @@ export function MoreOfChat() {
   const navigate = useNavigate();
   const userName = useUserName();
   const queryClient = useQueryClient();
-
-  const updateChatState = async () => {
-    const newChat = await getChatInfo({ chatId: chat.chat_id });
-    if (!newChat) {
-      navigate(`/${userName}/chats`);
-      toast.current?.show({
-        severity: 'warn',
-        summary: 'Error in updating chat info',
-        detail: 'redirect to chats page',
-        life: 2000,
-      });
-      return undefined;
-    } else return newChat;
-  };
 
   /**
    * @description Function called for `onSuccess` in `useMutation`, for the components in which
@@ -91,7 +78,12 @@ export function MoreOfChat() {
   ) => {
     if (isSuccessful) {
       queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] }); // prevent too-complicated cache setting
-      const updatedChat = await updateChatState();
+      const updatedChat = await updateChatState({
+        chatId: chat.chat_id,
+        toast,
+        navigate: navigate,
+        userName,
+      });
       if (!updatedChat) return;
       navigate(`/${userName}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
       toast.current?.show({
@@ -154,12 +146,13 @@ export function MoreOfChat() {
   const [selectedMember, setSelectedMember] = useState<DetailedMemberInfo | undefined>();
   const toast = useRef<Toast | null>(null);
 
-  // sswybd: Can't use useState because setState in Await is not good and may cause unexpected behavior. There's a warn if I use it.
+  // sswybd: Can't use useState because setState in Await is not good and may cause unexpected behavior.
+  // There's a warning if I use it.
   const currentUserRef = useRef<LeastUserInfo | undefined>(undefined);
 
   // At first the following two varaibles are both false because ref is undefined.
   // After loading and changing the ref, the following two variables will not be updated.
-  // When the component rerenders (sth new), the changed currentUserRef is applied and the following
+  // When the component re-renders (sth new), the changed currentUserRef is applied and the following
   // two variables are updated to the desired value
   const currentUserIsOwner = chat.chat.chat_owner.id === currentUserRef.current?.id;
   const currentUserIsAdmin =
@@ -284,7 +277,7 @@ export function MoreOfChat() {
   /**
    * @description When right-click on a member of a group chat, show the context menu
    */
-  const onRightClick = (event: React.MouseEvent, member: DetailedMemberInfo) => {
+  const onRightClick = (event: MouseEvent, member: DetailedMemberInfo) => {
     if (cm.current) {
       setSelectedMember(member);
       cm.current.show(event);

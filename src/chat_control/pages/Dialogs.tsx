@@ -1,7 +1,7 @@
 import { SingleChatProps } from './ChatHeader';
-import { Await, useLoaderData, useNavigate } from 'react-router-dom';
+import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsUserAndFriendsAndDetailedMessagesData } from '../../utils/AssertsForRouterLoader';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import {
   assertIsDetailedMessages,
   assertIsFriendsList,
@@ -14,11 +14,7 @@ import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
-import useWebSocket from 'react-use-websocket';
-import { assertIsS2CMessage } from '../../websockets/AssertsWS';
-import { receiveMessageActionWS } from '../../websockets/Actions';
-import { useChatId, useUserName } from '../../utils/UrlParamsHooks';
-import { useQueryClient } from '@tanstack/react-query';
+
 import { NoticesBar } from '../components/NoticesBar';
 
 export function Dialogs({ chat }: SingleChatProps) {
@@ -49,32 +45,8 @@ export function Dialogs({ chat }: SingleChatProps) {
     }
   };
 
-  const { lastJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
-    share: true,
-  });
-
-  const navigate = useNavigate();
-  const chatId = useChatId();
-  const userName = useUserName();
-  const queryClient = useQueryClient();
-
   const userAndFriendsAndDetailedMessagesData = useLoaderData();
   assertIsUserAndFriendsAndDetailedMessagesData(userAndFriendsAndDetailedMessagesData);
-
-  useEffect(() => {
-    if (lastJsonMessage) {
-      assertIsS2CMessage(lastJsonMessage);
-      if (
-        lastJsonMessage.ok &&
-        lastJsonMessage.action === receiveMessageActionWS &&
-        lastJsonMessage.data.message.chat_id === chatId
-      ) {
-        // Convert chatId to string is necessary. If not, the queryKey will not match and won't erase the cache.
-        queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
-        navigate(`/${userName}/chats/${chatId}`);
-      }
-    }
-  }, [chatId, lastJsonMessage, navigate, queryClient, userName]);
 
   return (
     <Suspense fallback={<div>Loading messages</div>}>

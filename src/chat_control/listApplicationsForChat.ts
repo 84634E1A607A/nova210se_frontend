@@ -2,7 +2,7 @@ import { assertIsApplicationsForChat } from '../utils/Asserts';
 import { ApplicationForChat } from '../utils/Types';
 
 /**
- * @description List applications for entering a chat.
+ * @description List applications for entering a specific chat.
  */
 export async function listApplicationsForChat({ chatId }: Params): Promise<ApplicationForChat[]> {
   try {

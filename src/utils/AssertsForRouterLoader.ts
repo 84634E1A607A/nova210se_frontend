@@ -41,13 +41,13 @@ function assertIsApplicationsForChatData(
     throw new Error('Server response does not contain applications');
 }
 
-export function assertIsInvitationsAndApplicationsForChatData(data: unknown): asserts data is {
-  invitations: Invitation[];
-  applicationsForChat: ApplicationForChat[];
-} {
-  assertIsInvitationsData(data);
-  assertIsApplicationsForChatData(data);
-}
+// export function assertIsInvitationsAndApplicationsForChatData(data: unknown): asserts data is {
+//   invitations: Invitation[];
+//   applicationsForChat: ApplicationForChat[];
+// } {
+//   assertIsInvitationsData(data);
+//   assertIsApplicationsForChatData(data);
+// }
 
 export function assertIsUserData(data: unknown): asserts data is { user: LeastUserInfo } {
   if (typeof data !== 'object') throw new Error('Server response is not an object');
@@ -62,6 +62,17 @@ export function assertIsChatsRelatedWithCurrentUserData(
   if (data === null) throw new Error('Server response is null');
   if (!('chatsRelatedWithCurrentUser' in data))
     throw new Error('Server response does not contain chatsRelatedWithCurrentUser');
+}
+export function assertIsInvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserData(
+  data: unknown,
+): asserts data is {
+  invitations: Invitation[];
+  applicationsForChat: ApplicationForChat[];
+  chatsRelatedWithCurrentUser: ChatRelatedWithCurrentUser[];
+} {
+  assertIsInvitationsData(data);
+  assertIsApplicationsForChatData(data);
+  assertIsChatsRelatedWithCurrentUserData(data);
 }
 
 export function assertIsFriendsAndChatsRelatedWithCurrentUserData(data: unknown): asserts data is {

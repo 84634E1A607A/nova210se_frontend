@@ -67,6 +67,7 @@ export type Chat = {
  * Can be set to empty string.
  * @field chat_id: for front-end's convenience, assert chat_id === chat.chat_id. The backend API return doesn't contain this field.
  * @field chatName: The name of the chat that should be displayed directly. It is created using `parseChatName`.
+ * **Not** from backend, so in camel case.
  */
 export type ChatRelatedWithCurrentUser = {
   chat: Chat;

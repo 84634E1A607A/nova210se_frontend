@@ -3,6 +3,11 @@ import { Avatar } from '../utils/ui/Avatar';
 
 type Props = { leastUserInfo: LeastUserInfo };
 
+/**
+ * @description In invitations list and applications for group chat list.
+ * @param leastUserInfo
+ * @constructor
+ */
 export function UserDisplayTabInInvitations({ leastUserInfo }: Props) {
   return (
     <div>

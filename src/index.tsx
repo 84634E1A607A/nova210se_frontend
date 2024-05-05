@@ -15,7 +15,7 @@ import {
   FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
-  InvitationsAndApplicationsForChatLoader,
+  InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader,
   UserAndFriendsAndDetailedMessagesLoader,
   UserAndFriendsLoader,
   UserLoader,
@@ -46,22 +46,26 @@ const router = createBrowserRouter([
       {
         path: ':user_name',
         element: <MainPageFramework />,
+        id: 'main_page',
         loader: async () => UserLoader(queryClient),
         children: [
           {
             path: 'chats',
             element: <ChatMainPageFramework />,
+            id: 'chats',
             loader: async () => FriendsAndChatsRelatedWithCurrentUserLoader(queryClient),
             children: [
               {
                 path: ':chat_id',
                 element: <SingleChatMain />,
+                id: 'chat_main',
                 loader: async ({ params }) =>
                   UserAndFriendsAndDetailedMessagesLoader(queryClient, params.chat_id!),
               },
               {
                 path: ':chat_id/more',
                 element: <MoreOfChat />,
+                id: 'chat_detail',
                 loader: async () => UserAndFriendsLoader(queryClient),
               },
             ],
@@ -69,29 +73,36 @@ const router = createBrowserRouter([
           {
             path: 'friends',
             element: <FriendsPage />,
+            id: 'friends',
             loader: async () => FriendsGroupsLoader(queryClient),
           },
           {
             path: 'search_friend',
             element: <SearchNewFriend />,
+            id: 'search',
             loader: async () => FriendsLoader(queryClient),
           },
           {
             path: 'invite',
             element: <InviteFriendPage />,
+            id: 'invite',
           },
           {
             path: 'account_management',
             element: <AccountManagement />,
+            id: 'account',
           },
           {
             path: 'invitation_list',
             element: <OngoingInvitations />,
-            loader: async () => InvitationsAndApplicationsForChatLoader(queryClient),
+            id: 'invitations',
+            loader: async () =>
+              InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader(queryClient),
           },
           {
             path: 'create_group_chat',
             element: <CreateGroupChat />,
+            id: 'create_chat',
             loader: async () => FriendsGroupsLoader(queryClient),
             // If dividing friends into groups when display in multiselect is required, the loader should load 'groups' in addition.
           },

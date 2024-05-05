@@ -1,7 +1,7 @@
 import { MessageContent } from './MessageContent';
 import { Avatar } from '../../utils/ui/Avatar';
 import { DetailedMessage } from '../../utils/Types';
-import { systemUserName } from '../../utils/ConstValues';
+import { systemUserName } from '../../utils/consts/SystemValues';
 import { RepliedMessageTab } from './RepliedMessageTab';
 import { useMessageRefsContext } from '../states/MessageRefsProvider';
 import { useEffect, useRef } from 'react';
