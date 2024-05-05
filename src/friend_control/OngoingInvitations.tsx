@@ -43,7 +43,7 @@ export function OngoingInvitations() {
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== acceptVar);
       });
-      queryClient.removeQueries({ queryKey: ['chats_related_with_current_us'] });
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       navigate(`/${userName}/invitation_list`);
     },
   });
