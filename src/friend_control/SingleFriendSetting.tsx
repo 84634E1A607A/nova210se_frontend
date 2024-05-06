@@ -152,13 +152,16 @@ export function SingleFriendSetting({ friendUserId }: Props) {
   });
 
   return (
-    <div className="m-4">
-      <form onSubmit={handleSubmit((form) => mutate(form))}>
-        <div>
+    <div className="h-50 box-border flex w-full flex-col items-center justify-center px-0 py-4 shadow-lg">
+      <form
+        onSubmit={handleSubmit((form) => mutate(form))}
+        className="mb-3 flex flex-grow flex-row items-center justify-center"
+      >
+        <div className="mx-2">
           <label
             htmlFor="target_group_name"
             title="Type in 'default' to switch to default group'"
-            className="mr-4"
+            className="block text-sm font-medium text-slate-700"
           >
             Change or create group
           </label>
@@ -169,12 +172,17 @@ export function SingleFriendSetting({ friendUserId }: Props) {
               pattern: /^[\w@+\-.]+$/,
               maxLength: 19,
             })}
-            className={getEditorStyle(errors.target_group_name)}
+            className={`${getEditorStyle(errors.target_group_name)} mt-1 block w-60 rounded-md border 
+            border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
+            disabled:shadow-none
+           `}
           />
           <ValidationError fieldError={errors.target_group_name} />
         </div>
-        <div>
-          <label htmlFor="nickname" className="mr-4">
+        <div className="mx-2">
+          <label htmlFor="nickname" className="block text-sm font-medium text-slate-700">
             Nickname
           </label>
           <input
@@ -184,11 +192,16 @@ export function SingleFriendSetting({ friendUserId }: Props) {
               pattern: /^[\w@+\-.]+$/,
               maxLength: 99,
             })}
-            className={getEditorStyle(errors.nickname)}
+            className={`${getEditorStyle(errors.nickname)} mt-1 block w-60 rounded-md border 
+            border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
+            disabled:shadow-none
+           `}
           />
           <ValidationError fieldError={errors.nickname} />
         </div>
-        <div>
+        <div className="mx-2">
           <button type="submit" disabled={isSubmitting}>
             submit
           </button>

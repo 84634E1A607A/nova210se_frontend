@@ -13,8 +13,8 @@ export function FriendsPage() {
   assertIsFriendsGroupsData(data);
 
   return (
-    <div className="grow">
-      <p>Friends</p>
+    <div className="flex flex-grow flex-col">
+      <div className="text-900 h-fit bg-teal-100 py-3 text-3xl font-medium">Friends Page</div>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
           {(friends) => {

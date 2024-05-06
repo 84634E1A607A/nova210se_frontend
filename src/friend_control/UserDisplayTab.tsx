@@ -31,7 +31,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
   return (
     <div>
-      <div className="flex h-fit flex-row items-center justify-evenly rounded-lg bg-gray-300 p-2">
+      <div className="mb-1 flex h-fit flex-grow flex-row items-center justify-evenly rounded-lg bg-gray-300 pb-2 pt-2">
         <div className="flex h-11 p-1">
           <Avatar
             url={leastUserInfo.avatar_url}
@@ -47,10 +47,10 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="ms-3 flex flex-col">
           <p>{userNameToDisplay}</p>
 
-          {isFriend ? (
+          {/* {isFriend ? (
             <p>
               {groupName === undefined || groupName === null || groupName === ''
                 ? 'default group'
@@ -67,7 +67,7 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
             {leastUserInfo.email === undefined || leastUserInfo.email === ''
               ? null
               : leastUserInfo.email}
-          </p>
+          </p> */}
         </div>
 
         {isFriend ? (
@@ -75,12 +75,12 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
             {...getToggleProps()}
             role="img"
             aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
-            className="inline-block w-10 cursor-pointer items-center"
+            className="flex w-10 cursor-pointer items-end justify-end"
           >
             {isExpanded ? (
-              <Foldup className="h-6 w-6 fill-teal-900" />
+              <Foldup className="ml-auto h-6 w-6 fill-teal-900" />
             ) : (
-              <Folddown className="h-6 w-6 fill-teal-900" />
+              <Folddown className="ml-auto h-6 w-6 fill-teal-900" />
             )}
           </span>
         ) : (

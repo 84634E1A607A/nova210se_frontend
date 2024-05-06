@@ -90,8 +90,11 @@ export function GroupSetting({ group, defaultGroup }: Props) {
   });
 
   return (
-    <>
-      <form onSubmit={handleSubmit((form) => dispatchChangeGroupName(form))}>
+    <div className="h-41 box-border w-full items-center justify-center px-0 py-4 shadow-lg">
+      <form
+        onSubmit={handleSubmit((form) => dispatchChangeGroupName(form))}
+        className="mb-1 flex flex-grow flex-row items-center justify-center"
+      >
         <div>
           <label htmlFor="new_group_name">New group name</label>
           <input
@@ -102,18 +105,31 @@ export function GroupSetting({ group, defaultGroup }: Props) {
               pattern: /^[\w@+\-.\\/]+$/,
               maxLength: 19,
             })}
-            className={getEditorStyle(errors.new_group_name)}
+            className={`${getEditorStyle(errors.new_group_name)} mt-1 block w-60 rounded-md border 
+            border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
+            disabled:shadow-none
+           `}
           />
           <ValidationError fieldError={errors.new_group_name} />
         </div>
         <div>
-          <button type="submit">edit</button>
+          <button type="submit" className="ms-3">
+            edit
+          </button>
         </div>
       </form>
-      <button type="button" onClick={() => dispatchDelete(groupId)}>
+      <button
+        type="button"
+        className="focus:shadow-outline mb-4 rounded bg-red-500 px-4 py-2 font-bold 
+    text-white hover:bg-red-600 focus:border-red-500 focus:outline-none focus:ring-1
+      focus:ring-red-500"
+        onClick={() => dispatchDelete(groupId)}
+      >
         Delete Group
       </button>
-    </>
+    </div>
   );
 }
 
