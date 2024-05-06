@@ -71,20 +71,23 @@ export function UpdateDataCompanion() {
         } else if (lastJsonMessage.action === receiveMemberAddedS2CActionWS) {
           queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
           if (thisPageUrl.match(chatsRouterUrl) || thisPageUrl.match(chat_mainRouterUrl)) {
+            console.log('match others');
+            console.log(thisPageUrl);
             navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           } else if (thisPageUrl.match(chat_detailRouterUrl)) {
+            console.log('in detail page');
             const chat = state.chat;
             assertIsChatRelatedWithCurrentUser(chat);
-            const updatedChat = updateChatState({
+            updateChatState({
               chatId: chat.chat_id,
               toast,
               navigate,
               userName,
+            }).then((updatedChat) => {
+              if (updatedChat) {
+                navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
+              } // else any problem will be dealt with within `updateChatState`
             });
-            if (updatedChat) {
-              navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
-            }
-            // else any problem will be dealt with within `updateChatState`
           }
         } else {
           console.error('Unknown action:', lastJsonMessage.action);

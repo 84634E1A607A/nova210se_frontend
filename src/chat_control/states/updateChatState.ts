@@ -17,7 +17,10 @@ export const updateChatState = async ({ chatId, toast, navigate, userName }: Par
       life: 3000,
     });
     return undefined;
-  } else return newChat;
+  } else {
+    console.log('success in updating chat info');
+    return newChat;
+  }
 };
 
 interface Params {
