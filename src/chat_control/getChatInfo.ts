@@ -9,13 +9,17 @@ export async function getChatInfo({ chatId }: Params) {
       },
       credentials: 'include',
     });
-    if (!response.ok) throw new Error('Failed to get chat info!');
+    if (!response.ok) {
+      // @ts-ignore
+      throw new Error('Failed to get chat info!');
+    }
     const data = await response.json();
     const chatInfo = data.data;
     assertIsChatRelatedWithCurrentUser(chatInfo);
     return chatInfo;
   } catch (e) {
     console.error(e);
+    return undefined;
   }
 }
 

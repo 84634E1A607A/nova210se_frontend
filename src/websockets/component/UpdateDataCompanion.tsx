@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { assertIsS2CMessage } from '../AssertsWS';
 import {
   receiveApplicationForChatS2CActionWS,
+  receiveFriendDeletedS2CActionWS,
   receiveMemberAddedS2CActionWS,
   receiveMessageS2CActionWS,
 } from '../Actions';
@@ -20,6 +21,7 @@ import { assertIsChatRelatedWithCurrentUser } from '../../utils/Asserts';
 import { Toast } from 'primereact/toast';
 import { updateChatState } from '../../chat_control/states/updateChatState';
 import { useUserName } from '../../utils/UrlParamsHooks';
+import { getChatInfo } from '../../chat_control/getChatInfo';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -71,11 +73,8 @@ export function UpdateDataCompanion() {
         } else if (lastJsonMessage.action === receiveMemberAddedS2CActionWS) {
           queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
           if (thisPageUrl.match(chatsRouterUrl) || thisPageUrl.match(chat_mainRouterUrl)) {
-            console.log('match others');
-            console.log(thisPageUrl);
             navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           } else if (thisPageUrl.match(chat_detailRouterUrl)) {
-            console.log('in detail page');
             const chat = state.chat;
             assertIsChatRelatedWithCurrentUser(chat);
             updateChatState({
@@ -88,6 +87,41 @@ export function UpdateDataCompanion() {
                 navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
               } // else any problem will be dealt with within `updateChatState`
             });
+          }
+        } else if (lastJsonMessage.action === receiveFriendDeletedS2CActionWS) {
+          queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+          queryClient.removeQueries({ queryKey: ['friends'] });
+
+          let shouldJumpToChats = true;
+          const chat_detailUrlMatched = thisPageUrl.match(chat_detailRouterUrl);
+          const chat_mainUrlMatched = thisPageUrl.match(chat_mainRouterUrl);
+          if (!chat_detailUrlMatched && !chat_mainUrlMatched) {
+            shouldJumpToChats = false;
+          } else {
+            let chatId: number;
+            if (chat_detailUrlMatched) {
+              chatId = Number(chat_detailUrlMatched[2]);
+            } else {
+              chatId = Number(chat_mainUrlMatched![2]);
+            }
+            getChatInfo({ chatId }).then((currentChat) => {
+              if (currentChat === undefined) {
+                shouldJumpToChats = true;
+                queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+              }
+            });
+          }
+
+          // !! if useEffect doesn't wait the above async function, then move the position of next block
+          if (shouldJumpToChats) {
+            toast.current?.show({
+              severity: 'error',
+              summary: 'Friend deleted',
+              detail: 'The friend has been deleted. The chat does not exist!',
+            });
+            navigate(`/${userName}/chats`);
+          } else {
+            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           }
         } else {
           console.error('Unknown action:', lastJsonMessage.action);
