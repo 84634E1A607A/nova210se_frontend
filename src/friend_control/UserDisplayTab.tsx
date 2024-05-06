@@ -14,13 +14,11 @@ import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   let isFriend = false;
   let userNameToDisplay = leastUserInfo.user_name;
-  let groupName: undefined | string;
 
   const friend = friendsList.find((friend) => friend.friend.id === leastUserInfo.id);
   if (friend !== undefined) {
     isFriend = true;
     if (friend.nickname !== '') userNameToDisplay = friend.nickname;
-    groupName = friend.group.group_name;
   }
 
   const userName = useUserName();
@@ -49,25 +47,6 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
         <div className="ms-3 flex flex-col">
           <p>{userNameToDisplay}</p>
-
-          {/* {isFriend ? (
-            <p>
-              {groupName === undefined || groupName === null || groupName === ''
-                ? 'default group'
-                : groupName}
-            </p>
-          ) : null}
-
-          <p>
-            {leastUserInfo.phone === undefined || leastUserInfo.phone === ''
-              ? null
-              : leastUserInfo.phone}
-          </p>
-          <p>
-            {leastUserInfo.email === undefined || leastUserInfo.email === ''
-              ? null
-              : leastUserInfo.email}
-          </p> */}
         </div>
 
         {isFriend ? (

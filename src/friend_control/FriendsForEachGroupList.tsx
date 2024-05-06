@@ -2,8 +2,6 @@ import { useCollapse } from 'react-collapsed';
 import { Friend, Group } from '../utils/Types';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTab } from './UserDisplayTab';
-import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';
-import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 import { GroupSetting } from './GroupSetting';
 import { useQuery } from '@tanstack/react-query';
 import { DataView } from 'primereact/dataview';
