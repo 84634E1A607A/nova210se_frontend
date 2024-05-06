@@ -77,7 +77,8 @@ export function MoreOfChat() {
     failedMessage: string,
   ) => {
     if (isSuccessful) {
-      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] }); // prevent too-complicated cache setting
+      // prevent too-complicated cache setting
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       const updatedChat = await updateChatState({
         chatId: chat.chat_id,
         toast,
