@@ -8,9 +8,7 @@ import { GroupSetting } from './GroupSetting';
 import { useQuery } from '@tanstack/react-query';
 import { getDefaultGroup } from './getDefaultGroup';
 
-type Porps = { friends: Friend[]; group: Group };
-
-export function FriendsForEachGroupList({ friends, group }: Porps) {
+export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: Props) {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
   const { isLoading, data: defaultGroup } = useQuery({
     queryKey: ['default_group'],
@@ -46,10 +44,10 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
 
       <div className="p-1">
         <ul>
-          {friends.map((friend) => {
+          {friendsInGroup.map((friend) => {
             return (
               <li key={friend.friend.id}>
-                <UserDisplayTab leastUserInfo={friend.friend} />
+                <UserDisplayTab leastUserInfo={friend.friend} friendsList={allFriends} />
               </li>
             );
           })}
@@ -57,4 +55,10 @@ export function FriendsForEachGroupList({ friends, group }: Porps) {
       </div>
     </div>
   );
+}
+
+interface Props {
+  friendsInGroup: Friend[];
+  group: Group;
+  allFriends: Friend[];
 }

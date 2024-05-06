@@ -1,8 +1,11 @@
 import { Friend, Group } from '../utils/Types';
 import { FriendsForEachGroupList } from './FriendsForEachGroupList';
 
-type Props = { friends: Friend[]; groups: Group[] };
-
+/**
+ * @param friends All friends of current user
+ * @param groups All groups set by current user
+ * @constructor
+ */
 export function FriendsList({ friends, groups }: Props) {
   return (
     <>
@@ -11,10 +14,11 @@ export function FriendsList({ friends, groups }: Props) {
           return (
             <li key={group.group_id}>
               <FriendsForEachGroupList
-                friends={friends.filter((friend) => {
+                friendsInGroup={friends.filter((friend) => {
                   return friend.group.group_id === group.group_id;
                 })}
                 group={group}
+                allFriends={friends}
               />
             </li>
           );
@@ -22,4 +26,9 @@ export function FriendsList({ friends, groups }: Props) {
       </ul>
     </>
   );
+}
+
+interface Props {
+  friends: Friend[];
+  groups: Group[];
 }
