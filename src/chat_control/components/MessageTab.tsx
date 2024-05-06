@@ -7,10 +7,11 @@ import { useMessageRefsContext } from '../states/MessageRefsProvider';
 import { useEffect, useRef } from 'react';
 import { parseSystemMessage } from '../utils/parseSystemMessage';
 import { basicTextTailwind } from '../../utils/ui/TailwindConsts';
+import { MessageAssociateInfo } from './MessageAssociateInfo';
 
 /**
  * @description The whole message tab, including the avatar of the sender, the message content,
- * the replied message, if any, etc.
+ * the replied message, if any, the count of messages that reply to it, if any, etc.
  * @param detailedMessage The detailed message.
  * @param isSelf Whether the sender is the current user.
  * @param name The name of the sender to directly display.
@@ -75,6 +76,8 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
           <MessageContent message={detailedMessage.message} isSelf={isSelf} />
         </div>
       </div>
+
+      <MessageAssociateInfo detailedMessage={detailedMessage} />
 
       <RepliedMessageTab
         message={detailedMessage.reply_to?.message}

@@ -9,7 +9,8 @@ run `npm i`
 create a `.env.development.local` file in root project, and add the following content:
 
 ```
-REACT_APP_API_URL = http://localhost:8000
+REACT_APP_API_URL=http://localhost:8000
+REACT_APP_WEBSOCKET_URL=ws://localhost:8000/ws/
 ```
 
 # Getting Started with Create React App

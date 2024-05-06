@@ -35,7 +35,7 @@ export function ChatMainPageFramework() {
             {(friends) => {
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               assertIsFriendsList(friends);
-
+              console.log('chats', chatsRelatedWithCurrentUser[0]?.chat.chat_members.length);
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
                 let chatName = '';
                 try {

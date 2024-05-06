@@ -11,6 +11,8 @@ function App() {
     onOpen: () => {
       console.log('WebSocket connection established.');
     },
+    shouldReconnect: (_closeEvent) => true,
+    reconnectInterval: 1000,
     share: true,
   });
   console.log('lastJsonMessage', lastJsonMessage);
