@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useLoaderData, Outlet, Await, useOutletContext, useNavigate } from 'react-router-dom';
 import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
 import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
@@ -15,6 +15,18 @@ export function ChatMainPageFramework() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  const [shouldReload, setShouldReload] = useState(false);
+  useEffect(() => {
+    if (shouldReload) {
+      queryClient.removeQueries({ queryKey: ['friends'] });
+      navigate(`/${userName}/chats`); // must navigate, only setState won't be enough to trigger re-render
+      setShouldReload(false);
+    }
+    return () => {
+      setShouldReload(false);
+    };
+  }, [navigate, queryClient, shouldReload, userName, setShouldReload]);
+
   return (
     <Suspense fallback={<p>Loading chats...</p>}>
       <Await resolve={friendsAndChatsRelatedWithCurrentUserData.chatsRelatedWithCurrentUser}>
@@ -25,9 +37,16 @@ export function ChatMainPageFramework() {
               assertIsFriendsList(friends);
 
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
-                const chatName = parseChatName(chat, userName, friends);
-                queryClient.removeQueries({ queryKey: ['friends'] });
-                navigate(`/${userName}/chats`);
+                let chatName = '';
+                try {
+                  // `parseChatName` may throw an error if a new friend is added and the friends list
+                  // is not updated to include the friend of the new private chat (when click chats page,
+                  // chats may load for the first time while friends is already loaded in other pages, so
+                  // friends list lag behind chats list
+                  chatName = parseChatName(chat, userName, friends);
+                } catch (e) {
+                  setShouldReload(true);
+                }
                 return {
                   ...chat,
                   chatName,

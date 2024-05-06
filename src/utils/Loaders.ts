@@ -60,10 +60,7 @@ export async function UserLoader(queryClient: QueryClient) {
 
 export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
   return defer({
-    friends: queryClient.fetchQuery({
-      queryKey: ['friends'],
-      queryFn: getFriendsList,
-    }),
+    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
     chatsRelatedWithCurrentUser: fetchDataForLoaders(
       queryClient,
       ['chats_related_with_current_user'],

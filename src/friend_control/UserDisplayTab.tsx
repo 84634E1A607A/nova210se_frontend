@@ -1,32 +1,21 @@
 import { Link } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/Types';
 import { useUserName } from '../utils/UrlParamsHooks';
-import { useQueryClient } from '@tanstack/react-query';
-import { assertIsFriendsList } from '../utils/Asserts';
 import { Avatar } from '../utils/ui/Avatar';
 import { SingleFriendSetting } from './SingleFriendSetting';
 import { useCollapse } from 'react-collapsed';
 import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';
 import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 
-type Props = { leastUserInfo: LeastUserInfo; friendsList?: Friend[] };
-
 /**
- * show all kinds of user info tab in a list of users (such as friends or searched strangers list)
+ * show all kinds of user info tab in a list of users (such as friends or searched users (including strangers) list)
  * @param friendsList: Friend[] (all friends of current user)
- * @returns
  */
 export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
   let isFriend = false;
   let userNameToDisplay = leastUserInfo.user_name;
   let groupName: undefined | string;
 
-  const queryCLient = useQueryClient();
-
-  if (friendsList === undefined) {
-    friendsList = queryCLient.getQueryData(['friends']);
-    assertIsFriendsList(friendsList);
-  }
   const friend = friendsList.find((friend) => friend.friend.id === leastUserInfo.id);
   if (friend !== undefined) {
     isFriend = true;
@@ -107,4 +96,9 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
       ) : null}
     </div>
   );
+}
+
+interface Props {
+  leastUserInfo: LeastUserInfo;
+  friendsList: Friend[];
 }
