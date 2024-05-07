@@ -65,7 +65,7 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
 
       <div className="w-full p-1">
         <div className="mx-6 mt-2">
-          <DataView value={friendsInGroup} listTemplate={listTemplate} paginator rows={5} />
+          <DataView value={friendsInGroup} listTemplate={listTemplate} />
         </div>
       </div>
     </div>
