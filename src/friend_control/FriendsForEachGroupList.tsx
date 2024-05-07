@@ -48,11 +48,6 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
           className={`${group.group_name === '' ? 'hidden' : ''} flex cursor-pointer items-end justify-center`}
         >
           {isDefaultGroup ? null : <SettingIcon className="h-3 w-3 fill-teal-900" />}
-          {/* {isDefaultGroup ? null : isExpanded ? (
-            <Foldup className="ml-auto h-6 w-6 fill-teal-900" />
-          ) : (
-            <Folddown className="ml-auto h-6 w-6 fill-teal-900" />
-          )} */}
         </span>
       </div>
       <div {...getCollapseProps()} className={`grow ${isDefaultGroup ? 'hidden' : ''}`}>
