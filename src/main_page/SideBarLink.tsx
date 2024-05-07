@@ -21,7 +21,7 @@ export function SidebarLink({ to, title, icon }: SidebarLinkProps) {
       <Link
         to={to}
         title={title}
-        className={`flex h-20 w-32 items-center justify-center px-6 ${isActive ? 'bg-teal-800 text-white' : 'hover:text-white'}`}
+        className={`px-auto flex h-20 w-20 items-center justify-center ${isActive ? 'bg-teal-800 text-white' : 'hover:text-white'}`}
         style={{
           transition: 'background-color 0.3s, color 0.3s',
         }}
