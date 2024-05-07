@@ -1,8 +1,8 @@
 import { ChatRelatedWithCurrentUser, DetailedMessage } from '../../utils/Types';
-import { unixTimestampToDateString } from '../../utils/time/unixTimestampToDateString';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef } from 'react';
 import { Button } from 'primereact/button';
+import { unixTimestampToExactTimeString } from '../../utils/time/unixTimestampToExactTimeString';
 
 /**
  * @param detailedMessage The message of concern.
@@ -21,7 +21,7 @@ export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
         </div>
 
         <div className="mt-1" title={'send time'}>
-          {unixTimestampToDateString(detailedMessage.send_time)}
+          {unixTimestampToExactTimeString(detailedMessage.send_time)}
         </div>
       </div>
 
