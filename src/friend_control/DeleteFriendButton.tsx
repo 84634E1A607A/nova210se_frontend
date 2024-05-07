@@ -24,7 +24,12 @@ export function DeleteFriendButton({ friendUserId }: Props) {
   });
 
   return (
-    <button type="button" onClick={() => mutate()} className="text-red-500">
+    <button
+      type="button"
+      onClick={() => mutate()}
+      className="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white 
+    hover:bg-red-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+    >
       Delete Friend
     </button>
   );
