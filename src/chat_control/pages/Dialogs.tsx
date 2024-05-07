@@ -79,7 +79,7 @@ export function Dialogs({ chat }: SingleChatProps) {
                       };
                       return (
                         <div className="flex flex-col overflow-auto">
-                          <NoticesBar chatName={chat.chatName} />
+                          <NoticesBar chat={chat} />
                           <ul className="m-2 flex flex-col">
                             {detailedMessages.map((detailedMessage) => {
                               return (

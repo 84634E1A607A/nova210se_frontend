@@ -28,13 +28,9 @@ export function SingleChatMain() {
     share: true,
   });
 
-  // send to server that this user has read the messages in this chat
+  // send to server that this user has read the messages in this chat when click and enter into this chat page
   useEffect(() => {
-    const interval = setInterval(() => {
-      sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
-    }, 5000);
-
-    return () => clearInterval(interval);
+    sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
   }, [chatId, sendJsonMessage]);
 
   const userName = useUserName();

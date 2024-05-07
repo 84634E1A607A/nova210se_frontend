@@ -9,6 +9,7 @@ import {
   receiveMemberRemovedS2CActionWS,
   receiveMessageS2CActionWS,
   receiveReadMessagesS2CActionWS,
+  sendReadMessagesC2SActionWS,
 } from '../Actions';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -34,7 +35,7 @@ export function UpdateDataCompanion() {
   const userName = useUserName();
   const queryClient = useQueryClient();
 
-  const { lastJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
+  const { lastJsonMessage, sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     onOpen: () => {
       console.log('WebSocket connection established.');
     },
@@ -120,6 +121,12 @@ export function UpdateDataCompanion() {
             if (matched && matched[2] === String(lastJsonMessage.data.message.chat_id)) {
               // In exactly the page that needs changing:
               navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
+
+              // send 'I've read the messages' to server
+              sendJsonMessage({
+                action: sendReadMessagesC2SActionWS,
+                data: { chat_id: lastJsonMessage.data.message.chat_id },
+              });
             }
             break;
 
@@ -193,7 +200,7 @@ export function UpdateDataCompanion() {
         }
       }
     }
-  }, [queryClient, lastJsonMessage, thisPageUrl, navigate, state, userName]);
+  }, [queryClient, lastJsonMessage, thisPageUrl, navigate, state, userName, sendJsonMessage]);
 
   return (
     <>
