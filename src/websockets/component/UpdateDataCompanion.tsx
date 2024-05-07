@@ -19,7 +19,6 @@ import {
   invitationsRouterUrl,
   loginRouterUrl,
 } from '../../utils/consts/RouterPaths';
-import { Message } from '../../utils/Types';
 import { assertIsChatRelatedWithCurrentUser } from '../../utils/Asserts';
 import { Toast } from 'primereact/toast';
 import { updateChatState } from '../../chat_control/states/updateChatState';
@@ -99,80 +98,90 @@ export function UpdateDataCompanion() {
     if (lastJsonMessage) {
       assertIsS2CMessage(lastJsonMessage);
       if (lastJsonMessage.ok) {
-        if (lastJsonMessage.action === receiveApplicationForChatS2CActionWS) {
-          queryClient.removeQueries({ queryKey: ['applications_for_chat'] });
-          if (thisPageUrl.match(invitationsRouterUrl)) {
-            navigate(thisPageUrl, { replace: true, state });
-          }
-        } else if (lastJsonMessage.action === receiveMessageS2CActionWS) {
-          const message = lastJsonMessage.data.message as Message;
-
-          /** Convert chatId to string is necessary. If not, the queryKey will not match correctly
-           *  and the cache won't be erased correctly. */
-          const chatId = String(message.chat_id);
-
-          const matched = thisPageUrl.match(chat_mainRouterUrl);
-          if (matched && matched[2] === chatId) {
-            // In exactly the page that needs changing:
-            queryClient.removeQueries({ queryKey: ['detailed_messages', chatId] });
-            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
-          } else {
-            queryClient.removeQueries({ queryKey: ['detailed_messages', chatId] });
-          }
-        } else if (lastJsonMessage.action === receiveMemberAddedS2CActionWS) {
-          queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-          if (thisPageUrl.match(chatsRouterUrl) || thisPageUrl.match(chat_mainRouterUrl)) {
-            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
-          } else if (thisPageUrl.match(chat_detailRouterUrl)) {
-            const chat = state.chat;
-            assertIsChatRelatedWithCurrentUser(chat);
-            updateChatState({
-              chatId: chat.chat_id,
-              toast,
-              navigate,
-              userName,
-            }).then((updatedChat) => {
-              if (updatedChat) {
-                navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
-              } // else any problem will be dealt with within `updateChatState`
-            });
-          }
-        } else if (lastJsonMessage.action === receiveFriendDeletedS2CActionWS) {
-          queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-          queryClient.removeQueries({ queryKey: ['friends'] });
-          dealChatUnauthorized(
-            true,
-            'Friend deleted',
-            'The friend has been deleted. No chat any more',
-          );
-        } else if (lastJsonMessage.action === receiveChatDeletedS2CActionWS) {
-          queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-          const chatId = lastJsonMessage.data.chat.chat_id as number;
-          queryClient.removeQueries({
-            queryKey: ['detailed_messages', String(chatId)],
-          });
-          dealChatUnauthorized(false, 'Chat deleted', 'The chat has been deleted');
-        } else if (lastJsonMessage.action === receiveMemberRemovedS2CActionWS) {
-          const deletedUserId = lastJsonMessage.data.user_id as number;
-          getUserInfo().then((currentUser) => {
-            if (currentUser?.id === deletedUserId) {
-              queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-              queryClient.removeQueries({
-                queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
-              });
-              dealChatUnauthorized(
-                false,
-                'You have been removed',
-                'You have been removed from the chat',
-              );
+        switch (lastJsonMessage.action) {
+          case receiveApplicationForChatS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['applications_for_chat'] });
+            if (thisPageUrl.match(invitationsRouterUrl)) {
+              navigate(thisPageUrl, { replace: true, state });
             }
-          });
-        } else if (lastJsonMessage.action === receiveReadMessagesS2CActionWS) {
-          const chatId = lastJsonMessage.data.chat_id as number;
-          queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
-          // TODO
-        } else {
-          console.error('Unknown action:', lastJsonMessage.action);
+            break;
+
+          case receiveMessageS2CActionWS:
+            const matched = thisPageUrl.match(chat_mainRouterUrl);
+            queryClient.removeQueries({
+              queryKey: ['detailed_messages', String(lastJsonMessage.data.message.chat_id)],
+            });
+            if (matched && matched[2] === String(lastJsonMessage.data.message.chat_id)) {
+              // In exactly the page that needs changing:
+              navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
+            }
+            break;
+
+          case receiveMemberAddedS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+            if (thisPageUrl.match(chatsRouterUrl) || thisPageUrl.match(chat_mainRouterUrl)) {
+              navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
+            } else if (thisPageUrl.match(chat_detailRouterUrl)) {
+              const chat = state.chat;
+              assertIsChatRelatedWithCurrentUser(chat);
+              updateChatState({
+                chatId: chat.chat_id,
+                toast,
+                navigate,
+                userName,
+              }).then((updatedChat) => {
+                if (updatedChat) {
+                  navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
+                } // else any problem will be dealt with within `updateChatState`
+              });
+            }
+            break;
+
+          case receiveFriendDeletedS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+            queryClient.removeQueries({ queryKey: ['friends'] });
+            dealChatUnauthorized(
+              true,
+              'Friend deleted',
+              'The friend has been deleted. No chat any more',
+            );
+            break;
+
+          case receiveChatDeletedS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+            queryClient.removeQueries({
+              queryKey: ['detailed_messages', String(lastJsonMessage.data.chat.chat_id)],
+            });
+            dealChatUnauthorized(false, 'Chat deleted', 'The chat has been deleted');
+            break;
+
+          case receiveMemberRemovedS2CActionWS:
+            const deletedUserId = lastJsonMessage.data.user_id as number;
+            getUserInfo().then((currentUser) => {
+              if (currentUser?.id === deletedUserId) {
+                queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+                queryClient.removeQueries({
+                  queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
+                });
+                dealChatUnauthorized(
+                  false,
+                  'You have been removed',
+                  'You have been removed from the chat',
+                );
+              }
+            });
+            break;
+
+          case receiveReadMessagesS2CActionWS:
+            queryClient.removeQueries({
+              queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
+            });
+            // TODO
+            break;
+
+          default:
+            console.error('Unknown action to do:', lastJsonMessage.action);
+            break;
         }
       }
     }
