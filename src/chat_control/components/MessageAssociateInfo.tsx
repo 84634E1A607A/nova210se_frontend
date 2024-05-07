@@ -36,15 +36,18 @@ export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
         {isPrivateChat ? (
           <strong>{detailedMessage.read_users.length === 2 ? 'Read' : 'Unread'}</strong>
         ) : (
-          <ul>
-            {detailedMessage.read_users.map((user) => {
-              return (
-                <li key={user.id} className="m-3">
-                  {user.user_name}
-                </li>
-              );
-            })}
-          </ul>
+          <div>
+            <p className="text-xs font-bold">Read by</p>
+            <ul>
+              {detailedMessage.read_users.map((user) => {
+                return (
+                  <li key={user.id} className="m-3">
+                    {user.user_name}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         )}
       </OverlayPanel>
     </div>
