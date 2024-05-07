@@ -6,7 +6,7 @@ import {
   receiveChatDeletedS2CActionWS,
   receiveFriendDeletedS2CActionWS,
   receiveMemberAddedS2CActionWS,
-  receiveMemberDeletedS2CActionWS,
+  receiveMemberRemovedS2CActionWS,
   receiveMessageS2CActionWS,
   receiveReadMessagesS2CActionWS,
 } from '../Actions';
@@ -53,14 +53,20 @@ export function UpdateDataCompanion() {
      * and only reload the data.
      * Unauthorized chat means the chat has been deleted or the user has been removed from the chat or a friend has been
      * deleted.
+     * @param shouldDeleteCache Whether should `removeQueries({ queryKey: ['detailed_messages', String(chatId)] })` in
+     * this function. If not, generally the caller should do it. And this should be true only if a friend is deleted (or
+     * that user deletes account).
+     * @param messageSummary The summary message to show in the toast
+     * @param messageDetail The detail message to show in the toast
      */
-    function dealChatUnauthorized(messageSummary: string, messageDetail: string) {
-      let shouldJumpToChats = true;
+    function dealChatUnauthorized(
+      shouldDeleteCache: boolean,
+      messageSummary: string,
+      messageDetail: string,
+    ) {
       const chat_detailUrlMatched = thisPageUrl.match(chat_detailRouterUrl);
       const chat_mainUrlMatched = thisPageUrl.match(chat_mainRouterUrl);
-      if (!chat_detailUrlMatched && !chat_mainUrlMatched) {
-        shouldJumpToChats = false;
-      } else {
+      if (chat_detailUrlMatched || chat_mainUrlMatched) {
         let chatId: number;
         if (chat_detailUrlMatched) {
           chatId = Number(chat_detailUrlMatched[2]);
@@ -69,22 +75,21 @@ export function UpdateDataCompanion() {
         }
         getChatInfo({ chatId }).then((currentChat) => {
           if (currentChat === undefined) {
-            shouldJumpToChats = true;
-            queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+            if (shouldDeleteCache) {
+              queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+            }
+            toast.current?.show({
+              severity: 'error',
+              summary: messageSummary,
+              detail: messageDetail,
+            });
+            navigate(`/${userName}/chats`);
+          } else if (shouldDeleteCache) {
+            // delete all cache because we can't get chatId of the deleted private chat
+            queryClient.removeQueries({ queryKey: ['detailed_messages'] });
+            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           }
         });
-      }
-
-      // It turns out useEffect waits the above async then function, so `shouldJumpToChats` will be correctly set
-      if (shouldJumpToChats) {
-        toast.current?.show({
-          severity: 'error',
-          summary: messageSummary,
-          detail: messageDetail,
-        });
-        navigate(`/${userName}/chats`);
-      } else {
-        navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
       }
     }
 
@@ -135,15 +140,19 @@ export function UpdateDataCompanion() {
         } else if (lastJsonMessage.action === receiveFriendDeletedS2CActionWS) {
           queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
           queryClient.removeQueries({ queryKey: ['friends'] });
-          dealChatUnauthorized('Friend deleted', 'The friend has been deleted. No chat any more');
+          dealChatUnauthorized(
+            true,
+            'Friend deleted',
+            'The friend has been deleted. No chat any more',
+          );
         } else if (lastJsonMessage.action === receiveChatDeletedS2CActionWS) {
           queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
           const chatId = lastJsonMessage.data.chat.chat_id as number;
           queryClient.removeQueries({
             queryKey: ['detailed_messages', String(chatId)],
           });
-          dealChatUnauthorized('Chat deleted', 'The chat has been deleted');
-        } else if (lastJsonMessage.action === receiveMemberDeletedS2CActionWS) {
+          dealChatUnauthorized(false, 'Chat deleted', 'The chat has been deleted');
+        } else if (lastJsonMessage.action === receiveMemberRemovedS2CActionWS) {
           const deletedUserId = lastJsonMessage.data.user_id as number;
           getUserInfo().then((currentUser) => {
             if (currentUser?.id === deletedUserId) {
@@ -152,7 +161,11 @@ export function UpdateDataCompanion() {
               queryClient.removeQueries({
                 queryKey: ['detailed_messages', String(chatId)],
               });
-              dealChatUnauthorized('You have been removed', 'You have been removed from the chat');
+              dealChatUnauthorized(
+                false,
+                'You have been removed',
+                'You have been removed from the chat',
+              );
             }
           });
         } else if (lastJsonMessage.action === receiveReadMessagesS2CActionWS) {

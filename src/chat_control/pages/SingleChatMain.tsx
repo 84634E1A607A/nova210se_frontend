@@ -30,7 +30,7 @@ export function SingleChatMain() {
   useEffect(() => {
     const interval = setInterval(() => {
       sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
-    }, 1100);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [chatId, sendJsonMessage]);

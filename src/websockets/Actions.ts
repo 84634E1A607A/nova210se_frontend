@@ -14,7 +14,7 @@ export const receiveFriendDeletedS2CActionWS = 'friend_deleted';
 
 export const receiveChatDeletedS2CActionWS = 'chat_deleted';
 
-export const receiveMemberDeletedS2CActionWS = 'member_deleted';
+export const receiveMemberRemovedS2CActionWS = 'member_deleted';
 
 export const sendReadMessagesC2SActionWS = 'messages_read';
 
