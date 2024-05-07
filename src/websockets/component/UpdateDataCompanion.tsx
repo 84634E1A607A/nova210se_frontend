@@ -6,6 +6,7 @@ import {
   receiveFriendDeletedS2CActionWS,
   receiveMemberAddedS2CActionWS,
   receiveMessageS2CActionWS,
+  receiveReadMessagesS2CActionWS,
 } from '../Actions';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -123,6 +124,10 @@ export function UpdateDataCompanion() {
           } else {
             navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           }
+        } else if (lastJsonMessage.action === receiveReadMessagesS2CActionWS) {
+          const chatId = lastJsonMessage.data.chat_id as number;
+          queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+          // TODO
         } else {
           console.error('Unknown action:', lastJsonMessage.action);
         }

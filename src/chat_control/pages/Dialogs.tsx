@@ -83,6 +83,7 @@ export function Dialogs({ chat }: SingleChatProps) {
                                       friends,
                                     })}
                                     onRightClick={onRightClick}
+                                    chat={chat}
                                   />
                                 </li>
                               );
