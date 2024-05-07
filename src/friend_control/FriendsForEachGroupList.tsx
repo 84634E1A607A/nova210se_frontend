@@ -22,8 +22,8 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
   const listTemplate = (items: Friend[]): ReactNode[] | undefined => {
     if (items.length === 0) return undefined;
 
-    let element = (
-      <ul>
+    const element = (
+      <ul key={group.group_id}>
         {items.map((friend) => {
           return (
             <li key={friend.friend.id}>
@@ -33,8 +33,7 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
         })}
       </ul>
     );
-    let nodes: ReactNode[] = [element as ReactNode];
-    return nodes;
+    return [element as ReactNode];
   };
 
   return (
