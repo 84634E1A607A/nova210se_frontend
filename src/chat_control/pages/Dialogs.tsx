@@ -1,5 +1,5 @@
 import { SingleChatProps } from './ChatHeader';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await, Navigate, useLoaderData, useLocation } from 'react-router-dom';
 import { assertIsUserAndFriendsAndDetailedMessagesData } from '../../utils/AssertsForRouterLoader';
 import { Suspense, useRef, useState } from 'react';
 import {
@@ -45,18 +45,30 @@ export function Dialogs({ chat }: SingleChatProps) {
     }
   };
 
+  const location = useLocation();
+  const thisUrl = location.pathname;
+
   const userAndFriendsAndDetailedMessagesData = useLoaderData();
   assertIsUserAndFriendsAndDetailedMessagesData(userAndFriendsAndDetailedMessagesData);
 
   return (
     <Suspense fallback={<div>Loading messages</div>}>
-      <Await resolve={userAndFriendsAndDetailedMessagesData.detailedMessages}>
+      <Await
+        resolve={userAndFriendsAndDetailedMessagesData.detailedMessages}
+        errorElement={<Navigate to={thisUrl} replace={true} />}
+      >
         {(detailedMessages) => {
           return (
-            <Await resolve={userAndFriendsAndDetailedMessagesData.user}>
+            <Await
+              resolve={userAndFriendsAndDetailedMessagesData.user}
+              errorElement={<Navigate to={thisUrl} replace={true} />}
+            >
               {(currentUser) => {
                 return (
-                  <Await resolve={userAndFriendsAndDetailedMessagesData.friends}>
+                  <Await
+                    resolve={userAndFriendsAndDetailedMessagesData.friends}
+                    errorElement={<Navigate to={thisUrl} replace={true} />}
+                  >
                     {(friends) => {
                       assertIsDetailedMessages(detailedMessages);
                       assertIsLeastUserInfo(currentUser);

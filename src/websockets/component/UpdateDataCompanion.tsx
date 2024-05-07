@@ -78,16 +78,16 @@ export function UpdateDataCompanion() {
             if (shouldDeleteCache) {
               queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
             }
+            navigate(`/${userName}/chats`);
+            navigate(`/${userName}/chats`);
             toast.current?.show({
               severity: 'error',
               summary: messageSummary,
               detail: messageDetail,
             });
-            navigate(`/${userName}/chats`);
           } else if (shouldDeleteCache) {
             // delete all cache because we can't get chatId of the deleted private chat
             queryClient.removeQueries({ queryKey: ['detailed_messages'] });
-            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
           }
         });
       }
@@ -157,9 +157,8 @@ export function UpdateDataCompanion() {
           getUserInfo().then((currentUser) => {
             if (currentUser?.id === deletedUserId) {
               queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-              const chatId = lastJsonMessage.data.chat_id as number;
               queryClient.removeQueries({
-                queryKey: ['detailed_messages', String(chatId)],
+                queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
               });
               dealChatUnauthorized(
                 false,

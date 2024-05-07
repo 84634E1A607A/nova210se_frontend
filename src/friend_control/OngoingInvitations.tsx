@@ -1,4 +1,4 @@
-import { Await, useLoaderData, useNavigate } from 'react-router-dom';
+import { Await, Navigate, useLoaderData, useNavigate } from 'react-router-dom';
 import { Suspense } from 'react';
 import { assertIsInvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserData } from '../utils/AssertsForRouterLoader';
 import {
@@ -22,6 +22,7 @@ import { ApplicationsForChatList } from '../chat_control/components/Applications
 export function OngoingInvitations() {
   const navigate = useNavigate();
   const userName = useUserName();
+  const thisPageUrl = `/${userName}/invitation_list`;
 
   const handleAccept = async (invitationId: number) => {
     return await acceptInvitation(invitationId);
@@ -41,7 +42,7 @@ export function OngoingInvitations() {
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== acceptVar);
       });
-      navigate(`/${userName}/invitation_list`);
+      navigate(thisPageUrl);
     },
   });
   const { mutate: reject, variables: rejectVar } = useMutation({
@@ -51,7 +52,7 @@ export function OngoingInvitations() {
       queryClient.setQueryData<Invitation[]>(['invitations'], (oldInvitations) => {
         return oldInvitations?.filter((invitation) => invitation.id !== rejectVar);
       });
-      navigate(`/${userName}/invitation_list`);
+      navigate(thisPageUrl);
     },
   });
 
@@ -59,23 +60,29 @@ export function OngoingInvitations() {
   assertIsInvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserData(data);
 
   return (
-    <Suspense fallback={<div>Loading invitaions...</div>}>
-      <Await resolve={data.invitations}>
-        {(inviations) => {
-          assertIsInvitationList(inviations);
+    <Suspense fallback={<div>Loading invitations...</div>}>
+      <Await resolve={data.invitations} errorElement={<Navigate to={thisPageUrl} replace={true} />}>
+        {(invitations) => {
+          assertIsInvitationList(invitations);
           return (
-            <Await resolve={data.applicationsForChat}>
+            <Await
+              resolve={data.applicationsForChat}
+              errorElement={<Navigate to={thisPageUrl} replace={true} />}
+            >
               {(applicationsForChat) => {
                 assertIsApplicationsForChat(applicationsForChat);
                 return (
-                  <Await resolve={data.chatsRelatedWithCurrentUser}>
+                  <Await
+                    resolve={data.chatsRelatedWithCurrentUser}
+                    errorElement={<Navigate to={thisPageUrl} replace={true} />}
+                  >
                     {(chats) => {
                       assertIsChatsRelatedWithCurrentUser(chats);
                       return (
                         <div className="flex flex-grow flex-col">
                           <strong className="m-2">Applications for friendship</strong>
                           <ul>
-                            {inviations.map((invitation) => (
+                            {invitations.map((invitation) => (
                               <li key={invitation.id}>
                                 <div
                                   className="m-1 p-2"

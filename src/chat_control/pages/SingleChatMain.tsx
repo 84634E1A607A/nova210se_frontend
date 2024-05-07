@@ -1,4 +1,4 @@
-import { useChatId } from '../../utils/UrlParamsHooks';
+import { useChatId, useUserName } from '../../utils/UrlParamsHooks';
 import { ChatHeader } from './ChatHeader';
 import { useChatsRelatedContext } from './ChatMainPageFramework';
 import { DialogBox } from './DialogBox';
@@ -9,6 +9,8 @@ import { DialogBoxRefProvider } from '../states/DialogBoxRefProvider';
 import { useEffect } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
+import { getChatInfo } from '../getChatInfo';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -34,6 +36,21 @@ export function SingleChatMain() {
 
     return () => clearInterval(interval);
   }, [chatId, sendJsonMessage]);
+
+  const userName = useUserName();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getChatInfo({ chatId }).then((currentChat) => {
+      if (currentChat === undefined) {
+        navigate(`/${userName}/chats`);
+
+        // The removed case is handled by toast in `UpdateDataCompanion` somehow. I don't know how
+        // So this will only happen in the case of chat deleted
+        window.alert('This chat has been deleted!');
+      }
+    });
+  }, [chatId, navigate, userName]);
 
   return (
     <div className="flex flex-col">
