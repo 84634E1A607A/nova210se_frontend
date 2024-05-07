@@ -35,8 +35,14 @@ export function UpdateDataCompanion() {
   const queryClient = useQueryClient();
 
   const { lastJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
+    onOpen: () => {
+      console.log('WebSocket connection established.');
+    },
+    shouldReconnect: (_closeEvent) => true,
+    reconnectInterval: 1500,
     share: true,
   });
+  console.log('lastJsonMessage:', lastJsonMessage);
 
   const location = useLocation();
   const thisPageUrl = location.pathname;
@@ -176,7 +182,9 @@ export function UpdateDataCompanion() {
             queryClient.removeQueries({
               queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
             });
-            // TODO
+            if (thisPageUrl.match(chat_mainRouterUrl)) {
+              navigate(thisPageUrl, { replace: true, state });
+            }
             break;
 
           default:
