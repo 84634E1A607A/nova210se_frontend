@@ -41,8 +41,8 @@ export function SingleChatMain() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getChatInfo({ chatId }).then((currentChat) => {
-      if (currentChat === undefined) {
+    getChatInfo({ chatId }).then((fetchedCurrentChat) => {
+      if (fetchedCurrentChat === undefined) {
         navigate(`/${userName}/chats`);
 
         // The removed case is handled by toast in `UpdateDataCompanion` somehow. I don't know how

@@ -18,7 +18,6 @@ export const updateChatState = async ({ chatId, toast, navigate, userName }: Par
     });
     return undefined;
   } else {
-    console.log('success in updating chat info');
     return newChat;
   }
 };

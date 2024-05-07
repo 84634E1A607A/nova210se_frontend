@@ -1,5 +1,6 @@
 import { assertIsApplicationsForChat } from '../utils/Asserts';
 import { ApplicationForChat } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /**
  * @description List applications for entering a specific chat.
@@ -22,7 +23,7 @@ export async function listApplicationsForChat({ chatId }: Params): Promise<Appli
     assertIsApplicationsForChat(applicationsList);
     return applicationsList;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return [];
   }
 }

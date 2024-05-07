@@ -1,5 +1,6 @@
 import { assertIsChatsRelatedWithCurrentUser } from '../utils/Asserts';
 import { ChatRelatedWithCurrentUser } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /**
  * @description List all chats of the current user. If failed, return an empty array list.
@@ -20,7 +21,7 @@ export async function getChats() {
     assertIsChatsRelatedWithCurrentUser(chats);
     return chats;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return [] as Array<ChatRelatedWithCurrentUser>;
   }
 }

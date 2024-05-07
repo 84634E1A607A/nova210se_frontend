@@ -1,4 +1,5 @@
 import { ChatPurview } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /**
  * @returns `ReturnType`: if the operation succeeds, the purview now of the user, and his user id.
@@ -20,7 +21,7 @@ export async function setAdmin({ chatId, memberId, setToAdmin }: Params): Promis
     if (!response.ok) throw new Error('Failed to set admin');
     return { isSuccessful: true, purview: setToAdmin ? 'Admin' : 'Member', memberUserId: memberId };
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return { isSuccessful: false, purview: undefined, memberUserId: memberId };
   }
 }
