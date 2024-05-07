@@ -3,8 +3,10 @@ import { useEffect, useRef } from 'react';
 import { assertIsS2CMessage } from '../AssertsWS';
 import {
   receiveApplicationForChatS2CActionWS,
+  receiveChatDeletedS2CActionWS,
   receiveFriendDeletedS2CActionWS,
   receiveMemberAddedS2CActionWS,
+  receiveMemberDeletedS2CActionWS,
   receiveMessageS2CActionWS,
 } from '../Actions';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,6 +24,7 @@ import { Toast } from 'primereact/toast';
 import { updateChatState } from '../../chat_control/states/updateChatState';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { getChatInfo } from '../../chat_control/getChatInfo';
+import { getUserInfo } from '../../user_control/getUserInfo';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -44,6 +47,46 @@ export function UpdateDataCompanion() {
   const toast = useRef<Toast | null>(null);
 
   useEffect(() => {
+    /**
+     * @description Deal with unauthorized chat. If current chat is unauthorized, jump to chats page. Else stay still
+     * and only reload the data.
+     * Unauthorized chat means the chat has been deleted or the user has been removed from the chat or a friend has been
+     * deleted.
+     */
+    function dealChatUnauthorized(messageSummary: string, messageDetail: string) {
+      let shouldJumpToChats = true;
+      const chat_detailUrlMatched = thisPageUrl.match(chat_detailRouterUrl);
+      const chat_mainUrlMatched = thisPageUrl.match(chat_mainRouterUrl);
+      if (!chat_detailUrlMatched && !chat_mainUrlMatched) {
+        shouldJumpToChats = false;
+      } else {
+        let chatId: number;
+        if (chat_detailUrlMatched) {
+          chatId = Number(chat_detailUrlMatched[2]);
+        } else {
+          chatId = Number(chat_mainUrlMatched![2]);
+        }
+        getChatInfo({ chatId }).then((currentChat) => {
+          if (currentChat === undefined) {
+            shouldJumpToChats = true;
+            queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+          }
+        });
+      }
+
+      // It turns out useEffect waits the above async then function, so `shouldJumpToChats` will be correctly set
+      if (shouldJumpToChats) {
+        toast.current?.show({
+          severity: 'error',
+          summary: messageSummary,
+          detail: messageDetail,
+        });
+        navigate(`/${userName}/chats`);
+      } else {
+        navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
+      }
+    }
+
     if (thisPageUrl.match(loginRouterUrl)) {
       return;
     }
@@ -91,38 +134,26 @@ export function UpdateDataCompanion() {
         } else if (lastJsonMessage.action === receiveFriendDeletedS2CActionWS) {
           queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
           queryClient.removeQueries({ queryKey: ['friends'] });
-
-          let shouldJumpToChats = true;
-          const chat_detailUrlMatched = thisPageUrl.match(chat_detailRouterUrl);
-          const chat_mainUrlMatched = thisPageUrl.match(chat_mainRouterUrl);
-          if (!chat_detailUrlMatched && !chat_mainUrlMatched) {
-            shouldJumpToChats = false;
-          } else {
-            let chatId: number;
-            if (chat_detailUrlMatched) {
-              chatId = Number(chat_detailUrlMatched[2]);
-            } else {
-              chatId = Number(chat_mainUrlMatched![2]);
+          dealChatUnauthorized('Friend deleted', 'The friend has been deleted. No chat any more');
+        } else if (lastJsonMessage.action === receiveChatDeletedS2CActionWS) {
+          queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+          const chatId = lastJsonMessage.data.chat.chat_id as number;
+          queryClient.removeQueries({
+            queryKey: ['detailed_messages', String(chatId)],
+          });
+          dealChatUnauthorized('Chat deleted', 'The chat has been deleted');
+        } else if (lastJsonMessage.action === receiveMemberDeletedS2CActionWS) {
+          const deletedUserId = lastJsonMessage.data.user_id as number;
+          getUserInfo().then((currentUser) => {
+            if (currentUser?.id === deletedUserId) {
+              queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+              const chatId = lastJsonMessage.data.chat_id as number;
+              queryClient.removeQueries({
+                queryKey: ['detailed_messages', String(chatId)],
+              });
+              dealChatUnauthorized('You have been removed', 'You have been removed from the chat');
             }
-            getChatInfo({ chatId }).then((currentChat) => {
-              if (currentChat === undefined) {
-                shouldJumpToChats = true;
-                queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
-              }
-            });
-          }
-
-          // !! if useEffect doesn't wait the above async function, then move the position of next block
-          if (shouldJumpToChats) {
-            toast.current?.show({
-              severity: 'error',
-              summary: 'Friend deleted',
-              detail: 'The friend has been deleted. The chat does not exist!',
-            });
-            navigate(`/${userName}/chats`);
-          } else {
-            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
-          }
+          });
         } else {
           console.error('Unknown action:', lastJsonMessage.action);
         }
