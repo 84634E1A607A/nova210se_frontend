@@ -11,3 +11,7 @@ export const receiveApplicationForChatS2CActionWS = 'chat_invitation';
 export const receiveMemberAddedS2CActionWS = 'member_added';
 
 export const receiveFriendDeletedS2CActionWS = 'friend_deleted';
+
+export const receiveChatDeletedS2CActionWS = 'chat_deleted';
+
+export const receiveMemberDeletedS2CActionWS = 'member_deleted';
