@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 export async function kickoutMember({ chatId, memberId }: Params): Promise<ReturnType> {
   try {
     const response = await fetch(
@@ -7,10 +9,10 @@ export async function kickoutMember({ chatId, memberId }: Params): Promise<Retur
         credentials: 'include',
       },
     );
-    if (!response.ok) throw new Error('Failed to kickout member!');
+    if (!response.ok) throw new Error('Failed to kick out member!');
     return { isSuccessful: true };
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return { isSuccessful: false };
   }
 }

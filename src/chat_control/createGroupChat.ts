@@ -1,4 +1,5 @@
 import { assertIsChat } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 interface Params {
   chatName: string;
@@ -24,6 +25,6 @@ export async function createGroupChat({ chatName, chatMembers }: Params) {
     assertIsChat(newGroupChat);
     return newGroupChat;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
   }
 }

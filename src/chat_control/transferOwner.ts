@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 export async function transferOwner({ chatId, newOwnerId }: Params): Promise<ReturnType> {
   try {
     const response = await fetch(
@@ -14,7 +16,7 @@ export async function transferOwner({ chatId, newOwnerId }: Params): Promise<Ret
     if (!response.ok) throw new Error('Failed to transfer owner');
     return { isSuccessful: true };
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return { isSuccessful: false };
   }
 }

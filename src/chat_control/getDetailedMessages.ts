@@ -1,5 +1,6 @@
 import { Chat, ChatRelatedWithCurrentUser, DetailedMessage } from '../utils/Types';
 import { assertIsDetailedMessages } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /**
  * @description List all messages of the current chat. If failed, return an empty array list.
@@ -24,7 +25,7 @@ export async function getDetailedMessages(chat: Chat | ChatRelatedWithCurrentUse
     assertIsDetailedMessages(messages);
     return messages;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return [] as Array<DetailedMessage>;
   }
 }

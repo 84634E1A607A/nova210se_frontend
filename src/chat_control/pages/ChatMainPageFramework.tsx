@@ -18,7 +18,6 @@ import { useQueryClient } from '@tanstack/react-query';
 export function ChatMainPageFramework() {
   const friendsAndChatsRelatedWithCurrentUserData = useLoaderData();
   assertIsFriendsAndChatsRelatedWithCurrentUserData(friendsAndChatsRelatedWithCurrentUserData);
-  console.log(friendsAndChatsRelatedWithCurrentUserData);
   const userName = useUserName();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -49,7 +48,6 @@ export function ChatMainPageFramework() {
             {(friends) => {
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               assertIsFriendsList(friends);
-              console.log(chatsRelatedWithCurrentUser, friends);
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
                 let chatName = '';
                 try {
