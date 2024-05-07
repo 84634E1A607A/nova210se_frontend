@@ -1,6 +1,6 @@
 import { MessageContent } from './MessageContent';
 import { Avatar } from '../../utils/ui/Avatar';
-import { DetailedMessage } from '../../utils/Types';
+import { ChatRelatedWithCurrentUser, DetailedMessage } from '../../utils/Types';
 import { systemUserName } from '../../utils/consts/SystemValues';
 import { RepliedMessageTab } from './RepliedMessageTab';
 import { useMessageRefsContext } from '../states/MessageRefsProvider';
@@ -16,8 +16,9 @@ import { MessageAssociateInfo } from './MessageAssociateInfo';
  * @param isSelf Whether the sender is the current user.
  * @param name The name of the sender to directly display.
  * @param onRightClick For context menu.
+ * @param chat The chat of the message.
  */
-export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Props) {
+export function MessageTab({ detailedMessage, isSelf, name, onRightClick, chat }: Props) {
   const { refs } = useMessageRefsContext();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -77,7 +78,7 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick }: Prop
         </div>
       </div>
 
-      <MessageAssociateInfo detailedMessage={detailedMessage} />
+      <MessageAssociateInfo detailedMessage={detailedMessage} chat={chat} />
 
       <RepliedMessageTab
         message={detailedMessage.reply_to?.message}
@@ -93,4 +94,5 @@ interface Props {
   isSelf: boolean;
   name: string;
   onRightClick: (_event: React.MouseEvent, _message: DetailedMessage) => void;
+  chat: ChatRelatedWithCurrentUser;
 }

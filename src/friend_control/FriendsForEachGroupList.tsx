@@ -2,11 +2,13 @@ import { useCollapse } from 'react-collapsed';
 import { Friend, Group } from '../utils/Types';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTab } from './UserDisplayTab';
-import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';
-import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 import { GroupSetting } from './GroupSetting';
 import { useQuery } from '@tanstack/react-query';
+import { DataView } from 'primereact/dataview';
+import { ReactComponent as SettingIcon } from '../svg/nav-setting-icon.svg';
+
 import { getDefaultGroup } from './getDefaultGroup';
+import React, { ReactNode } from 'react';
 
 export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: Props) {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
@@ -17,6 +19,23 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
 
   const isDefaultGroup = group.group_name === '';
 
+  const listTemplate = (items: Friend[]): ReactNode[] | undefined => {
+    if (items.length === 0) return undefined;
+
+    const element = (
+      <ul key={group.group_id}>
+        {items.map((friend) => {
+          return (
+            <li key={friend.friend.id}>
+              <UserDisplayTab leastUserInfo={friend.friend} friendsList={allFriends} />
+            </li>
+          );
+        })}
+      </ul>
+    );
+    return [element as ReactNode];
+  };
+
   return (
     <div className="m-2 flex flex-col">
       <div className="p-1 font-medium" style={{ backgroundColor: theme.secondary_container }}>
@@ -25,13 +44,9 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
           {...getToggleProps()}
           role="img"
           aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
-          className={`${group.group_name === '' ? 'hidden' : ''} inline-block w-10 cursor-pointer items-center`}
+          className={`${group.group_name === '' ? 'hidden' : ''} flex cursor-pointer items-end justify-center`}
         >
-          {isDefaultGroup ? null : isExpanded ? (
-            <Foldup className="h-6 w-6 fill-teal-900" />
-          ) : (
-            <Folddown className="h-6 w-6 fill-teal-900" />
-          )}
+          {isDefaultGroup ? null : <SettingIcon className="h-3 w-3 fill-teal-900" />}
         </span>
       </div>
       <div {...getCollapseProps()} className={`grow ${isDefaultGroup ? 'hidden' : ''}`}>
@@ -42,16 +57,10 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
         )}
       </div>
 
-      <div className="p-1">
-        <ul>
-          {friendsInGroup.map((friend) => {
-            return (
-              <li key={friend.friend.id}>
-                <UserDisplayTab leastUserInfo={friend.friend} friendsList={allFriends} />
-              </li>
-            );
-          })}
-        </ul>
+      <div className="w-full p-1">
+        <div className="mx-6 mt-2">
+          <DataView value={friendsInGroup} listTemplate={listTemplate} />
+        </div>
       </div>
     </div>
   );

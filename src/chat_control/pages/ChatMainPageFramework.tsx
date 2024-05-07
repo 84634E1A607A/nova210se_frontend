@@ -1,5 +1,12 @@
 import { Suspense, useEffect, useState } from 'react';
-import { useLoaderData, Outlet, Await, useOutletContext, useNavigate } from 'react-router-dom';
+import {
+  useLoaderData,
+  Outlet,
+  Await,
+  useOutletContext,
+  useNavigate,
+  Navigate,
+} from 'react-router-dom';
 import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
 import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
 import { SingleChatTab } from './SingleChatTab';
@@ -11,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query';
 export function ChatMainPageFramework() {
   const friendsAndChatsRelatedWithCurrentUserData = useLoaderData();
   assertIsFriendsAndChatsRelatedWithCurrentUserData(friendsAndChatsRelatedWithCurrentUserData);
+  console.log(friendsAndChatsRelatedWithCurrentUserData);
   const userName = useUserName();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -29,13 +37,19 @@ export function ChatMainPageFramework() {
 
   return (
     <Suspense fallback={<p>Loading chats...</p>}>
-      <Await resolve={friendsAndChatsRelatedWithCurrentUserData.chatsRelatedWithCurrentUser}>
+      <Await
+        resolve={friendsAndChatsRelatedWithCurrentUserData.chatsRelatedWithCurrentUser}
+        errorElement={<Navigate to={`/${userName}/chats`} />}
+      >
         {(chatsRelatedWithCurrentUser) => (
-          <Await resolve={friendsAndChatsRelatedWithCurrentUserData.friends}>
+          <Await
+            resolve={friendsAndChatsRelatedWithCurrentUserData.friends}
+            errorElement={<Navigate to={`/${userName}/chats`} />}
+          >
             {(friends) => {
               assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
               assertIsFriendsList(friends);
-              console.log('chats', chatsRelatedWithCurrentUser[0]?.chat.chat_members.length);
+              console.log(chatsRelatedWithCurrentUser, friends);
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
                 let chatName = '';
                 try {

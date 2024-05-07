@@ -56,7 +56,7 @@ export function MoreOfChat() {
       queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       navigate(`/${userName}/chats`); // without it time is so short, and the loader won't reload. don't know why
       navigate(`/${userName}/chats`);
-      window.alert(successMessage); // there is no toast left if it returns to the parent page
+      // toast is called by websocket part in `UpdateDataCompanion`
     } else {
       toast.current?.show({
         severity: 'error',

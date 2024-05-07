@@ -1,37 +1,57 @@
-import { DetailedMessage } from '../../utils/Types';
-import { Accordion, AccordionTab } from 'primereact/accordion';
+import { ChatRelatedWithCurrentUser, DetailedMessage } from '../../utils/Types';
 import { unixTimestampToDateString } from '../../utils/time/unixTimestampToDateString';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { useRef } from 'react';
+import { Button } from 'primereact/button';
 
 /**
  * @param detailedMessage The message of concern.
- * @para isRead Whether the friend has read it. For private chat.
- * @para isSelf The same as in `MessageTab`, for group chat.
+ * @param chat The chat of the message.
  */
-export function MessageAssociateInfo({ detailedMessage }: Props) {
+export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
+  const op = useRef<OverlayPanel | null>(null);
+  const isPrivateChat = chat?.chat.chat_name === '';
+
   return (
-    <div className="m-1">
-      <Accordion activeIndex={1}>
-        <AccordionTab header="replied by">
-          <div className="m-1">
-            <strong className="inline">{detailedMessage.replied_by.length}</strong>
-            <p className="inline"> messages</p>
-          </div>
-        </AccordionTab>
+    <div className="m-1 flex flex-row">
+      <div className="flex flex-col text-xs">
+        <div>
+          <p className="inline">Reply: </p>
+          <strong className="inline">{detailedMessage.replied_by.length}</strong>
+        </div>
 
-        <AccordionTab header="send time">
-          <div className="m-1">{unixTimestampToDateString(detailedMessage.send_time)}</div>
-        </AccordionTab>
+        <div className="mt-1" title={'send time'}>
+          {unixTimestampToDateString(detailedMessage.send_time)}
+        </div>
+      </div>
 
-        <AccordionTab header="already read">
-          <div className="m-1"></div>
-        </AccordionTab>
-      </Accordion>
+      <Button
+        type="button"
+        icon="pi pi-list-check"
+        className="ml-5 h-4 w-3"
+        unstyled={true}
+        onClick={(e) => op.current?.toggle(e)}
+      ></Button>
+      <OverlayPanel ref={op}>
+        {isPrivateChat ? (
+          <strong>{detailedMessage.read_users.length === 2 ? 'Read' : 'Unread'}</strong>
+        ) : (
+          <ul>
+            {detailedMessage.read_users.map((user) => {
+              return (
+                <li key={user.id} className="m-3">
+                  {user.user_name}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </OverlayPanel>
     </div>
   );
 }
 
 interface Props {
   detailedMessage: DetailedMessage;
-  isRead?: boolean;
-  isSelf?: boolean;
+  chat?: ChatRelatedWithCurrentUser;
 }

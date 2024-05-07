@@ -1,4 +1,5 @@
 import { assertIsChatRelatedWithCurrentUser } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getChatInfo({ chatId }: Params) {
   try {
@@ -18,7 +19,7 @@ export async function getChatInfo({ chatId }: Params) {
     assertIsChatRelatedWithCurrentUser(chatInfo);
     return chatInfo;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return undefined;
   }
 }
