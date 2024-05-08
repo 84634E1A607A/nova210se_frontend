@@ -1,5 +1,6 @@
 import { assertIsLeastUserInfo } from '../utils/Asserts';
 import { LeastUserInfo } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function searchFriend(searchParam: string): Promise<Array<LeastUserInfo>> {
   const userList: Array<LeastUserInfo> = [];
@@ -26,7 +27,7 @@ export async function searchFriend(searchParam: string): Promise<Array<LeastUser
       assertIsLeastUserInfoList(body);
       userList.push(...body);
     } catch (e) {
-      console.error(e);
+      console.log(expectedException, e);
       window.alert('Failed to search friend');
     }
   };

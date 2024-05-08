@@ -1,4 +1,5 @@
 import { Friend, InvitationSourceType } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 type InvitationParam = { id: number; source: InvitationSourceType; comment?: string };
 // backend requires that comment not be undefined or null
@@ -22,7 +23,7 @@ export async function invite(
     if (friend === null) return { sendInvitationSuccessful: true, friend: undefined };
     return { sendInvitationSuccessful: true, friend };
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return { sendInvitationSuccessful: false, friend: undefined };
   }
 }

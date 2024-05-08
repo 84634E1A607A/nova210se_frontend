@@ -1,4 +1,5 @@
 import { assertIsGroup } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /* For now, group can only be created in a friend's setting */
 export async function createGroup(group_name: string) {
@@ -18,7 +19,7 @@ export async function createGroup(group_name: string) {
     assertIsGroup(group);
     return group;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to create group');
   }
 }

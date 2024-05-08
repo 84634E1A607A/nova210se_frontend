@@ -63,7 +63,7 @@ export function assertIsFriendsList(friendsList: unknown): asserts friendsList i
 }
 
 export function assertIsFriendsListData(data: unknown): asserts data is { friends: Friend[] } {
-  if (data === undefined) console.error('Server response is undefined');
+  if (data === undefined) throw new Error('Server response is undefined');
   if (typeof data !== 'object') throw new Error('Server response is not an object');
   if (data === null) throw new Error('Server response is null');
   if (!('friends' in data)) throw new Error("Server response does not contain ' friends ' body");

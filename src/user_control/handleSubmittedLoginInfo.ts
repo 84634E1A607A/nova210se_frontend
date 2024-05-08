@@ -1,6 +1,7 @@
 import { LoginInfo } from '../utils/Types';
 import { PostMethodReturn } from '../utils/Types';
 import { ChooseLoginType } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function handleSubmittedLoginInfo(
   contact: LoginInfo,
@@ -28,8 +29,8 @@ export async function handleSubmittedLoginInfo(
 
     const failInfo = getFailureMessage(response.status);
     return { status_code: response.status, ok: false, message: failInfo };
-  } catch (error) {
-    console.error('Error', error);
+  } catch (e) {
+    console.log(expectedException, e);
     window.alert('Failed to login');
     return { status_code: 500, ok: false, message: 'Internal server error' };
   }

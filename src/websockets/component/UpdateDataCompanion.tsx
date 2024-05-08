@@ -114,20 +114,30 @@ export function UpdateDataCompanion() {
             break;
 
           case receiveMessageS2CActionWS:
+            // Only in this case or when click the chat should we update the
+            // unread count of the current user's chats list
+
             const matched = thisPageUrl.match(chat_mainRouterUrl);
             queryClient.removeQueries({
               queryKey: ['detailed_messages', String(lastJsonMessage.data.message.chat_id)],
             });
             if (matched && matched[2] === String(lastJsonMessage.data.message.chat_id)) {
               // In exactly the page that needs changing:
-              navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
-
               // send 'I've read the messages' to server
+              // don't need to update unread count because it's set to zero when enter the chat
               sendJsonMessage({
                 action: sendReadMessagesC2SActionWS,
                 data: { chat_id: lastJsonMessage.data.message.chat_id },
               });
+            } else {
+              // for chats list to update the unread count.
+              // but can't update unread count if in an irrelevant chat main or chat detail page, or
+              // in this chat's detail page.
+              // can only update when in chats page or in other parts of the APP
+              // TODO
+              queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             }
+            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
             break;
 
           case receiveMemberAddedS2CActionWS:

@@ -1,5 +1,6 @@
 import { assertIsInvitationList } from '../utils/Asserts';
 import { Invitation } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getInvitations(): Promise<Invitation[]> {
   try {
@@ -16,7 +17,7 @@ export async function getInvitations(): Promise<Invitation[]> {
     assertIsInvitationList(invitationList);
     return invitationList;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return [];
   }
 }

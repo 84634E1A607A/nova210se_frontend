@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 export async function deleteGroup(groupId: number) {
   try {
     const response = await fetch(
@@ -12,7 +14,7 @@ export async function deleteGroup(groupId: number) {
     }
     return true;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to delete group');
     return false;
   }

@@ -1,5 +1,6 @@
 import { assertIsGroupsList } from '../utils/Asserts';
 import { Group } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getGroupsList(): Promise<Group[]> {
   try {
@@ -16,7 +17,7 @@ export async function getGroupsList(): Promise<Group[]> {
     assertIsGroupsList(groupsList);
     return groupsList;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to get groups list');
     return [];
   }

@@ -1,5 +1,6 @@
 import { assertIsLeastUserInfo } from '../utils/Asserts';
 import { LeastUserInfo } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getUserInfo(): Promise<LeastUserInfo | undefined> {
   try {
@@ -19,6 +20,6 @@ export async function getUserInfo(): Promise<LeastUserInfo | undefined> {
     assertIsLeastUserInfo(userInfo);
     return userInfo;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
   }
 }

@@ -11,6 +11,8 @@ import useWebSocket from 'react-use-websocket';
 import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
 import { getChatInfo } from '../getChatInfo';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -28,13 +30,38 @@ export function SingleChatMain() {
     share: true,
   });
 
-  // send to server that this user has read the messages in this chat when click and enter into this chat page
-  useEffect(() => {
-    sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
-  }, [chatId, sendJsonMessage]);
-
   const userName = useUserName();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // when click this chat, if there are unread messages, refresh the unread count
+    if (currentChat!.unread_count !== 0) {
+      console.log('unread_count:', currentChat!.unread_count);
+      // send to server that this user has read the messages in this chat when click and enter into this chat page
+      sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
+
+      // TODO
+      // the behavior of this effect hook is still unclear
+      queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
+        ['chats_related_with_current_user'],
+        (oldChats) => {
+          return oldChats!.map((chat) => {
+            if (chat.chat_id === chatId) {
+              return {
+                ...chat,
+                unread_count: 0,
+              };
+            }
+            return chat;
+          });
+        },
+      );
+      navigate(`/${userName}/chats`);
+      navigate(`/${userName}/chats/${chatId}`);
+      console.log('refreshed unread count');
+    }
+  }, [currentChat, chatId, navigate, queryClient, sendJsonMessage, userName]);
 
   useEffect(() => {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
