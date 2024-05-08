@@ -77,9 +77,8 @@ export default function EditDialog({ field }: Props) {
       info.phone!,
       info.email!,
       info.user_name!,
-    ).then((user) => {
-      if (user === undefined) setError('old_password', { message: 'Old password is incorrect' });
-      return user;
+    ).catch((error) => {
+      setError('user_name', { message: error.message });
     });
   };
 
