@@ -1,17 +1,15 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { ValidationError } from '../../utils/ValidationError';
 import { EditingInfo } from '../AccountManagement';
 import { useForm } from 'react-hook-form';
-import { maxUserNameLength } from '../../utils/ConstValues';
+import { maxUserNameLength } from '../../utils/consts/InputRestrictions';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
-import { LeastUserInfo } from '../../utils/types';
+import { LeastUserInfo } from '../../utils/Types';
 import { editUserInfo } from '../editUserInfo';
-import { EditUserDialogContent } from './EditUserDialogContent';
-import { get } from 'http';
 
 type Props = {
   field: string;
@@ -25,8 +23,6 @@ export default function EditDialog({ field }: Props) {
     setError,
     formState: { errors, dirtyFields },
     setValue,
-    getValues,
-    reset,
   } = useForm<EditingInfo>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -78,7 +74,8 @@ export default function EditDialog({ field }: Props) {
       info.email!,
       info.user_name!,
     ).catch((error) => {
-      setError('user_name', { message: error.message });
+      if (error.message.includes('Username')) setError('user_name', { message: error.message });
+      if (error.message.includes('password')) setError('old_password', { message: error.message });
     });
   };
 
@@ -89,14 +86,9 @@ export default function EditDialog({ field }: Props) {
     mutationFn: onSubmit,
     retry: 5,
     onError: () => {
-      console.log('error');
-      console.log(mutation);
       mutation.reset();
     },
-    onSettled: () => {
-      console.log('settle');
-      console.log(mutation);
-    },
+    onSettled: () => {},
     onSuccess: (nowUser) => {
       console.log('success');
       console.log(mutation);
@@ -104,44 +96,88 @@ export default function EditDialog({ field }: Props) {
       queryClient.setQueryData<LeastUserInfo>(['user'], () => {
         return { ...nowUser };
       });
-      setSummitStatus(true);
       mutation.reset(); // setValue('old_password', defaultValues?.old_password) is useless. Maybe because render in batch so no effect
       navigate(`/${nowUser.user_name}/account_management`); // can't use redirect because maybe it doesn't reload data
-      // window.alert('User info updated');
       toast.current?.show({
         severity: 'info',
         summary: 'Updated!',
         detail: 'User info updated',
         life: 2000,
       });
+      setVisible(false);
     },
   });
 
-  const sleep = (ms: number | undefined) => new Promise((r) => setTimeout(r, ms));
-  const [summit_status, setSummitStatus] = useState<boolean>(false);
-
   return (
-    <div className="w-6 md:w-2 flex justify-content-end">
+    <div className="justify-content-end flex w-6 md:w-2">
       <Button
         label="Edit"
         icon="pi pi-pencil"
         className="p-button-text"
         onClick={() => {
           setVisible(true);
-          setSummitStatus(false);
         }}
       />
-      <Dialog
-        header="Header"
-        visible={visible}
-        style={{ width: '50vw' }}
-        onHide={() => setVisible(false)}
-      >
-        {field === 'User Name' && (
-          <form noValidate onSubmit={handleSubmit((form) => mutation.mutate(form))}>
+      <Dialog visible={visible} onHide={() => setVisible(false)} header={`Edit your ${field}`}>
+        {/* Avatar Edit Dialog */}
+        {field === 'Avatar' && (
+          <form
+            noValidate
+            className="flex flex-col items-center"
+            onSubmit={handleSubmit((form) => mutation.mutate(form))}
+          >
             <div>
-              <label htmlFor="user_name" className="block text-left">
-                <span className="block text-sm font-medium text-slate-700">User Name</span>
+              <label htmlFor="avatar_url" className="mt-2 block text-left">
+                <span className="block text-sm font-medium text-slate-700">New Avatar</span>
+                <input
+                  type="text"
+                  id="avatar_url"
+                  {...register('avatar_url', {
+                    maxLength: {
+                      value: 490,
+                      message: 'User name must be at most 490 characters long',
+                    },
+                    pattern: {
+                      // start with http(s)://
+                      value: /^(http|https):\/\/.*$/,
+                      message: 'Invalid URL: it must start with http:// or https://',
+                    },
+                  })}
+                  className={`mt-1 block w-60 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+             `}
+                />
+                <ValidationError fieldError={errors.avatar_url} />
+              </label>
+            </div>
+            <div className="mt-5">
+              <button
+                className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                         focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                type="submit"
+                onClick={() => {
+                  if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email) {
+                    setValue('old_password', '');
+                  }
+                }}
+              >
+                {mutation.isPending ? 'loading...' : 'update'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* User Name Edit Dialog */}
+        {field === 'User Name' && (
+          <form
+            noValidate
+            className="flex flex-col items-center"
+            onSubmit={handleSubmit((form) => mutation.mutate(form))}
+          >
+            <div>
+              <label htmlFor="user_name" className="mt-2 block text-left">
+                <span className="block text-sm font-medium text-slate-700">New User Name</span>
                 <input
                   type="text"
                   id="user_name"
@@ -157,23 +193,22 @@ export default function EditDialog({ field }: Props) {
                         'Invalid user name. Only a-z A-Z 0-9 - _ ( ) @ . are allowed. At least 1 character.',
                     },
                   })}
-                  className={`mt-1 block w-60 px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
-              focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
-              disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+                  className={`mt-1 block w-60 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
              `}
                 />
                 <ValidationError fieldError={errors.user_name} />
               </label>
             </div>
-            <div>
+            <div className="mt-5">
               <button
+                className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                         focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                 type="submit"
                 onClick={() => {
                   if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email) {
                     setValue('old_password', '');
-                    // if (mutation.isSuccess);
-                    // mutation.reset();
-                    if (summit_status) setVisible(false);
                   }
                 }}
               >
@@ -181,17 +216,209 @@ export default function EditDialog({ field }: Props) {
               </button>
             </div>
           </form>
-          // <EditUserDialogContent
-          //   register={register}
-          //   maxUserNameLength={maxUserNameLength}
-          //   errors={errors}
-          //   dirtyFields={dirtyFields}
-          //   setValue={setValue}
-          //   getValues={getValues}
-          //   mutation={mutate}
-          //   handleSubmit={handleSubmit}
-          //   setVisible={setVisible}
-          // />
+        )}
+
+        {/* Email Edit Dialog */}
+        {field === 'Email' && (
+          <form
+            noValidate
+            className="flex flex-col items-center"
+            onSubmit={handleSubmit((form) => mutation.mutate(form))}
+          >
+            <div>
+              <label htmlFor="email" className="mt-2 block text-left">
+                <span className="block text-sm font-medium text-slate-700">New Email</span>
+                <input
+                  type="text"
+                  id="email"
+                  {...register('email', {
+                    maxLength: { value: 100, message: 'Email must be at most 100 characters long' },
+                    pattern: {
+                      value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+                      message: 'Email pattern should be correct',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.email} />
+                <span className="mt-2 block text-sm font-medium text-slate-700">Old Password</span>
+                <input
+                  type="password"
+                  id="old_password"
+                  {...register('old_password', {
+                    maxLength: {
+                      value: 100,
+                      message: 'Password must be at most 100 characters long',
+                    },
+                    minLength: { value: 6, message: 'Password must be at least 6 characters long' },
+                    pattern: {
+                      value: /^[^\s]*$/,
+                      message: 'Password cannot contain blank spaces',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.old_password} />
+              </label>
+            </div>
+            <div className="mt-5">
+              <button
+                className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                         focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                type="submit"
+                onClick={() => {
+                  if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email) {
+                    setValue('old_password', '');
+                  }
+                }}
+              >
+                {mutation.isPending ? 'loading...' : 'update'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Email Edit Dialog */}
+        {field === 'Phone' && (
+          <form
+            noValidate
+            className="flex flex-col items-center"
+            onSubmit={handleSubmit((form) => mutation.mutate(form))}
+          >
+            <div>
+              <label htmlFor="phone" className="mt-2 block text-left">
+                <span className="block text-sm font-medium text-slate-700">New Phone Number</span>
+                <input
+                  type="text"
+                  id="phone"
+                  {...register('phone', {
+                    maxLength: { value: 11, message: 'Too long' },
+                    minLength: { value: 11, message: 'Too short' },
+                    pattern: {
+                      value: /^[0-9]*$/,
+                      message: 'Phone number must contain only digits',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.phone} />
+                <span className="mt-2 block text-sm font-medium text-slate-700">Old Password</span>
+                <input
+                  type="password"
+                  id="old_password"
+                  {...register('old_password', {
+                    maxLength: {
+                      value: 100,
+                      message: 'Password must be at most 100 characters long',
+                    },
+                    minLength: { value: 6, message: 'Password must be at least 6 characters long' },
+                    pattern: {
+                      value: /^[^\s]*$/,
+                      message: 'Password cannot contain blank spaces',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.old_password} />
+              </label>
+            </div>
+            <div className="mt-5">
+              <button
+                className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                         focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                type="submit"
+                onClick={() => {
+                  if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email) {
+                    setValue('old_password', '');
+                  }
+                }}
+              >
+                {mutation.isPending ? 'loading...' : 'update'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Password Edit Dialog */}
+        {field === 'Password' && (
+          <form
+            noValidate
+            className="flex flex-col items-center"
+            onSubmit={handleSubmit((form) => mutation.mutate(form))}
+          >
+            <div>
+              <label htmlFor="new_password" className="mt-2 block text-left">
+                <span className="block text-sm font-medium text-slate-700">New Password</span>
+                <input
+                  type="text"
+                  id="new_password"
+                  {...register('new_password', {
+                    maxLength: {
+                      value: 100,
+                      message: 'Password must be at most 100 characters long',
+                    },
+                    minLength: { value: 6, message: 'Password must be at least 6 characters long' },
+                    pattern: {
+                      value: /^[^\s]*$/,
+                      message: 'Password cannot contain blank spaces',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.new_password} />
+                <span className="mt-2 block text-sm font-medium text-slate-700">Old Password</span>
+                <input
+                  type="password"
+                  id="old_password"
+                  {...register('old_password', {
+                    maxLength: {
+                      value: 100,
+                      message: 'Password must be at most 100 characters long',
+                    },
+                    minLength: { value: 6, message: 'Password must be at least 6 characters long' },
+                    pattern: {
+                      value: /^[^\s]*$/,
+                      message: 'Password cannot contain blank spaces',
+                    },
+                  })}
+                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+                            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
+                             `}
+                />
+                <ValidationError fieldError={errors.old_password} />
+              </label>
+            </div>
+            <div className="mt-5">
+              <button
+                className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                         focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                type="submit"
+                onClick={() => {
+                  if (!dirtyFields.new_password && !dirtyFields.phone && !dirtyFields.email) {
+                    setValue('old_password', '');
+                  }
+                }}
+              >
+                {mutation.isPending ? 'loading...' : 'update'}
+              </button>
+            </div>
+          </form>
         )}
       </Dialog>
     </div>

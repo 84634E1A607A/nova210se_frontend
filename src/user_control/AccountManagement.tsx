@@ -1,25 +1,12 @@
-import { useForm } from 'react-hook-form';
-import { ValidationError, getEditorStyle } from '../utils/ValidationError';
-import { editUserInfo } from './editUserInfo';
 import { logout } from './logout';
 import { deleteAccount } from './deleteAccount';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 import { theme } from '../utils/ui/themes';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { LeastUserInfo } from '../utils/types';
 import 'primeicons/primeicons.css';
-import { Button } from 'primereact/button';
-import { info } from 'console';
 import { Suspense } from 'react';
 import { assertIsUserData } from '../utils/AssertsForRouterLoader';
-import userEvent from '@testing-library/user-event';
 import { assertIsLeastUserInfo } from '../utils/Asserts';
 import { Avatar } from '../utils/ui/Avatar';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import { Toast } from 'primereact/toast';
-import React, { useRef } from 'react';
-import { SettingConfirmDialog } from './components/SettingConfirmDialog';
-import TestDialog from './components/EditDialog';
 import EditDialog from './components/EditDialog';
 
 /**
@@ -38,69 +25,58 @@ export function AccountManagement() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="flex flex-col flex-grow mt-3 me-5">
+            <div className="me-5 mt-3 flex flex-grow flex-col">
               <div className="surface-0">
-                <div className="font-medium text-3xl text-900 mb-2">User Information</div>
+                <div className="text-900 mb-2 text-3xl font-medium">User Information</div>
                 <div className="text-500">You can modify your current info here.</div>
                 <div className="text-500 mb-5">
                   If you want to edit your email, phone number, or password, you have to provide
                   your old password.
                 </div>
                 <div className="parent-container w-full">
-                  <ul className="list-none px-10 m-0">
-                    <li className="flex h-52 align-items-center py-3 px-2 border-top-1 border-300">
-                      <div className="text-500 w-6 md:w-2 font-medium">Avatar</div>
-                      <div className="flex md:w-8 md:flex-order-0 flex-order-1 flex-grow justify-center items-center">
+                  <ul className="m-0 list-none px-10">
+                    <li className="align-items-center border-top-1 border-300 flex h-52 px-2 py-3">
+                      <div className="text-500 w-6 font-medium md:w-2">Avatar</div>
+                      <div className="md:flex-order-0 flex-order-1 flex flex-grow items-center justify-center md:w-8">
                         <div className="h-32 w-32 ">
                           <Avatar url={user.avatar_url} />
                         </div>
                       </div>
-                      <div className="w-6 md:w-2 flex justify-content-end">
-                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
-                      </div>
+                      <EditDialog field="Avatar" />
                     </li>
-                    <li className="flex  align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
-                      <div className="text-500 w-6 md:w-2 font-medium">User Name</div>
-                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">{`${user.user_name}`}</div>
+                    <li className="align-items-center  border-top-1 border-300 flex flex-wrap px-2 py-3">
+                      <div className="text-500 w-6 font-medium md:w-2">User Name</div>
+                      <div className="text-900 md:flex-order-0 flex-order-1 w-full md:w-8">{`${user.user_name}`}</div>
                       <EditDialog field="User Name" />
-                      {/* <div className="w-6 md:w-2 flex justify-content-end">
-                        <SettingConfirmDialog changeField="User Name" />
-                      </div> */}
                     </li>
-                    <li className="flex align-items-center py-3 px-2 border-top-1 border-300 flex-wrap">
-                      <div className="text-500 w-6 md:w-2 font-medium">Email</div>
-                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1">
+                    <li className="align-items-center border-top-1 border-300 flex flex-wrap px-2 py-3">
+                      <div className="text-500 w-6 font-medium md:w-2">Email</div>
+                      <div className="text-900 md:flex-order-0 flex-order-1 w-full md:w-8">
                         {`${user.email}`}
                       </div>
-                      <div className="w-6 md:w-2 flex justify-content-end">
-                        <SettingConfirmDialog changeField="Email" requireOldPassword={true} />
-                      </div>
+                      <EditDialog field="Email" />
                     </li>
-                    <li className="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 border-300 flex-wrap">
-                      <div className="text-500 w-6 md:w-2 font-medium">Phone</div>
-                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1 line-height-3">
+                    <li className="align-items-center border-top-1 border-bottom-1 border-300 flex flex-wrap px-2 py-3">
+                      <div className="text-500 w-6 font-medium md:w-2">Phone</div>
+                      <div className="text-900 md:flex-order-0 flex-order-1 line-height-3 w-full md:w-8">
                         {`${user.phone}`}
                       </div>
-                      <div className="w-6 md:w-2 flex justify-content-end">
-                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
-                      </div>
+                      <EditDialog field="Phone" />
                     </li>
-                    <li className="flex align-items-center py-3 px-2 border-top-1 border-bottom-1 border-300 flex-wrap">
-                      <div className="text-500 w-6 md:w-2 font-medium">Password</div>
-                      <div className="text-900 w-full md:w-8 md:flex-order-0 flex-order-1 line-height-3">
+                    <li className="align-items-center border-top-1 border-bottom-1 border-300 flex flex-wrap px-2 py-3">
+                      <div className="text-500 w-6 font-medium md:w-2">Password</div>
+                      <div className="text-900 md:flex-order-0 flex-order-1 line-height-3 w-full md:w-8">
                         ************
                       </div>
-                      <div className="w-6 md:w-2 flex justify-content-end">
-                        <Button label="Edit" icon="pi pi-pencil" className="p-button-text" />
-                      </div>
+                      <EditDialog field="Password" />
                     </li>
                   </ul>
                 </div>
               </div>
-              <div className="flex flex-col pt-6 space-y-2 items-center mb-5">
+              <div className="mb-5 flex flex-col items-center space-y-2 pt-6">
                 <button
-                  className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded 
-          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600 
+          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   style={{ backgroundColor: theme.tertiary_container }}
                   onClick={() => {
                     logout();
@@ -110,8 +86,8 @@ export function AccountManagement() {
                   Logout
                 </button>
                 <button
-                  className="bg-teal-700 hover:bg-teal-900 text-white font-bold py-2 px-4 rounded 
-          focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+          focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   style={{ backgroundColor: theme.error }}
                   onClick={() => {
                     const confirmDelete = window.confirm(
@@ -142,11 +118,3 @@ export type EditingInfo = {
   email?: string;
   user_name?: string;
 };
-
-function getHiddenOrVisibleEditorStyle(
-  newPasswordExists: boolean | undefined,
-  phoneExists: boolean | undefined,
-  emailExists: boolean | undefined,
-) {
-  if (!newPasswordExists && !phoneExists && !emailExists) return 'hidden';
-}
