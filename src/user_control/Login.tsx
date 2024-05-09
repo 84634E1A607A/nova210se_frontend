@@ -103,7 +103,7 @@ export function Login() {
         <div className="mt-5 flex w-full justify-between">
           <button
             className="focus:shadow-outline rounded bg-teal-500 px-4 py-2 font-bold text-white 
-              hover:bg-teal-600 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                     hover:bg-teal-600 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             type="submit"
             onClick={() => (buttonTypeRef.current = 'register')}
             disabled={isSubmitting}
@@ -112,7 +112,7 @@ export function Login() {
           </button>
           <button
             className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
-              focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                     focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
             type="submit"
             onClick={() => (buttonTypeRef.current = 'login')}
             disabled={isSubmitting}
