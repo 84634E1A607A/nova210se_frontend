@@ -1,17 +1,23 @@
 import { invite } from './invite';
 import { Friend, InvitationSourceType } from '../utils/Types';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { assertIsInvitationSourceType } from '../utils/Asserts';
-import { useState } from 'react';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Toast } from 'primereact/toast';
 
-export function InviteFriendPage() {
+export const InviteFriendPage = forwardRef(({ state, callback }: Props, ref) => {
+  useImperativeHandle(ref, () => ({
+    submit() {
+      mutate({ ...state, comment });
+    },
+  }));
+
   const [comment, setComment] = useState('');
-  const navigate = useNavigate();
-  const userName = useUserName();
 
   const queryClient = useQueryClient();
+
+  const toast = useRef<Toast | null>(null);
+
   const { mutate } = useMutation({
     mutationFn: invite,
     onSuccess: ({ sendInvitationSuccessful, friend }) => {
@@ -25,30 +31,28 @@ export function InviteFriendPage() {
       } else if (!sendInvitationSuccessful) alertMessage = 'Failed to send invitation';
       else alertMessage = 'Invitation sent';
 
-      window.alert(alertMessage);
-      navigate(`/${userName}`);
+      callback(sendInvitationSuccessful, alertMessage);
     },
   });
 
-  const location = useLocation();
-  const state = location.state;
   assertIsValidState(state);
 
   return (
     <div className="grow">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault(); // prevent the state from being erased out to null
-          mutate({ ...state, comment });
-        }}
-      >
-        <label htmlFor="comment">comment</label>
-        <textarea id="comment" onChange={(e) => setComment(e.target.value)} />
-        <button type="submit">invite</button>
-      </form>
+      <Toast ref={toast} />
+      <label className="block text-sm font-medium text-slate-700" htmlFor="comment">
+        Leave your comment here
+      </label>
+      <textarea
+        className="mt-1 block w-60 rounded-md border border-slate-300 bg-white text-sm placeholder-slate-400 shadow-sm
+            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
+            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none"
+        id="comment"
+        onChange={(e) => setComment(e.target.value)}
+      />
     </div>
   );
-}
+});
 
 function assertIsValidState(
   state: unknown,
@@ -59,4 +63,9 @@ function assertIsValidState(
   assertIsInvitationSourceType(state.source);
   if (!('id' in state)) throw new Error('state does not contain id');
   if (typeof state.id !== 'number') throw new Error('id is not a number');
+}
+
+interface Props {
+  state: any;
+  callback: any;
 }
