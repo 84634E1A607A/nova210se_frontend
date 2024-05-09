@@ -8,7 +8,7 @@ import { UpdateDataCompanion } from './websockets/component/UpdateDataCompanion'
 function App() {
   return (
     <PrimeReactProvider value={{ unstyled: false }}>
-      <div className="App">
+      <div className="App flex">
         <RouterGuard />
         <Outlet />
         <UpdateDataCompanion />

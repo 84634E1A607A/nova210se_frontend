@@ -27,25 +27,21 @@ export async function editUserInfo(
     if (email !== '') requestBody = { ...requestBody, email };
   }
 
-  try {
-    const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user'), {
-      method: 'PATCH',
-      body: JSON.stringify(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      assertIsApiError(error);
-      throw new Error(error.error);
-    }
-    const data = await response.json();
-    const user = data.data;
-    assertIsLeastUserInfo(user);
-    return user;
-  } catch (e) {
-    window.alert(`${e}${e !== '' ? '\n' : ''}Failed to edit user info.`);
+  const response = await fetch(process.env.REACT_APP_API_URL!.concat('/user'), {
+    method: 'PATCH',
+    body: JSON.stringify(requestBody),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    assertIsApiError(error);
+    throw new Error(error.error);
   }
+  const data = await response.json();
+  const user = data.data;
+  assertIsLeastUserInfo(user);
+  return user;
 }
