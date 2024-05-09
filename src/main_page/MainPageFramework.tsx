@@ -7,6 +7,7 @@ import { ReactComponent as HomeIcon } from '../svg/nav-home-icon.svg';
 import { ReactComponent as FriendIcon } from '../svg/nav-friend-icon.svg';
 import { ReactComponent as SettingIcon } from '../svg/nav-setting-icon.svg';
 import { ReactComponent as UpcomingIcon } from '../svg/nav-upcoming-icon.svg';
+import { ReactComponent as SearchIcon } from '../svg/nav-search-icon.svg';
 
 export function MainPageFramework() {
   const userName = useUserName();
@@ -51,7 +52,7 @@ export function MainPageFramework() {
           <SidebarLink
             to={`/${userName}/search_friend`}
             title="Search Friend"
-            icon={<UpcomingIcon className={icon_class} />}
+            icon={<SearchIcon className={icon_class} />}
           />
           <SidebarLink
             to={`/${userName}/invitation_list`}
