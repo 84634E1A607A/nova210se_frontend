@@ -3,10 +3,12 @@ import { useUserName } from '../utils/UrlParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { SidebarLink } from './SideBarLink';
 import { DisplayCurrentUserInfo } from '../user_control/DisplayCurrentUserInfo';
-import { ReactComponent as HomeIcon } from '../svg/nav-home-icon.svg';
+import { ReactComponent as HomeIcon } from '../svg/nav-chat-icon.svg';
 import { ReactComponent as FriendIcon } from '../svg/nav-friend-icon.svg';
 import { ReactComponent as SettingIcon } from '../svg/nav-setting-icon.svg';
-import { ReactComponent as UpcomingIcon } from '../svg/nav-upcoming-icon.svg';
+import { ReactComponent as SearchIcon } from '../svg/nav-search-icon.svg';
+import { ReactComponent as GroupIcon } from '../svg/nav-group-icon.svg';
+import { ReactComponent as InvitationIcon } from '../svg/nav-invitation-icon.svg';
 
 export function MainPageFramework() {
   const userName = useUserName();
@@ -51,17 +53,17 @@ export function MainPageFramework() {
           <SidebarLink
             to={`/${userName}/search_friend`}
             title="Search Friend"
-            icon={<UpcomingIcon className={icon_class} />}
+            icon={<SearchIcon className={icon_class} />}
           />
           <SidebarLink
             to={`/${userName}/invitation_list`}
             title="Invitation List"
-            icon={<UpcomingIcon className={icon_class} />}
+            icon={<InvitationIcon className={icon_class} />}
           />
           <SidebarLink
             to={`/${userName}/create_group_chat`}
             title="Group Chat"
-            icon={<UpcomingIcon className={icon_class} />}
+            icon={<GroupIcon className={icon_class} />}
           />
         </ul>
       </nav>
