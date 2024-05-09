@@ -73,9 +73,9 @@ export function AccountManagement() {
                   </ul>
                 </div>
               </div>
-              <div className="mb-5 flex flex-col items-center space-y-2 pt-6">
+              <div className="flex flex-row justify-center gap-10 pt-4">
                 <button
-                  className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600 
+                  className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600
           focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   style={{ backgroundColor: theme.tertiary_container }}
                   onClick={() => {
@@ -86,7 +86,7 @@ export function AccountManagement() {
                   Logout
                 </button>
                 <button
-                  className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900 
+                  className="rounded bg-teal-700 px-4 py-2 font-bold text-white hover:bg-teal-900
           focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   style={{ backgroundColor: theme.error }}
                   onClick={() => {
