@@ -8,7 +8,6 @@ import { MainPageFramework } from './main_page/MainPageFramework';
 import { FriendsPage } from './friend_control/FriendsPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchNewFriend } from './friend_control/SearchNewFriend';
-import { InviteFriendPage } from './friend_control/InviteFriendPage';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
@@ -81,11 +80,6 @@ const router = createBrowserRouter([
             element: <SearchNewFriend />,
             id: 'search',
             loader: async () => FriendsLoader(queryClient),
-          },
-          {
-            path: 'invite',
-            element: <InviteFriendPage />,
-            id: 'invite',
           },
           {
             path: 'account_management',

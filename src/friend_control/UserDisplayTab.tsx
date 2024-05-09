@@ -1,11 +1,14 @@
-import { Link } from 'react-router-dom';
 import { Friend, InvitationSourceType, LeastUserInfo } from '../utils/Types';
-import { useUserName } from '../utils/UrlParamsHooks';
 import { Avatar } from '../utils/ui/Avatar';
 import { SingleFriendSetting } from './SingleFriendSetting';
 import { useCollapse } from 'react-collapsed';
 import { ReactComponent as Foldup } from '../svg/fold-up-svgrepo-com.svg';
 import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
+import { InviteFriendPage } from './InviteFriendPage';
+import { Button } from 'primereact/button';
+import { useRef } from 'react';
+import { confirmPopup, ConfirmPopup } from 'primereact/confirmpopup';
+import { Toast } from 'primereact/toast';
 
 /**
  * show all kinds of user info tab in a list of users (such as friends or searched users (including strangers) list)
@@ -21,14 +24,17 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
     if (friend.nickname !== '') userNameToDisplay = friend.nickname;
   }
 
-  const userName = useUserName();
-
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse();
 
   const source: InvitationSourceType = 'search';
 
+  const invitePopup = useRef<any>();
+
+  const toast = useRef<Toast | null>(null);
+
   return (
     <div>
+      <Toast ref={toast} />
       <div className="mb-1 flex h-fit flex-grow flex-row items-center justify-evenly rounded-lg bg-gray-300 py-2">
         <div className="mx-2 flex h-11">
           <Avatar
@@ -65,13 +71,35 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
             )}
           </div>
         ) : (
-          <Link
-            className="focus:shadow-outline mx-2 rounded bg-blue-500 px-2 py-1 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            to={`/${userName}/invite`}
-            state={{ source: source, id: leastUserInfo.id }}
-          >
-            Invite
-          </Link>
+          <>
+            <Button
+              className="focus:shadow-outline mx-2 rounded bg-blue-500 px-2 py-1 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              onClick={(e) => {
+                confirmPopup({
+                  target: e.currentTarget,
+                  message: (
+                    <InviteFriendPage
+                      ref={invitePopup}
+                      state={{ source: source, id: leastUserInfo.id }}
+                      callback={(success: boolean, message: string) => {
+                        toast.current?.show({
+                          severity: success ? 'success' : 'error',
+                          summary: success ? 'Success' : 'Error',
+                          detail: message,
+                        });
+                      }}
+                    />
+                  ),
+                  accept() {
+                    invitePopup.current?.submit();
+                  },
+                });
+              }}
+            >
+              Invite
+            </Button>
+            <ConfirmPopup></ConfirmPopup>
+          </>
         )}
       </div>
       {isFriend ? (
