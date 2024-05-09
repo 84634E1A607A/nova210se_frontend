@@ -28,20 +28,24 @@ export function SearchNewFriendResultList() {
   return (
     <div className="m-4 box-border rounded-lg p-4 shadow-md">
       <ul>
-        {searchNewFriendResultList.map((user) => {
-          return (
-            <li key={user.id} className="my-3">
-              <Suspense>
-                <Await resolve={data.friends}>
-                  {(friends) => {
-                    assertIsFriendsList(friends);
-                    return <UserDisplayTab leastUserInfo={user} friendsList={friends} />;
-                  }}
-                </Await>
-              </Suspense>
-            </li>
-          );
-        })}
+        {searchNewFriendResultList.length > 0 ? (
+          searchNewFriendResultList.map((user) => {
+            return (
+              <li key={user.id} className="my-3">
+                <Suspense>
+                  <Await resolve={data.friends}>
+                    {(friends) => {
+                      assertIsFriendsList(friends);
+                      return <UserDisplayTab leastUserInfo={user} friendsList={friends} />;
+                    }}
+                  </Await>
+                </Suspense>
+              </li>
+            );
+          })
+        ) : (
+          <p>No users found</p>
+        )}
       </ul>
     </div>
   );
