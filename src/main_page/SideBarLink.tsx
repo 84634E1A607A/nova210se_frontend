@@ -21,12 +21,12 @@ export function SidebarLink({ to, title, icon }: SidebarLinkProps) {
       <Link
         to={to}
         title={title}
-        className={`px-auto flex h-20 w-20 items-center justify-center ${isActive ? 'bg-teal-800 text-white' : 'hover:text-white'}`}
+        className={`flex h-20 w-20 items-center justify-center ${isActive ? 'bg-teal-800 text-white' : 'hover:text-white'}`}
         style={{
           transition: 'background-color 0.3s, color 0.3s',
         }}
       >
-        <i className="mx-auto">{icon}</i>
+        <i className="m-auto">{icon}</i>
       </Link>
     </li>
   );

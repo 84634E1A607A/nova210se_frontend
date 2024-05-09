@@ -11,7 +11,7 @@ import { ReactComponent as UpcomingIcon } from '../svg/nav-upcoming-icon.svg';
 export function MainPageFramework() {
   const userName = useUserName();
 
-  const icon_class = 'h-10 w-10 fill-current';
+  const icon_class = 'h-10 w-10 fill-current m-auto';
 
   return (
     <div className="flex h-screen w-screen min-w-[75rem] flex-row flex-wrap overflow-x-hidden">
