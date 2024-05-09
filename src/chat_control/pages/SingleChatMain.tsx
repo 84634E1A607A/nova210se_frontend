@@ -70,10 +70,6 @@ export function SingleChatMain() {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
       if (fetchedCurrentChat === undefined) {
         navigate(`/${userName}/chats`);
-
-        // The removed case is handled by toast in `UpdateDataCompanion` somehow. I don't know how
-        // So this will only happen in the case of chat deleted
-        window.alert('This chat has been deleted!');
       }
     });
   }, [chatId, navigate, userName]);
