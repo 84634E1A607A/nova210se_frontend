@@ -86,14 +86,10 @@ export default function EditDialog({ field }: Props) {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: onSubmit,
-    retry: 5,
     onError: () => {
       mutation.reset();
     },
-    onSettled: () => {},
     onSuccess: (nowUser) => {
-      console.log('success');
-      console.log(mutation);
       if (nowUser === undefined) return;
       queryClient.setQueryData<LeastUserInfo>(['user'], () => {
         return { ...nowUser };
