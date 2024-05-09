@@ -9,7 +9,7 @@ export function RouterGuard() {
   const path = location.pathname;
 
   useEffect(() => {
-    async function checkIsValidPath(toRoot?: boolean) {
+    function checkIsValidPath(toRoot?: boolean) {
       getUserInfo().then((userInfo) => {
         if (userInfo === undefined) {
           navigate('/login');

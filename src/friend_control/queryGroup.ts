@@ -1,5 +1,6 @@
 import { assertIsGroup } from '../utils/Asserts';
 import { Group } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function queryGroup(groupId: number): Promise<Group | undefined> {
   try {
@@ -19,7 +20,7 @@ export async function queryGroup(groupId: number): Promise<Group | undefined> {
     assertIsGroup(group);
     return group;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to get group');
   }
 }

@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
 import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
-import { SingleChatTab } from './SingleChatTab';
+import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { ChatRelatedWithCurrentUser, Friend } from '../../utils/Types';

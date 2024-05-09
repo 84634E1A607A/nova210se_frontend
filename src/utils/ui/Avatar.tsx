@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
+import React, { useEffect, useRef, useState } from 'react';
 import { DetailedInfoPopup } from '../../user_control/components/DetailedInfoPopup';
 import { DetailedUserInfo } from '../Types';
+import { OverlayPanel } from 'primereact/overlaypanel';
 
 type Props = { url?: string; enablePopup?: boolean; detailedInfo?: DetailedUserInfo };
 
@@ -19,28 +19,24 @@ export function Avatar({ url, enablePopup, detailedInfo }: Props) {
     else setUrlState(url);
   }, [defaultUrl, url]);
 
-  // I truly don't know the exact type of e
-  const showTemplate = (e: any) => {
-    confirmPopup({
-      target: e.currentTarget,
-      message: <DetailedInfoPopup detailedInfo={detailedInfo!} />,
-      acceptClassName: 'hidden',
-      rejectClassName: 'hidden',
-    });
-  };
+  const detail = useRef<OverlayPanel>(null);
 
   return (
     <>
-      <ConfirmPopup />
       <img
         src={urlState}
         style={{ borderRadius: '30%', width: '100%', height: '100%' }}
         onError={() => setUrlState(defaultUrl)}
         alt="avatar"
         onClick={(e) => {
-          if (enablePopup) showTemplate(e);
+          if (enablePopup) detail.current?.toggle(e);
         }}
       />
+      {detailedInfo !== null && (
+        <OverlayPanel ref={detail}>
+          <DetailedInfoPopup detailedInfo={detailedInfo!} />
+        </OverlayPanel>
+      )}
     </>
   );
 }

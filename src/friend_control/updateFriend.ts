@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 export async function updateFriend(
   nickname: string,
   group_id: number | undefined,
@@ -22,7 +24,7 @@ export async function updateFriend(
     }
     return true;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return false;
   }
 }

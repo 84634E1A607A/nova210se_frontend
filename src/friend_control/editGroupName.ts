@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 export async function editGroupName(newName: string, groupId: number) {
   try {
     const response = await fetch(
@@ -16,7 +18,7 @@ export async function editGroupName(newName: string, groupId: number) {
     }
     return true;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to edit group name');
     return false;
   }

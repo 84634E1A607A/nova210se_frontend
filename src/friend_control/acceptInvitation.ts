@@ -1,4 +1,5 @@
 import { assertIsFriend } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 /**
  *
@@ -22,7 +23,7 @@ export async function acceptInvitation(invitationId: number) {
     assertIsFriend(friend);
     return friend;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to accept invitation');
   }
 }

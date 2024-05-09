@@ -1,5 +1,6 @@
 import { assertIsFriendsList } from '../utils/Asserts';
 import { Friend } from '../utils/Types';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getFriendsList(): Promise<Friend[]> {
   try {
@@ -16,7 +17,7 @@ export async function getFriendsList(): Promise<Friend[]> {
     assertIsFriendsList(friendsList);
     return friendsList;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     return [];
   }
 }

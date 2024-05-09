@@ -1,3 +1,5 @@
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
+
 /**
  *
  * @param invitationId: number
@@ -16,7 +18,7 @@ export async function rejectInvitation(invitationId: number): Promise<boolean> {
     if (!response.ok) throw new Error('Response is not ok');
     return true;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
     window.alert('Failed to reject invitation');
     return false;
   }

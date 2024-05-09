@@ -1,4 +1,5 @@
 import { assertIsFriend } from '../utils/Asserts';
+import { expectedException } from '../utils/consts/DebugAndDevConsts';
 
 export async function getFriendInfo(friend_user_id: number) {
   try {
@@ -18,6 +19,6 @@ export async function getFriendInfo(friend_user_id: number) {
     assertIsFriend(friend);
     return friend;
   } catch (e) {
-    console.error(e);
+    console.log(expectedException, e);
   }
 }

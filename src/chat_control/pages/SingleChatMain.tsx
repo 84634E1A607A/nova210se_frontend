@@ -11,6 +11,8 @@ import useWebSocket from 'react-use-websocket';
 import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
 import { getChatInfo } from '../getChatInfo';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
@@ -28,13 +30,41 @@ export function SingleChatMain() {
     share: true,
   });
 
-  // send to server that this user has read the messages in this chat when click and enter into this chat page
-  useEffect(() => {
-    sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
-  }, [chatId, sendJsonMessage]);
-
   const userName = useUserName();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // when click this chat, if there are unread messages, refresh the unread count
+    if (currentChat!.unread_count !== 0) {
+      // send to server that this user has read the messages in this chat when click and enter into this chat page
+      sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
+
+      queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
+        ['chats_related_with_current_user'],
+        (oldChats) => {
+          return oldChats!.map((chat) => {
+            if (chat.chat_id === chatId) {
+              return {
+                ...chat,
+                unread_count: 0,
+              };
+            }
+            return chat;
+          });
+        },
+      );
+
+      // In the next lines, a single `navigate(`/${userName}/chats/${chatId}`);` is not OK, because it
+      // will trigger a dead loop when clicking a chat with none-zero unread count.
+      navigate(`/${userName}/chats`);
+      // Not a good way by setting timer. Should change the architecture to decouple the chat main
+      // page and chats list to avoid this tough dealing.
+      setTimeout(() => {
+        navigate(`/${userName}/chats/${chatId}`);
+      }, 50);
+    }
+  }, [currentChat, chatId, navigate, queryClient, sendJsonMessage, userName]);
 
   useEffect(() => {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
