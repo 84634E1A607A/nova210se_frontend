@@ -8,6 +8,7 @@ import { ReactComponent as FriendIcon } from '../svg/nav-friend-icon.svg';
 import { ReactComponent as SettingIcon } from '../svg/nav-setting-icon.svg';
 import { ReactComponent as UpcomingIcon } from '../svg/nav-upcoming-icon.svg';
 import { ReactComponent as SearchIcon } from '../svg/nav-search-icon.svg';
+import { ReactComponent as GroupIcon } from '../svg/nav-group-icon.svg';
 
 export function MainPageFramework() {
   const userName = useUserName();
@@ -62,7 +63,7 @@ export function MainPageFramework() {
           <SidebarLink
             to={`/${userName}/create_group_chat`}
             title="Group Chat"
-            icon={<UpcomingIcon className={icon_class} />}
+            icon={<GroupIcon className={icon_class} />}
           />
         </ul>
       </nav>
