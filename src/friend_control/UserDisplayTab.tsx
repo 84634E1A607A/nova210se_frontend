@@ -29,8 +29,8 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
 
   return (
     <div>
-      <div className="mb-1 flex h-fit flex-grow flex-row items-center justify-evenly rounded-lg bg-gray-300 pb-2 pt-2">
-        <div className="flex h-11 p-1">
+      <div className="mb-1 flex h-fit flex-grow flex-row items-center justify-evenly rounded-lg bg-gray-300 py-2">
+        <div className="mx-2 flex h-11">
           <Avatar
             url={leastUserInfo.avatar_url}
             enablePopup={true}
@@ -49,22 +49,28 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
           <p>{userNameToDisplay}</p>
         </div>
 
+        <div className="flex flex-grow"></div>
+
         {isFriend ? (
-          <span
+          <div
             {...getToggleProps()}
             role="img"
             aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
-            className="flex w-10 cursor-pointer items-end justify-end"
+            className="flex cursor-pointer"
           >
             {isExpanded ? (
-              <Foldup className="ml-auto h-6 w-6 fill-teal-900" />
+              <Foldup className="h-8 w-8 fill-teal-900" />
             ) : (
-              <Folddown className="ml-auto h-6 w-6 fill-teal-900" />
+              <Folddown className="h-8 w-8 fill-teal-900" />
             )}
-          </span>
+          </div>
         ) : (
-          <Link to={`/${userName}/invite`} state={{ source: source, id: leastUserInfo.id }}>
-            invite
+          <Link
+            className="focus:shadow-outline mx-2 rounded bg-blue-500 px-2 py-1 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            to={`/${userName}/invite`}
+            state={{ source: source, id: leastUserInfo.id }}
+          >
+            Invite
           </Link>
         )}
       </div>

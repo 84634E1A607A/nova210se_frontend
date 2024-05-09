@@ -33,8 +33,17 @@ export async function searchFriend(searchParam: string): Promise<Array<LeastUser
   };
 
   const searchId = parseInt(searchParam);
-  if (!Number.isNaN(searchId) && searchId > 0) await fetchList(searchId);
   await fetchList(searchParam);
+  if (!Number.isNaN(searchId) && searchId > 0) {
+    let id_in_list = false;
+    userList.forEach((u) => {
+      if (u.id === searchId) id_in_list = true;
+    });
+
+    if (!id_in_list) {
+      await fetchList(searchId);
+    }
+  }
   return userList;
 }
 
