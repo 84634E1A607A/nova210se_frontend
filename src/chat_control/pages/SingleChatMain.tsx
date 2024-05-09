@@ -37,12 +37,9 @@ export function SingleChatMain() {
   useEffect(() => {
     // when click this chat, if there are unread messages, refresh the unread count
     if (currentChat!.unread_count !== 0) {
-      console.log('unread_count:', currentChat!.unread_count);
       // send to server that this user has read the messages in this chat when click and enter into this chat page
       sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
 
-      // TODO
-      // the behavior of this effect hook is still unclear
       queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
         ['chats_related_with_current_user'],
         (oldChats) => {
@@ -57,9 +54,15 @@ export function SingleChatMain() {
           });
         },
       );
+
+      // In the next lines, a single `navigate(`/${userName}/chats/${chatId}`);` is not OK, because it
+      // will trigger a dead loop when clicking a chat with none-zero unread count.
       navigate(`/${userName}/chats`);
-      navigate(`/${userName}/chats/${chatId}`);
-      console.log('refreshed unread count');
+      // Not a good way by setting timer. Should change the architecture to decouple the chat main
+      // page and chats list to avoid this tough dealing.
+      setTimeout(() => {
+        navigate(`/${userName}/chats/${chatId}`);
+      }, 50);
     }
   }, [currentChat, chatId, navigate, queryClient, sendJsonMessage, userName]);
 

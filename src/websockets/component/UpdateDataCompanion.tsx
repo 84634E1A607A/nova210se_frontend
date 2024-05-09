@@ -130,11 +130,10 @@ export function UpdateDataCompanion() {
                 data: { chat_id: lastJsonMessage.data.message.chat_id },
               });
             } else {
-              // for chats list to update the unread count.
-              // but can't update unread count if in an irrelevant chat main or chat detail page, or
-              // in this chat's detail page.
-              // can only update when in chats page or in other parts of the APP
-              // TODO
+              // For chats list to update the unread count.
+              // Can update unread count if in an irrelevant chat main or chat detail page, or
+              // in this chat's detail page, but I think it can only update when in chats page or
+              // in other parts of the APP. So don't understand why it works.
               queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             }
             navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
