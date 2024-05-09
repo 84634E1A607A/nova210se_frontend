@@ -110,6 +110,7 @@ export default function EditDialog({ field }: Props) {
 
   return (
     <div className="justify-content-end flex w-6 md:w-2">
+      <Toast ref={toast} />
       <Button
         label="Edit"
         icon="pi pi-pencil"
