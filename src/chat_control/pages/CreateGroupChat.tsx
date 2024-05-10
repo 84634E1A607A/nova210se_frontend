@@ -11,7 +11,7 @@ import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend'
 import { useUserName } from '../../utils/UrlParamsHooks';
 import { createGroupChat } from '../createGroupChat';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FriendTabTemplate } from '../components/FriendTabTemplate';
+import { UserTabTemplate } from '../components/UserTabTemplate';
 import { multiselectElementStyle } from '../../utils/ui/TailwindConsts';
 
 export function CreateGroupChat() {
@@ -137,7 +137,7 @@ export function CreateGroupChat() {
                       maxSelectedLabels={4}
                       className={multiselectElementStyle}
                       display="chip"
-                      itemTemplate={FriendTabTemplate}
+                      itemTemplate={UserTabTemplate}
                     />
                   )}
                 />

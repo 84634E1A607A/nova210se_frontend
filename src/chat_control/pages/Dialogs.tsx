@@ -14,8 +14,9 @@ import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
-
 import { NoticesBar } from '../components/NoticesBar';
+import { getIsSelf } from '../utils/getIsSelf';
+import { messageTabListItemCssClass } from '../components/ui/MessageTabListItem';
 
 export function Dialogs({ chat }: SingleChatProps) {
   const cm = useRef<ContextMenu | null>(null);
@@ -74,9 +75,6 @@ export function Dialogs({ chat }: SingleChatProps) {
                       assertIsLeastUserInfo(currentUser);
                       assertIsFriendsList(friends);
                       detailedMessages.sort((a, b) => a.send_time - b.send_time);
-                      const getIsSelf = (detailedMessageParam: DetailedMessage) => {
-                        return detailedMessageParam.sender.id === currentUser.id;
-                      };
                       return (
                         <div className="flex flex-col overflow-auto">
                           <NoticesBar chat={chat} />
@@ -85,11 +83,11 @@ export function Dialogs({ chat }: SingleChatProps) {
                               return (
                                 <li
                                   key={detailedMessage.message_id}
-                                  className="rounded-1xl m-1 flex w-[39rem] bg-amber-50 pb-0.5 pr-2"
+                                  className={messageTabListItemCssClass}
                                 >
                                   <MessageTab
                                     detailedMessage={detailedMessage}
-                                    isSelf={getIsSelf(detailedMessage)}
+                                    isSelf={getIsSelf(detailedMessage, currentUser)}
                                     name={parseAnyoneName({
                                       unknownUser: detailedMessage.sender,
                                       friends,
