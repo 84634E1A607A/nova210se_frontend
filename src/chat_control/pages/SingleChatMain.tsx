@@ -54,15 +54,7 @@ export function SingleChatMain() {
           });
         },
       );
-
-      // In the next lines, a single `navigate(`/${userName}/chats/${chatId}`);` is not OK, because it
-      // will trigger a dead loop when clicking a chat with none-zero unread count.
       navigate(`/${userName}/chats`);
-      // Not a good way by setting timer. Should change the architecture to decouple the chat main
-      // page and chats list to avoid this tough dealing.
-      setTimeout(() => {
-        navigate(`/${userName}/chats/${chatId}`);
-      }, 50);
     }
   }, [currentChat, chatId, navigate, queryClient, sendJsonMessage, userName]);
 
