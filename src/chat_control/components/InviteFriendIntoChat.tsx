@@ -3,7 +3,7 @@ import { Toast } from 'primereact/toast';
 import { LeastFriendInfo } from '../../utils/Types';
 import { Controller, useForm } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
-import { FriendTabTemplate } from './FriendTabTemplate';
+import { UserTabTemplate } from './UserTabTemplate';
 import { Button } from 'primereact/button';
 import { multiselectElementStyle } from '../../utils/ui/TailwindConsts';
 import { inviteToGroupChat } from '../inviteToGroupChat';
@@ -58,8 +58,8 @@ export function InviteFriendIntoChat({ toast, invitableFriends }: Props) {
 
   return (
     <div className="flex flex-col content-center">
-      <p className="my-3 block font-bold">Invite someone into chat.</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center gap-2">
+      <p className="mb-1 block font-bold">Invite someone into chat.</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center">
         <Controller
           name="friends"
           control={control}
@@ -76,12 +76,12 @@ export function InviteFriendIntoChat({ toast, invitableFriends }: Props) {
               maxSelectedLabels={4}
               className={multiselectElementStyle}
               display="chip"
-              itemTemplate={FriendTabTemplate}
+              itemTemplate={UserTabTemplate}
             />
           )}
         />
         {getFormErrorMessage('friends')}
-        <Button type="submit" label="Submit" className="mt-2" />
+        <Button type="submit" label="Submit" />
       </form>
     </div>
   );

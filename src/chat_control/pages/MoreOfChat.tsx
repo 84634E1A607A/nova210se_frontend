@@ -23,6 +23,8 @@ import { InviteFriendIntoChat } from '../components/InviteFriendIntoChat';
 import { getInvitableFriends } from '../utils/getInvitableFriends';
 import { updateChatState } from '../states/updateChatState';
 import { MouseEvent } from 'react';
+import { MessagesFilterContainer } from '../components/MessagesFilterContainer';
+import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -342,9 +344,13 @@ export function MoreOfChat() {
                     if (friend)
                       return {
                         ...member,
-                        nickname: friend.nickname,
+                        nickname: parseNameOfFriend(friend),
                       };
-                    else return member;
+                    else
+                      return {
+                        ...member,
+                        nickname: member.user_name,
+                      };
                   });
                   const membersWithoutSelf = chat.chat.chat_members.filter(
                     (member) => member.id !== currentUser.id,
@@ -392,7 +398,7 @@ export function MoreOfChat() {
                             icon="pi pi-check"
                             label="Delete chat"
                             className="mr-2"
-                          ></Button>
+                          />
                         </div>
                       ) : null}
 
@@ -402,6 +408,12 @@ export function MoreOfChat() {
                           invitableFriends={getInvitableFriends({ friends, membersWithoutSelf })}
                         />
                       )}
+
+                      <MessagesFilterContainer
+                        chat={chat}
+                        currentUser={currentUser}
+                        membersWithDisplayName={membersToDisplay}
+                      />
                     </div>
                   );
                 }}

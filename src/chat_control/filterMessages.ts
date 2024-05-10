@@ -1,22 +1,22 @@
 import { expectedException } from '../utils/consts/DebugAndDevConsts';
-import { DetailedMessage } from '../utils/Types';
 import { assertIsDetailedMessages } from '../utils/Asserts';
+import { DetailedMessagesReturnType } from './getDetailedMessagesVerbosely';
 
 export async function filterMessages({
   beginTime,
   endTime,
   sender,
   chatId,
-}: Params): Promise<ReturnType> {
+}: Params): Promise<DetailedMessagesReturnType> {
   let filterRequestPostBody: any = {};
   if (beginTime) {
     filterRequestPostBody.begin_time = beginTime;
     filterRequestPostBody.end_time = endTime;
   }
-  if (sender) {
+  if (sender && sender.length > 0) {
     filterRequestPostBody.sender = sender;
   }
-  if (!beginTime && !sender) {
+  if (!beginTime && (!sender || sender.length === 0)) {
     return {
       messages: [],
       isSuccessful: false,
@@ -57,9 +57,4 @@ interface Params {
   endTime?: number;
   sender?: Array<number>;
   chatId: number;
-}
-
-interface ReturnType {
-  messages: DetailedMessage[];
-  isSuccessful: boolean;
 }
