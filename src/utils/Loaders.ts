@@ -63,17 +63,15 @@ export async function UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMes
   chat_id: string | undefined,
 ) {
   return defer({
-    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-    chatsRelatedWithCurrentUser: fetchDataForLoaders(
-      queryClient,
-      ['chats_related_with_current_user'],
-      getChats,
-    ),
-    detailedMessages: chat_id
-      ? fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
-          getDetailedMessages(Number(chat_id)),
-        )
-      : Promise.resolve([]),
+    data: Promise.all([
+      fetchDataForLoaders(queryClient, ['user'], getUserInfo),
+      fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
+      fetchDataForLoaders(queryClient, ['chats_related_with_current_user'], getChats),
+      chat_id
+        ? fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
+            getDetailedMessages(Number(chat_id)),
+          )
+        : Promise.resolve([]),
+    ]),
   });
 }
