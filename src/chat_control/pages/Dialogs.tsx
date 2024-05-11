@@ -1,6 +1,4 @@
-import { SingleChatProps } from './ChatHeader';
 import { Await, Navigate, useLoaderData, useLocation } from 'react-router-dom';
-import { assertIsUserAndFriendsAndDetailedMessagesData } from '../../utils/AssertsForRouterLoader';
 import { Suspense, useRef, useState } from 'react';
 import {
   assertIsDetailedMessages,
@@ -9,7 +7,13 @@ import {
   assertIsMessage,
 } from '../../utils/Asserts';
 import { MessageTab } from '../components/MessageTab';
-import { DetailedMessage, Message } from '../../utils/Types';
+import {
+  ChatRelatedWithCurrentUser,
+  DetailedMessage,
+  Friend,
+  LeastUserInfo,
+  Message,
+} from '../../utils/Types';
 import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
@@ -18,7 +22,7 @@ import { NoticesBar } from '../components/NoticesBar';
 import { getIsSelf } from '../utils/getIsSelf';
 import { messageTabListItemCssClass } from '../components/ui/MessageTabListItem';
 
-export function Dialogs({ chat }: SingleChatProps) {
+export function Dialogs({ chat, messages, user, friends }: Props) {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();
   const { setRepliedMessage } = useRepliedMessageContext();
@@ -48,9 +52,6 @@ export function Dialogs({ chat }: SingleChatProps) {
 
   const location = useLocation();
   const thisUrl = location.pathname;
-
-  const userAndFriendsAndDetailedMessagesData = useLoaderData();
-  assertIsUserAndFriendsAndDetailedMessagesData(userAndFriendsAndDetailedMessagesData);
 
   return (
     <Suspense fallback={<div>Loading messages</div>}>
@@ -118,4 +119,11 @@ export function Dialogs({ chat }: SingleChatProps) {
       </Await>
     </Suspense>
   );
+}
+
+interface Props {
+  chat: ChatRelatedWithCurrentUser;
+  messages: DetailedMessage[];
+  user: LeastUserInfo;
+  friends: Friend[];
 }

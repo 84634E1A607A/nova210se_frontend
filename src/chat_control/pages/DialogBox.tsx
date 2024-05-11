@@ -1,4 +1,3 @@
-import { SingleChatProps } from './ChatHeader';
 import { useForm } from 'react-hook-form';
 import { ValidationError } from '../../utils/ValidationError';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
@@ -7,8 +6,9 @@ import useWebSocket from 'react-use-websocket';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 import { useEffect, useRef } from 'react';
 import { sendMessageC2SActionWS } from '../../websockets/Actions';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 
-export function DialogBox({ chat }: SingleChatProps) {
+export function DialogBox({ chat }: Props) {
   const {
     formState: { errors, isSubmitting },
     register,
@@ -96,4 +96,8 @@ export function DialogBox({ chat }: SingleChatProps) {
 
 interface ChatContent {
   content: string;
+}
+
+interface Props {
+  chat: ChatRelatedWithCurrentUser;
 }

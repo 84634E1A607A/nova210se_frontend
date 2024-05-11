@@ -10,8 +10,8 @@ import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useChatId, useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChatRelatedWithCurrentUser, LeastUserInfo } from '../../utils/Types';
-// import { assertIsUserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesData } from '../../utils/AssertsForRouterLoader';
+import { SingleChatMain } from './SingleChatMain';
+import { MoreOfChat } from './MoreOfChat';
 
 /**
  * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
@@ -77,13 +77,20 @@ export function ChatMainPageFramework() {
             };
           });
           assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
+          const currentChat = chatsRelatedWithCurrentUser.find((chat) => chat.chat_id === chatId);
 
           return (
             <div className="flex flex-grow flex-row">
               <div className="ml-2 flex w-1/5 max-w-72 flex-col">
                 <ul>
                   {chatsRelatedWithCurrentUser.map((chat) => (
-                    <li key={chat.chat_id}>
+                    <li
+                      key={chat.chat_id}
+                      onClick={() => {
+                        navigate(`/${userName}/chats/${chatId}`);
+                        setRightComponent('chat');
+                      }}
+                    >
                       <SingleChatTab chat={chat} />
                     </li>
                   ))}
@@ -91,7 +98,25 @@ export function ChatMainPageFramework() {
               </div>
 
               {/* main page or chat detail page for chat apiece */}
-              <div className="ml-2 w-4/5 flex-wrap border-r-2"></div>
+              <div className="ml-2 w-4/5 flex-wrap border-r-2">
+                {rightComponent === 'chat' ? (
+                  <SingleChatMain
+                    chatId={chatId!}
+                    chat={currentChat!}
+                    setRightComponent={setRightComponent}
+                    messages={detailedMessages}
+                    user={currentUser}
+                    friends={friends}
+                  />
+                ) : rightComponent === 'more' ? (
+                  <MoreOfChat
+                    chat={currentChat!}
+                    user={currentUser}
+                    friends={friends}
+                    setRightComponent={setRightComponent}
+                  />
+                ) : null}
+              </div>
             </div>
           );
         }}
