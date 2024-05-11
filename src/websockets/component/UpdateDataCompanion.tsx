@@ -43,7 +43,11 @@ export function UpdateDataCompanion() {
     reconnectInterval: 1500,
     share: true,
   });
-  console.log('lastJsonMessage:', lastJsonMessage);
+
+  useEffect(() => {
+    // should be only for DEV phase
+    console.log('lastJsonMessage:', lastJsonMessage);
+  }, [lastJsonMessage]);
 
   const location = useLocation();
   const thisPageUrl = location.pathname;

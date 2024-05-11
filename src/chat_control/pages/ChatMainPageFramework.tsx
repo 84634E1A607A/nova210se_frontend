@@ -2,7 +2,6 @@ import { Suspense, useEffect, useState } from 'react';
 import { useLoaderData, Await, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import {
   assertIsChatsRelatedWithCurrentUser,
-  assertIsDetailedMessages,
   assertIsFriendsList,
   assertIsLeastUserInfo,
 } from '../../utils/Asserts';
@@ -12,6 +11,7 @@ import { useChatId, useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
 import { MoreOfChat } from './MoreOfChat';
+import { useCurrentChatContext } from '../states/CurrentChatProvider';
 
 /**
  * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
@@ -31,6 +31,7 @@ export function ChatMainPageFramework() {
    * @description The state that manages which should be displayed on the right-hand side of this page.
    */
   const [rightComponent, setRightComponent] = useState<RightSideComponent>();
+  const { setCurrentChat } = useCurrentChatContext();
 
   /**
    * @description The data management part.
@@ -52,16 +53,15 @@ export function ChatMainPageFramework() {
       setShouldReload(false);
     }
     return () => setShouldReload(false);
-  }, [navigate, queryClient, shouldReload, userName, setShouldReload]);
+  }, [navigate, queryClient, shouldReload, userName, setShouldReload, currentRouterUrl]);
 
   return (
     <Suspense fallback={<p>Loading chats...</p>}>
       <Await resolve={data} errorElement={<Navigate to={currentRouterUrl} />}>
-        {([currentUser, friends, chatsRelatedWithCurrentUser, detailedMessages]) => {
+        {([currentUser, friends, chatsRelatedWithCurrentUser]) => {
           assertIsLeastUserInfo(currentUser);
           assertIsFriendsList(friends);
           assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
-          assertIsDetailedMessages(detailedMessages);
 
           /** @description get the chat name that can be directly displayed for a specific current user */
           chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
@@ -77,7 +77,6 @@ export function ChatMainPageFramework() {
             };
           });
           assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
-          const currentChat = chatsRelatedWithCurrentUser.find((chat) => chat.chat_id === chatId);
 
           return (
             <div className="flex flex-grow flex-row">
@@ -87,7 +86,7 @@ export function ChatMainPageFramework() {
                     <li
                       key={chat.chat_id}
                       onClick={() => {
-                        navigate(`/${userName}/chats/${chatId}`);
+                        setCurrentChat(chat);
                         setRightComponent('chat');
                       }}
                     >
@@ -102,15 +101,12 @@ export function ChatMainPageFramework() {
                 {rightComponent === 'chat' ? (
                   <SingleChatMain
                     chatId={chatId!}
-                    chat={currentChat!}
                     setRightComponent={setRightComponent}
-                    messages={detailedMessages}
                     user={currentUser}
                     friends={friends}
                   />
                 ) : rightComponent === 'more' ? (
                   <MoreOfChat
-                    chat={currentChat!}
                     user={currentUser}
                     friends={friends}
                     setRightComponent={setRightComponent}

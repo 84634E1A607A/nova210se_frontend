@@ -10,26 +10,16 @@ import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
 import { getChatInfo } from '../getChatInfo';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  ChatRelatedWithCurrentUser,
-  DetailedMessage,
-  Friend,
-  LeastUserInfo,
-} from '../../utils/Types';
+import { ChatRelatedWithCurrentUser, Friend, LeastUserInfo } from '../../utils/Types';
+import { useCurrentChatContext } from '../states/CurrentChatProvider';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
  * @layout Dialogs (all the chats, the core component)
  * @layout DialogBox
  */
-export function SingleChatMain({
-  chatId,
-  chat,
-  setRightComponent,
-  messages,
-  user,
-  friends,
-}: Props) {
+export function SingleChatMain({ chatId, setRightComponent, user, friends }: Props) {
+  const { currentChat } = useCurrentChatContext();
   const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     share: true,
   });
@@ -40,7 +30,7 @@ export function SingleChatMain({
 
   useEffect(() => {
     // when click this chat, if there are unread messages, refresh the unread count
-    if (chat!.unread_count !== 0) {
+    if (currentChat!.unread_count !== 0) {
       // send to server that this user has read the messages in this chat when click and enter into this chat page
       sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
 
@@ -60,7 +50,15 @@ export function SingleChatMain({
       );
       navigate(currentRouterUrl);
     }
-  }, [chat, chatId, navigate, queryClient, sendJsonMessage, user.user_name]);
+  }, [
+    currentChat,
+    chatId,
+    currentRouterUrl,
+    navigate,
+    queryClient,
+    sendJsonMessage,
+    user.user_name,
+  ]);
 
   useEffect(() => {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
@@ -72,13 +70,13 @@ export function SingleChatMain({
 
   return (
     <div className="flex flex-col">
-      <ChatHeader chat={chat} setRightComponent={setRightComponent} />
+      <ChatHeader chat={currentChat!} setRightComponent={setRightComponent} />
       <RepliedMessageProvider>
         <DialogBoxRefProvider>
           <MessageRefsProvider>
-            <Dialogs chat={chat} messages={messages} user={user} friends={friends} />
+            <Dialogs chat={currentChat!} user={user} friends={friends} />
           </MessageRefsProvider>
-          <DialogBox chat={chat} />
+          <DialogBox chat={currentChat!} />
         </DialogBoxRefProvider>
       </RepliedMessageProvider>
     </div>
@@ -87,9 +85,7 @@ export function SingleChatMain({
 
 interface Props {
   chatId: number;
-  chat: ChatRelatedWithCurrentUser;
   setRightComponent: any;
-  messages: DetailedMessage[];
   user: LeastUserInfo;
   friends: Friend[];
 }

@@ -45,14 +45,11 @@ const router = createBrowserRouter([
         loader: async () => UserLoader(queryClient),
         children: [
           {
-            path: 'chats/:chat_id?',
+            path: 'chats',
             element: <ChatMainPageFramework />,
             id: 'chats',
-            loader: async ({ params }) =>
-              UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader(
-                queryClient,
-                params.chat_id,
-              ),
+            loader: async () =>
+              UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader(queryClient),
           },
           {
             path: 'friends',

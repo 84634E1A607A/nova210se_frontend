@@ -2,12 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { SingleUserTab } from '../components/SIngleUserTab';
 import { useRef, useState } from 'react';
 import { ContextMenu } from 'primereact/contextmenu';
-import {
-  ChatRelatedWithCurrentUser,
-  DetailedUserInfo,
-  Friend,
-  LeastUserInfo,
-} from '../../utils/Types';
+import { DetailedUserInfo, Friend, LeastUserInfo } from '../../utils/Types';
 import { Toast } from 'primereact/toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setAdmin } from '../setAdmin';
@@ -23,19 +18,23 @@ import { updateChatState } from '../states/updateChatState';
 import { MouseEvent } from 'react';
 import { MessagesFilterContainer } from '../components/MessagesFilterContainer';
 import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
+import { useCurrentChatContext } from '../states/CurrentChatProvider';
 
 /**
  * @description the members and settings, etc. of a chat
  */
-export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
-  const currentUserIsOwner = chat.chat.chat_owner.id === user.id;
+export function MoreOfChat({ user, friends, setRightComponent }: Props) {
+  const { currentChat } = useCurrentChatContext();
+  if (currentChat === null) throw new Error('currentChat is null');
+
+  const currentUserIsOwner = currentChat.chat.chat_owner.id === user.id;
   const currentUserIsAdmin =
-    chat.chat.chat_admins.find((admin) => admin.id === user.id) !== undefined;
-  const isPrivateChat = chat.chat.chat_name === '';
+    currentChat.chat.chat_admins.find((admin) => admin.id === user.id) !== undefined;
+  const isPrivateChat = currentChat.chat.chat_name === '';
 
   const membersForUse = !isPrivateChat
-    ? chat.chat.chat_members
-    : chat.chat.chat_members.filter((member) => member.id !== user.id);
+    ? currentChat.chat.chat_members
+    : currentChat.chat.chat_members.filter((member) => member.id !== user.id);
   const membersToDisplay: DetailedUserInfo[] = membersForUse.map((member) => {
     const friend = friends.find((item) => item.friend.id === member.id);
     if (friend)
@@ -49,7 +48,9 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
         nickname: member.user_name,
       };
   });
-  const membersWithoutSelf = chat.chat.chat_members.filter((member) => member.id !== user.id);
+  const membersWithoutSelf = currentChat.chat.chat_members.filter(
+    (member) => member.id !== user.id,
+  );
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -61,7 +62,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
    */
   const onMutateSuccessToParentPage = (
     isSuccessful: boolean,
-    successMessage: string,
+    _successMessage: string,
     failedMessage: string,
   ) => {
     if (isSuccessful) {
@@ -93,13 +94,15 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
       // prevent too-complicated cache setting
       queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       const updatedChat = await updateChatState({
-        chatId: chat.chat_id,
+        chatId: currentChat.chat_id,
         toast,
         navigate: navigate,
         userName: user.user_name,
       });
       if (!updatedChat) return;
-      navigate(`/${user.user_name}/chats/${chat.chat_id}/more`, { state: { chat: updatedChat } });
+      navigate(`/${user.user_name}/chats/${currentChat.chat_id}/more`, {
+        state: { chat: updatedChat },
+      });
       toast.current?.show({
         severity: 'success',
         summary: 'Success',
@@ -173,7 +176,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
         });
       else {
         navigate(`/${user.user_name}/invite`, {
-          state: { source: chat.chat_id, id: selectedMember!.id },
+          state: { source: currentChat.chat_id, id: selectedMember!.id },
         });
       }
     },
@@ -195,7 +198,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
       }
       if (isAbleToToggle) {
         mutateAdmin({
-          chatId: chat.chat_id,
+          chatId: currentChat.chat_id,
           memberId: selectedMember!.id,
           setToAdmin: !selectedMember!.isAdmin,
         });
@@ -215,7 +218,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
     label: 'Transfer Owner',
     command: () => {
       if (currentUserIsOwner && !selectedMember!.isMe) {
-        mutateOwner({ chatId: chat.chat_id, newOwnerId: selectedMember!.id });
+        mutateOwner({ chatId: currentChat.chat_id, newOwnerId: selectedMember!.id });
       } else {
         toast.current?.show({
           severity: 'error',
@@ -233,7 +236,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
     label: 'Remove Member',
     command: () => {
       if (selectedMember!.isMe && !selectedMember!.isOwner) {
-        mutateLeaveChat({ chatId: chat.chat_id });
+        mutateLeaveChat({ chatId: currentChat.chat_id });
       } else if (selectedMember!.isOwner) {
         toast.current?.show({
           severity: 'error',
@@ -256,7 +259,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
           life: 2000,
         });
       } else {
-        mutateKickoutMember({ chatId: chat.chat_id, memberId: selectedMember!.id });
+        mutateKickoutMember({ chatId: currentChat.chat_id, memberId: selectedMember!.id });
       }
     },
   };
@@ -320,10 +323,10 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
     <div className="ml-3 flex flex-col">
       {/** two types of name, one is absolute name, which can be set by admins. Nickname can be arbitrarily set */}
       <span className="p-1">
-        {`${isPrivateChat ? 'Private' : 'Group'} chat name: ${chat.chatName}`}
+        {`${isPrivateChat ? 'Private' : 'Group'} chat name: ${currentChat.chatName}`}
       </span>
       {isPrivateChat ? null : (
-        <span className="p-1">{`Absolute name: ${chat.chat.chat_name}`}</span>
+        <span className="p-1">{`Absolute name: ${currentChat.chat.chat_name}`}</span>
       )}
 
       <div className="card md:justify-content-center flex flex-col items-center">
@@ -331,8 +334,8 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
           {membersToDisplay.map((member) => {
             const detailedMember: DetailedMemberInfo = {
               ...member,
-              isOwner: chat.chat.chat_owner.id === member.id,
-              isAdmin: chat.chat.chat_admins.some((admin) => admin.id === member.id),
+              isOwner: currentChat.chat.chat_owner.id === member.id,
+              isAdmin: currentChat.chat.chat_admins.some((admin) => admin.id === member.id),
               isMe: user.id === member.id,
               isFriend: friends.some((friend) => friend.friend.id === member.id),
             };
@@ -360,10 +363,10 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
         )}
 
         <ConfirmDialog />
-        {chat.chat.chat_owner.id === user.id && !isPrivateChat ? (
+        {currentChat.chat.chat_owner.id === user.id && !isPrivateChat ? (
           <div className="card justify-content-center flex flex-wrap gap-2">
             <Button
-              onClick={() => confirmDeleteChat(chat.chat_id)}
+              onClick={() => confirmDeleteChat(currentChat.chat_id)}
               icon="pi pi-check"
               label="Delete chat"
               className="mr-2"
@@ -379,7 +382,7 @@ export function MoreOfChat({ chat, user, friends, setRightComponent }: Props) {
         )}
 
         <MessagesFilterContainer
-          chat={chat}
+          chat={currentChat}
           currentUser={user}
           membersWithDisplayName={membersToDisplay}
         />
@@ -397,7 +400,6 @@ export type DetailedMemberInfo = DetailedUserInfo & {
 };
 
 interface Props {
-  chat: ChatRelatedWithCurrentUser;
   user: LeastUserInfo;
   friends: Friend[];
   setRightComponent: any;

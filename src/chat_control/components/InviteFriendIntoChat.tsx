@@ -32,7 +32,7 @@ export function InviteFriendIntoChat({ toast, invitableFriends }: Props) {
     let hasOneSuccess = false;
     let hasOneFailure = false;
     for (const friend of friends) {
-      const response = await inviteToGroupChat({ chatId, userId: friend.userId });
+      const response = await inviteToGroupChat({ chatId: chatId!, userId: friend.userId });
       if (response.isSuccessful) {
         hasOneSuccess = true;
       } else {

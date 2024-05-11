@@ -5,7 +5,6 @@
 
 import {
   ChatRelatedWithCurrentUser,
-  DetailedMessage,
   Friend,
   Group,
   Invitation,
@@ -26,14 +25,6 @@ function assertIsApplicationsForChatData(
   if (data === null) throw new Error('Server response is null');
   if (!('applicationsForChat' in data))
     throw new Error('Server response does not contain applications');
-}
-
-function assertIsDetailedMessagesData(
-  data: unknown,
-): asserts data is { detailedMessages: DetailedMessage[] } {
-  if (typeof data !== 'object') throw new Error('Server response is not an object');
-  if (data === null) throw new Error('Server response is null');
-  if (!('detailedMessages' in data)) throw new Error('Server response does not contain messages');
 }
 
 function assertIsChatsRelatedWithCurrentUserData(
