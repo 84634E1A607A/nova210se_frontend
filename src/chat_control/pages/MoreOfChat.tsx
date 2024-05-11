@@ -100,9 +100,7 @@ export function MoreOfChat({ user, friends, setRightComponent }: Props) {
         userName: user.user_name,
       });
       if (!updatedChat) return;
-      navigate(`/${user.user_name}/chats/${currentChat.chat_id}/more`, {
-        state: { chat: updatedChat },
-      });
+      navigate(`/${user.user_name}/chats`);
       toast.current?.show({
         severity: 'success',
         summary: 'Success',

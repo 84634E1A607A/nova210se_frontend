@@ -57,9 +57,7 @@ export async function UserLoader(queryClient: QueryClient) {
   });
 }
 
-export async function UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader(
-  queryClient: QueryClient,
-) {
+export async function UserAndFriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
   return defer({
     data: Promise.all([
       fetchDataForLoaders(queryClient, ['user'], getUserInfo),
