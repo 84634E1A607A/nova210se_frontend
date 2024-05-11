@@ -5,6 +5,7 @@ import { RouterGuard } from './user_control/RouterGuard';
 import { PrimeReactProvider } from 'primereact/api';
 import { UpdateDataCompanion } from './websockets/component/UpdateDataCompanion';
 import { CurrentChatProvider } from './chat_control/states/CurrentChatProvider';
+import { RefetchProvider } from './chat_control/states/RefetchProvider';
 
 function App() {
   return (
@@ -12,8 +13,10 @@ function App() {
       <div className="App flex">
         <RouterGuard />
         <CurrentChatProvider>
-          <Outlet />
-          <UpdateDataCompanion />
+          <RefetchProvider>
+            <Outlet />
+            <UpdateDataCompanion />
+          </RefetchProvider>
         </CurrentChatProvider>
       </div>
     </PrimeReactProvider>

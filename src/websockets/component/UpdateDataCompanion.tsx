@@ -14,18 +14,18 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  chat_detailRouterUrl,
-  chat_mainRouterUrl,
   chatsRouterUrl,
   invitationsRouterUrl,
   loginRouterUrl,
 } from '../../utils/router/RouterPaths';
 import { assertIsChatRelatedWithCurrentUser } from '../../utils/Asserts';
-import { Toast } from 'primereact/toast';
 import { updateChatState } from '../../chat_control/states/updateChatState';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { getChatInfo } from '../../chat_control/getChatInfo';
 import { getUserInfo } from '../../user_control/getUserInfo';
+import { useCurrentChatContext } from '../../chat_control/states/CurrentChatProvider';
+import { Toast } from 'primereact/toast';
+import { useRefetchContext } from '../../chat_control/states/RefetchProvider';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -50,12 +50,14 @@ export function UpdateDataCompanion() {
   }, [lastJsonMessage]);
 
   const location = useLocation();
-  const thisPageUrl = location.pathname;
+  const currentRouterUrl = location.pathname;
   const state = location.state;
 
   const navigate = useNavigate();
 
   const toast = useRef<Toast | null>(null);
+  const { currentChat } = useCurrentChatContext();
+  const { refetches } = useRefetchContext();
 
   useEffect(() => {
     /**
@@ -74,36 +76,35 @@ export function UpdateDataCompanion() {
       messageSummary: string,
       messageDetail: string,
     ) {
-      const chat_detailUrlMatched = thisPageUrl.match(chat_detailRouterUrl);
-      const chat_mainUrlMatched = thisPageUrl.match(chat_mainRouterUrl);
-      if (chat_detailUrlMatched || chat_mainUrlMatched) {
-        let chatId: number;
-        if (chat_detailUrlMatched) {
-          chatId = Number(chat_detailUrlMatched[2]);
-        } else {
-          chatId = Number(chat_mainUrlMatched![2]);
-        }
-        getChatInfo({ chatId }).then((currentChat) => {
-          if (currentChat === undefined) {
-            if (shouldDeleteCache) {
-              queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
-            }
-            navigate(`/${userName}/chats`);
-            navigate(`/${userName}/chats`);
-            toast.current?.show({
-              severity: 'error',
-              summary: messageSummary,
-              detail: messageDetail,
-            });
-          } else if (shouldDeleteCache) {
-            // delete all cache because we can't get chatId of the deleted private chat
-            queryClient.removeQueries({ queryKey: ['detailed_messages'] });
-          }
-        });
-      }
+      //
+      //   if (chat_detailUrlMatched || chat_mainUrlMatched) {
+      //     let chatId: number;
+      //     if (chat_detailUrlMatched) {
+      //       chatId = Number(chat_detailUrlMatched[2]);
+      //     } else {
+      //       chatId = Number(chat_mainUrlMatched![2]);
+      //     }
+      //     getChatInfo({ chatId }).then((currentChat) => {
+      //       if (currentChat === undefined) {
+      //         if (shouldDeleteCache) {
+      //           queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
+      //         }
+      //         navigate(`/${userName}/chats`);
+      //         navigate(`/${userName}/chats`);
+      //         toastRef.current!.show({
+      //           severity: 'error',
+      //           summary: messageSummary,
+      //           detail: messageDetail,
+      //         });
+      //       } else if (shouldDeleteCache) {
+      //         // delete all cache because we can't get chatId of the deleted private chat
+      //         queryClient.removeQueries({ queryKey: ['detailed_messages'] });
+      //       }
+      //     });
+      //   }
     }
 
-    if (thisPageUrl.match(loginRouterUrl)) {
+    if (currentRouterUrl.match(loginRouterUrl)) {
       return;
     }
     if (lastJsonMessage) {
@@ -112,56 +113,62 @@ export function UpdateDataCompanion() {
         switch (lastJsonMessage.action) {
           case receiveApplicationForChatS2CActionWS:
             queryClient.removeQueries({ queryKey: ['applications_for_chat'] });
-            if (thisPageUrl.match(invitationsRouterUrl)) {
-              navigate(thisPageUrl, { replace: true, state });
+            if (currentRouterUrl.match(invitationsRouterUrl)) {
+              navigate(currentRouterUrl, { replace: true, state });
             }
             break;
 
           case receiveMessageS2CActionWS:
-            // Only in this case or when click the chat should we update the
-            // unread count of the current user's chats list
+            // Only in this case or when click the chat should we update the unread count of current user
 
-            const matched = thisPageUrl.match(chat_mainRouterUrl);
             queryClient.removeQueries({
               queryKey: ['detailed_messages', String(lastJsonMessage.data.message.chat_id)],
             });
-            if (matched && matched[2] === String(lastJsonMessage.data.message.chat_id)) {
-              // In exactly the page that needs changing:
-              // send 'I've read the messages' to server
-              // don't need to update unread count because it's set to zero when enter the chat
-              sendJsonMessage({
-                action: sendReadMessagesC2SActionWS,
-                data: { chat_id: lastJsonMessage.data.message.chat_id },
-              });
+
+            // Mainly to update the last message of the chat.
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+
+            if (currentRouterUrl.match(chatsRouterUrl)) {
+              if (currentChat?.chat_id === lastJsonMessage.data.message.chat_id) {
+                // In exactly the page that needs changing: send 'I've read the messages' to server
+                // (no need to update unread count because it's set to zero when enter the chat before)
+                sendJsonMessage({
+                  action: sendReadMessagesC2SActionWS,
+                  data: { chat_id: lastJsonMessage.data.message.chat_id },
+                });
+              }
+              navigate(currentRouterUrl, { preventScrollReset: true });
+              console.log(refetches);
+              refetches[0]();
             } else {
-              // For chats list to update the unread count.
-              // Can update unread count if in an irrelevant chat main or chat detail page, or
-              // in this chat's detail page, but I think it can only update when in chats page or
-              // in other parts of the APP. So don't understand why it works.
-              queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+              // `state` is for possible invitations page
+              navigate(currentRouterUrl, { preventScrollReset: true, state });
             }
-            navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
+
             break;
 
-          case receiveMemberAddedS2CActionWS:
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-            if (thisPageUrl.match(chatsRouterUrl) || thisPageUrl.match(chat_mainRouterUrl)) {
-              navigate(thisPageUrl, { replace: true, preventScrollReset: true, state });
-            } else if (thisPageUrl.match(chat_detailRouterUrl)) {
-              const chat = state.chat;
-              assertIsChatRelatedWithCurrentUser(chat);
-              updateChatState({
-                chatId: chat.chat_id,
-                toast,
-                navigate,
-                userName,
-              }).then((updatedChat) => {
-                if (updatedChat) {
-                  navigate(thisPageUrl, { replace: true, state: { chat: updatedChat } });
-                } // else any problem will be dealt with within `updateChatState`
-              });
-            }
-            break;
+          // case receiveMemberAddedS2CActionWS:
+          //   queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+          //   if (
+          //     currentRouterUrl.match(chatsRouterUrl) ||
+          //     currentRouterUrl.match(chat_mainRouterUrl)
+          //   ) {
+          //     navigate(currentRouterUrl, { replace: true, preventScrollReset: true, state });
+          //   } else if (currentRouterUrl.match(chat_detailRouterUrl)) {
+          //     const chat = state.chat;
+          //     assertIsChatRelatedWithCurrentUser(chat);
+          //     updateChatState({
+          //       chatId: chat.chat_id,
+          //       toast: toastRef,
+          //       navigate,
+          //       userName,
+          //     }).then((updatedChat) => {
+          //       if (updatedChat) {
+          //         navigate(currentRouterUrl, { replace: true, state: { chat: updatedChat } });
+          //       } // else any problem will be dealt with within `updateChatState`
+          //     });
+          //   }
+          //   break;
 
           case receiveFriendDeletedS2CActionWS:
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
@@ -202,8 +209,8 @@ export function UpdateDataCompanion() {
             queryClient.removeQueries({
               queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
             });
-            if (thisPageUrl.match(chat_mainRouterUrl)) {
-              navigate(thisPageUrl, { replace: true, state });
+            if (currentRouterUrl.match(chatsRouterUrl)) {
+              navigate(currentRouterUrl, { replace: true, state });
             }
             break;
 
@@ -213,11 +220,7 @@ export function UpdateDataCompanion() {
         }
       }
     }
-  }, [queryClient, lastJsonMessage, thisPageUrl, navigate, state, userName, sendJsonMessage]);
+  }, [queryClient, lastJsonMessage, currentRouterUrl, navigate, state, userName, sendJsonMessage]);
 
-  return (
-    <>
-      <Toast ref={toast} />
-    </>
-  );
+  return <Toast ref={toast} />;
 }
