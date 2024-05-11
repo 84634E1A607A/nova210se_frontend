@@ -7,7 +7,7 @@ import {
 } from '../../utils/Asserts';
 import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
-import { useChatId, useUserName } from '../../utils/router/RouteParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
 import { MoreOfChat } from './MoreOfChat';
@@ -25,7 +25,6 @@ export function ChatMainPageFramework() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const currentRouterUrl = useLocation().pathname;
-  const chatId = useChatId();
 
   /**
    * @description The state that manages which should be displayed on the right-hand side of this page.
@@ -100,7 +99,6 @@ export function ChatMainPageFramework() {
               <div className="ml-2 w-4/5 flex-wrap border-r-2">
                 {rightComponent === 'chat' ? (
                   <SingleChatMain
-                    chatId={chatId!}
                     setRightComponent={setRightComponent}
                     user={currentUser}
                     friends={friends}

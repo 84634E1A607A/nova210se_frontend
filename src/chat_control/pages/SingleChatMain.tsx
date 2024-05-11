@@ -18,8 +18,9 @@ import { useCurrentChatContext } from '../states/CurrentChatProvider';
  * @layout Dialogs (all the chats, the core component)
  * @layout DialogBox
  */
-export function SingleChatMain({ chatId, setRightComponent, user, friends }: Props) {
+export function SingleChatMain({ setRightComponent, user, friends }: Props) {
   const { currentChat } = useCurrentChatContext();
+  const chatId = currentChat!.chat_id;
   const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     share: true,
   });
@@ -32,7 +33,10 @@ export function SingleChatMain({ chatId, setRightComponent, user, friends }: Pro
     // when click this chat, if there are unread messages, refresh the unread count
     if (currentChat!.unread_count !== 0) {
       // send to server that this user has read the messages in this chat when click and enter into this chat page
-      sendJsonMessage({ action: sendReadMessagesC2SActionWS, data: { chat_id: chatId } });
+      sendJsonMessage({
+        action: sendReadMessagesC2SActionWS,
+        data: { chat_id: chatId },
+      });
 
       queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
         ['chats_related_with_current_user'],
@@ -84,7 +88,6 @@ export function SingleChatMain({ chatId, setRightComponent, user, friends }: Pro
 }
 
 interface Props {
-  chatId: number;
   setRightComponent: any;
   user: LeastUserInfo;
   friends: Friend[];
