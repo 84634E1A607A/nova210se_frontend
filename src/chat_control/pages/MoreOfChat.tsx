@@ -10,7 +10,7 @@ import { assertIsUserAndFriendsData } from '../../utils/AssertsForRouterLoader';
 import { ContextMenu } from 'primereact/contextmenu';
 import { DetailedUserInfo, LeastUserInfo } from '../../utils/Types';
 import { Toast } from 'primereact/toast';
-import { useUserName } from '../../utils/UrlParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { setAdmin } from '../setAdmin';
 import { transferOwner } from '../transferOwner';

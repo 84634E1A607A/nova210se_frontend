@@ -1,20 +1,16 @@
 import { Suspense, useEffect, useState } from 'react';
-import {
-  useLoaderData,
-  Outlet,
-  Await,
-  useOutletContext,
-  useNavigate,
-  Navigate,
-} from 'react-router-dom';
+import { useLoaderData, Await, useNavigate, Navigate } from 'react-router-dom';
 import { assertIsFriendsAndChatsRelatedWithCurrentUserData } from '../../utils/AssertsForRouterLoader';
 import { assertIsChatsRelatedWithCurrentUser, assertIsFriendsList } from '../../utils/Asserts';
 import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
-import { useUserName } from '../../utils/UrlParamsHooks';
-import { ChatRelatedWithCurrentUser, Friend } from '../../utils/Types';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQueryClient } from '@tanstack/react-query';
 
+/**
+ * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
+ * Its loader needs: user, friends, chats_related_with_current_user, detailed_messages
+ */
 export function ChatMainPageFramework() {
   const friendsAndChatsRelatedWithCurrentUserData = useLoaderData();
   assertIsFriendsAndChatsRelatedWithCurrentUserData(friendsAndChatsRelatedWithCurrentUserData);
@@ -22,6 +18,10 @@ export function ChatMainPageFramework() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
+  // `parseChatName` may throw an error if a new friend is added and the friends list
+  // is not updated to include the friend of the new private chat (when click chats page,
+  // chats may load for the first time while friends is already loaded in other pages, so
+  // friends list lag behind chats list
   const [shouldReload, setShouldReload] = useState(false);
   useEffect(() => {
     if (shouldReload) {
@@ -51,10 +51,6 @@ export function ChatMainPageFramework() {
               chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
                 let chatName = '';
                 try {
-                  // `parseChatName` may throw an error if a new friend is added and the friends list
-                  // is not updated to include the friend of the new private chat (when click chats page,
-                  // chats may load for the first time while friends is already loaded in other pages, so
-                  // friends list lag behind chats list
                   chatName = parseChatName(chat, userName, friends);
                 } catch (e) {
                   setShouldReload(true);
@@ -79,15 +75,7 @@ export function ChatMainPageFramework() {
                   </div>
 
                   {/* main page for chat apiece */}
-                  <div className="felx-wrap ml-2 w-4/5 border-r-2">
-                    <Outlet
-                      context={
-                        {
-                          chatsRelatedWithCurrentUser,
-                        } satisfies ChatsRelatedContextType
-                      }
-                    />
-                  </div>
+                  <div className="felx-wrap ml-2 w-4/5 border-r-2"></div>
                 </div>
               );
             }}
@@ -96,13 +84,4 @@ export function ChatMainPageFramework() {
       </Await>
     </Suspense>
   );
-}
-
-interface ChatsRelatedContextType {
-  chatsRelatedWithCurrentUser: ChatRelatedWithCurrentUser[];
-  friends?: Friend[];
-}
-
-export function useChatsRelatedContext() {
-  return useOutletContext<ChatsRelatedContextType>();
 }

@@ -7,7 +7,7 @@ import {
 } from '../respondToApplicationForChat';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { useUserName } from '../../utils/UrlParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useRef } from 'react';
 import { Toast } from 'primereact/toast';
 

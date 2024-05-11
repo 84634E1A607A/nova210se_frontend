@@ -19,11 +19,11 @@ import {
   chatsRouterUrl,
   invitationsRouterUrl,
   loginRouterUrl,
-} from '../../utils/consts/RouterPaths';
+} from '../../utils/router/RouterPaths';
 import { assertIsChatRelatedWithCurrentUser } from '../../utils/Asserts';
 import { Toast } from 'primereact/toast';
 import { updateChatState } from '../../chat_control/states/updateChatState';
-import { useUserName } from '../../utils/UrlParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { getChatInfo } from '../../chat_control/getChatInfo';
 import { getUserInfo } from '../../user_control/getUserInfo';
 

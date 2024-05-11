@@ -75,12 +75,26 @@ export function assertIsInvitationsAndApplicationsForChatAndChatsRelatedWithCurr
   assertIsChatsRelatedWithCurrentUserData(data);
 }
 
-export function assertIsFriendsAndChatsRelatedWithCurrentUserData(data: unknown): asserts data is {
+function assertIsDetailedMessagesData(
+  data: unknown,
+): asserts data is { detailedMessages: DetailedMessage[] } {
+  if (typeof data !== 'object') throw new Error('Server response is not an object');
+  if (data === null) throw new Error('Server response is null');
+  if (!('detailedMessages' in data)) throw new Error('Server response does not contain messages');
+}
+
+export function assertIsUserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesData(
+  data: unknown,
+): asserts data is {
+  user: LeastUserInfo;
   friends: Friend[];
   chatsRelatedWithCurrentUser: ChatRelatedWithCurrentUser[];
+  detailedMessages: DetailedMessage[];
 } {
+  assertIsUserData(data);
   assertIsFriendsData(data);
   assertIsChatsRelatedWithCurrentUserData(data);
+  assertIsDetailedMessagesData(data);
 }
 
 export function assertIsUserAndFriendsData(data: unknown): asserts data is {
@@ -89,14 +103,6 @@ export function assertIsUserAndFriendsData(data: unknown): asserts data is {
 } {
   assertIsUserData(data);
   assertIsFriendsData(data);
-}
-
-function assertIsDetailedMessagesData(
-  data: unknown,
-): asserts data is { detailedMessages: DetailedMessage[] } {
-  if (typeof data !== 'object') throw new Error('Server response is not an object');
-  if (data === null) throw new Error('Server response is null');
-  if (!('detailedMessages' in data)) throw new Error('Server response does not contain messages');
 }
 
 export function assertIsUserAndFriendsAndDetailedMessagesData(data: unknown): asserts data is {

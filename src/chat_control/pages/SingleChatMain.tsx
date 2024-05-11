@@ -1,4 +1,4 @@
-import { useChatId, useUserName } from '../../utils/UrlParamsHooks';
+import { useChatId, useUserName } from '../../utils/router/RouteParamsHooks';
 import { ChatHeader } from './ChatHeader';
 import { useChatsRelatedContext } from './ChatMainPageFramework';
 import { DialogBox } from './DialogBox';
@@ -22,7 +22,6 @@ import { ChatRelatedWithCurrentUser } from '../../utils/Types';
  * @warn The caller must guarantee that `chatName` is contained within at least the `currentChat` object.
  */
 export function SingleChatMain() {
-  const { chatsRelatedWithCurrentUser } = useChatsRelatedContext();
   const chatId = useChatId();
   const currentChat = chatsRelatedWithCurrentUser.find((chat) => chat.chat_id === chatId);
 

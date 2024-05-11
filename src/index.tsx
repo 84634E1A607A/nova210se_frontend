@@ -11,19 +11,15 @@ import { SearchNewFriend } from './friend_control/SearchNewFriend';
 import { OngoingInvitations } from './friend_control/OngoingInvitations';
 import { AccountManagement } from './user_control/AccountManagement';
 import {
-  FriendsAndChatsRelatedWithCurrentUserLoader,
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader,
-  UserAndFriendsAndDetailedMessagesLoader,
-  UserAndFriendsLoader,
+  UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader,
   UserLoader,
 } from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
 import { CreateGroupChat } from './chat_control/pages/CreateGroupChat';
 import { ChatMainPageFramework } from './chat_control/pages/ChatMainPageFramework';
-import { SingleChatMain } from './chat_control/pages/SingleChatMain';
-import { MoreOfChat } from './chat_control/pages/MoreOfChat';
 import './index.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
@@ -49,25 +45,14 @@ const router = createBrowserRouter([
         loader: async () => UserLoader(queryClient),
         children: [
           {
-            path: 'chats',
+            path: 'chats/:chat_id?',
             element: <ChatMainPageFramework />,
             id: 'chats',
-            loader: async () => FriendsAndChatsRelatedWithCurrentUserLoader(queryClient),
-            children: [
-              {
-                path: ':chat_id',
-                element: <SingleChatMain />,
-                id: 'chat_main',
-                loader: async ({ params }) =>
-                  UserAndFriendsAndDetailedMessagesLoader(queryClient, params.chat_id!),
-              },
-              {
-                path: ':chat_id/more',
-                element: <MoreOfChat />,
-                id: 'chat_detail',
-                loader: async () => UserAndFriendsLoader(queryClient),
-              },
-            ],
+            loader: async ({ params }) =>
+              UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader(
+                queryClient,
+                params.chat_id,
+              ),
           },
           {
             path: 'friends',

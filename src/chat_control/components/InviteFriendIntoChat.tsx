@@ -7,7 +7,7 @@ import { UserTabTemplate } from './UserTabTemplate';
 import { Button } from 'primereact/button';
 import { multiselectElementStyle } from '../../utils/ui/TailwindConsts';
 import { inviteToGroupChat } from '../inviteToGroupChat';
-import { useChatId } from '../../utils/UrlParamsHooks';
+import { useChatId } from '../../utils/router/RouteParamsHooks';
 
 /**
  * @description Mainly a multiselect component that allows users to select friends to invite into a chat.

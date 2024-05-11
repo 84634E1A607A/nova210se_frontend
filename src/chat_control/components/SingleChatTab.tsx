@@ -1,7 +1,7 @@
 import { Badge } from 'primereact/badge';
 import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 import { Link } from 'react-router-dom';
-import { useUserName } from '../../utils/UrlParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 
 interface Props {
   chat: ChatRelatedWithCurrentUser;

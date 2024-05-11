@@ -14,7 +14,7 @@ export function useUserName() {
   return userName;
 }
 
-export function useChatId() {
+export function useChatId(): number | undefined {
   const { chatId } = useUrlParams();
-  return chatId!;
+  return chatId;
 }

@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/router/RouteParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { SidebarLink } from './SideBarLink';
 import { DisplayCurrentUserInfo } from '../user_control/DisplayCurrentUserInfo';

@@ -58,33 +58,22 @@ export async function UserLoader(queryClient: QueryClient) {
   });
 }
 
-export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
+export async function UserAndFriendsAndChatsRelatedWithCurrentUserAndDetailedMessagesLoader(
+  queryClient: QueryClient,
+  chat_id: string | undefined,
+) {
   return defer({
+    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
     friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
     chatsRelatedWithCurrentUser: fetchDataForLoaders(
       queryClient,
       ['chats_related_with_current_user'],
       getChats,
     ),
-  });
-}
-
-export async function UserAndFriendsLoader(queryClient: QueryClient) {
-  return defer({
-    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-  });
-}
-
-export async function UserAndFriendsAndDetailedMessagesLoader(
-  queryClient: QueryClient,
-  chat_id: string,
-) {
-  return defer({
-    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-    detailedMessages: fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
-      getDetailedMessages(Number(chat_id)),
-    ),
+    detailedMessages: chat_id
+      ? fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
+          getDetailedMessages(Number(chat_id)),
+        )
+      : Promise.resolve([]),
   });
 }

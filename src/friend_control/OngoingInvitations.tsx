@@ -10,7 +10,7 @@ import { acceptInvitation } from './acceptInvitation';
 import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Invitation } from '../utils/Types';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/router/RouteParamsHooks';
 import { theme } from '../utils/ui/themes';
 import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
 import { ApplicationsForChatList } from '../chat_control/components/ApplicationsForChatList';

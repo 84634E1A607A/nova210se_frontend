@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/router/RouteParamsHooks';
 import { deleteFriend } from './deleteFriend';
 import { useNavigate } from 'react-router-dom';
 
