@@ -50,6 +50,7 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
     user.user_name,
   ]);
 
+  /** @description If the chat is unauthorized for this user, jump to chats page. */
   useEffect(() => {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
       if (fetchedCurrentChat === undefined) {

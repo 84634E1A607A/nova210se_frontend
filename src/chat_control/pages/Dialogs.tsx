@@ -37,7 +37,7 @@ export function Dialogs({ chat, user, friends }: Props) {
     return () => {
       refetches.splice(refetches.indexOf(refetch), 1);
     };
-  }, []);
+  }, [refetch, refetches]);
 
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();

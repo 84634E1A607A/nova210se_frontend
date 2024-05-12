@@ -18,14 +18,12 @@ import {
   invitationsRouterUrl,
   loginRouterUrl,
 } from '../../utils/router/RouterPaths';
-import { assertIsChatRelatedWithCurrentUser } from '../../utils/Asserts';
-import { updateChatState } from '../../chat_control/states/updateChatState';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
-import { getChatInfo } from '../../chat_control/getChatInfo';
 import { getUserInfo } from '../../user_control/getUserInfo';
 import { useCurrentChatContext } from '../../chat_control/states/CurrentChatProvider';
 import { Toast } from 'primereact/toast';
 import { useRefetchContext } from '../../chat_control/states/RefetchProvider';
+import { getChatInfo } from '../../chat_control/getChatInfo';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -56,7 +54,8 @@ export function UpdateDataCompanion() {
   const navigate = useNavigate();
 
   const toast = useRef<Toast | null>(null);
-  const { currentChat, rightComponent } = useCurrentChatContext();
+  const { currentChat, setCurrentChat, rightComponent, setRightComponent } =
+    useCurrentChatContext();
   const { refetches } = useRefetchContext();
 
   useEffect(() => {
@@ -65,43 +64,40 @@ export function UpdateDataCompanion() {
      * and only reload the data.
      * Unauthorized chat means the chat has been deleted or the user has been removed from the chat or a friend has been
      * deleted.
-     * @param shouldDeleteCache Whether should `removeQueries({ queryKey: ['detailed_messages', String(chatId)] })` in
-     * this function. If not, generally the caller should do it. And this should be true only if a friend is deleted (or
-     * that user deletes account).
      * @param messageSummary The summary message to show in the toast
      * @param messageDetail The detail message to show in the toast
+     * @param chatId The chat id notified by web socket. Without it, we'll deal with friendship broken case.
+     * @param friendId The friend id notified by web socket. If chatId is undefined, friendId must be defined. Vice versa.
      */
     function dealChatUnauthorized(
-      shouldDeleteCache: boolean,
       messageSummary: string,
       messageDetail: string,
+      chatId: number | undefined,
+      friendId: number | undefined,
     ) {
-      //
-      //   if (chat_detailUrlMatched || chat_mainUrlMatched) {
-      //     let chatId: number;
-      //     if (chat_detailUrlMatched) {
-      //       chatId = Number(chat_detailUrlMatched[2]);
-      //     } else {
-      //       chatId = Number(chat_mainUrlMatched![2]);
-      //     }
-      //     getChatInfo({ chatId }).then((currentChat) => {
-      //       if (currentChat === undefined) {
-      //         if (shouldDeleteCache) {
-      //           queryClient.removeQueries({ queryKey: ['detailed_messages', String(chatId)] });
-      //         }
-      //         navigate(`/${userName}/chats`);
-      //         navigate(`/${userName}/chats`);
-      //         toastRef.current!.show({
-      //           severity: 'error',
-      //           summary: messageSummary,
-      //           detail: messageDetail,
-      //         });
-      //       } else if (shouldDeleteCache) {
-      //         // delete all cache because we can't get chatId of the deleted private chat
-      //         queryClient.removeQueries({ queryKey: ['detailed_messages'] });
-      //       }
-      //     });
-      //   }
+      if (currentRouterUrl.match(chatsRouterUrl)) {
+        let shouldJumpToParent = false;
+        if (
+          chatId === undefined &&
+          currentChat?.chat.chat_name === '' &&
+          currentChat.chat.chat_members.find((m) => m.id === friendId)
+        ) {
+          shouldJumpToParent = true;
+        }
+        if (currentChat?.chat_id === chatId) {
+          shouldJumpToParent = true;
+        } else {
+          navigate(currentRouterUrl, { preventScrollReset: true });
+        }
+        if (shouldJumpToParent) {
+          setRightComponent(undefined);
+          toast.current?.show({
+            severity: 'warn',
+            summary: messageSummary,
+            detail: messageDetail,
+          });
+        }
+      }
     }
 
     if (currentRouterUrl.match(loginRouterUrl)) {
@@ -162,33 +158,53 @@ export function UpdateDataCompanion() {
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             queryClient.removeQueries({ queryKey: ['friends'] });
             dealChatUnauthorized(
-              true,
               'Friend deleted',
               'The friend has been deleted. No chat any more',
+              undefined,
+              lastJsonMessage.data.friend.friend.id,
             );
             break;
 
           case receiveChatDeletedS2CActionWS:
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-            queryClient.removeQueries({
-              queryKey: ['detailed_messages', String(lastJsonMessage.data.chat.chat_id)],
-            });
-            dealChatUnauthorized(false, 'Chat deleted', 'The chat has been deleted');
+            dealChatUnauthorized(
+              'Chat deleted',
+              'The chat has been deleted',
+              lastJsonMessage.data.chat.chat_id,
+              undefined,
+            );
             break;
 
           case receiveMemberRemovedS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             const deletedUserId = lastJsonMessage.data.user_id as number;
             getUserInfo().then((currentUser) => {
               if (currentUser?.id === deletedUserId) {
-                queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-                queryClient.removeQueries({
-                  queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
-                });
                 dealChatUnauthorized(
-                  false,
                   'You have been removed',
                   'You have been removed from the chat',
+                  lastJsonMessage.data.chat_id,
+                  undefined,
                 );
+              } else if (currentRouterUrl.match(chatsRouterUrl)) {
+                navigate(currentRouterUrl, { preventScrollReset: true });
+                if (rightComponent === 'chat' && refetches[0]) {
+                  refetches[0](); // to show 'xx removed xx from the group...'
+                }
+                if (rightComponent === 'more') {
+                  getChatInfo({ chatId: lastJsonMessage.data.chat_id }).then(
+                    (fetchedCurrentChat) => {
+                      if (fetchedCurrentChat) {
+                        setCurrentChat(fetchedCurrentChat);
+                      } else {
+                        toast.current?.show({
+                          severity: 'error',
+                          summary: 'Failure in getting chat message',
+                        });
+                      }
+                    },
+                  );
+                }
               }
             });
             break;
@@ -216,9 +232,11 @@ export function UpdateDataCompanion() {
     state,
     userName,
     sendJsonMessage,
-    currentChat?.chat_id,
+    currentChat,
     refetches,
     rightComponent,
+    setRightComponent,
+    setCurrentChat,
   ]);
 
   return <Toast ref={toast} />;
