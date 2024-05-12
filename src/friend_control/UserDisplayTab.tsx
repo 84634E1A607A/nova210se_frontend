@@ -7,7 +7,7 @@ import { ReactComponent as Folddown } from '../svg/fold-down-svgrepo-com.svg';
 import { InviteFriendPage } from './InviteFriendPage';
 import { Button } from 'primereact/button';
 import { useRef } from 'react';
-import { confirmPopup, ConfirmPopup } from 'primereact/confirmpopup';
+import { confirmPopup } from 'primereact/confirmpopup';
 import { Toast } from 'primereact/toast';
 
 /**
@@ -98,7 +98,6 @@ export function UserDisplayTab({ leastUserInfo, friendsList }: Props) {
             >
               Invite
             </Button>
-            <ConfirmPopup></ConfirmPopup>
           </>
         )}
       </div>
