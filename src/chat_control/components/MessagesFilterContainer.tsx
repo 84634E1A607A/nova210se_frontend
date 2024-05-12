@@ -74,7 +74,7 @@ export function MessagesFilterContainer({ chat, currentUser, membersWithDisplayN
         chatId: chat.chat_id,
         beginTime: convertDateToUnixTImeStamp(dates[0]!),
         endTime: convertDateToUnixTImeStamp(dates[1]!),
-        sender: selectedMembers!.map((m) => m.id),
+        sender: selectedMembers.map((m) => m.id),
       }).then((ret) => {
         handleResult(ret);
       });

@@ -4,7 +4,7 @@ import { createGroup } from './createGroup';
 import { updateFriend } from './updateFriend';
 import { getFriendInfo } from './getFriendInfo';
 import { getDefaultGroup } from './getDefaultGroup';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/router/RouteParamsHooks';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Friend, Group } from '../utils/Types';
 import { useLoaderData, useNavigate } from 'react-router-dom';

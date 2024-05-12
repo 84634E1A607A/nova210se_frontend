@@ -8,7 +8,7 @@ import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsGroupsData } from '../../utils/AssertsForRouterLoader';
 import { assertIsFriendsList } from '../../utils/Asserts';
 import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
-import { useUserName } from '../../utils/UrlParamsHooks';
+import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { createGroupChat } from '../createGroupChat';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserTabTemplate } from '../components/UserTabTemplate';

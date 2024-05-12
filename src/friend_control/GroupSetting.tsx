@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { editGroupName } from './editGroupName';
 import { getGroupsList } from './getGroupsList';
 import { deleteGroup } from './deleteGroup';
-import { useUserName } from '../utils/UrlParamsHooks';
+import { useUserName } from '../utils/router/RouteParamsHooks';
 import { Friend, Group } from '../utils/Types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';

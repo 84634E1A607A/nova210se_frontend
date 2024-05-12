@@ -5,7 +5,6 @@ import { getGroupsList } from '../friend_control/getGroupsList';
 import { getInvitations } from '../friend_control/getInvitations';
 import { getUserInfo } from '../user_control/getUserInfo';
 import { getChats } from '../chat_control/getChats';
-import { getDetailedMessages } from '../chat_control/getDetailedMessages';
 import { listApplicationsForAllChats } from '../chat_control/listApplicationsForAllChats';
 
 async function fetchDataForLoaders<T>(
@@ -58,33 +57,12 @@ export async function UserLoader(queryClient: QueryClient) {
   });
 }
 
-export async function FriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
+export async function UserAndFriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
   return defer({
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-    chatsRelatedWithCurrentUser: fetchDataForLoaders(
-      queryClient,
-      ['chats_related_with_current_user'],
-      getChats,
-    ),
-  });
-}
-
-export async function UserAndFriendsLoader(queryClient: QueryClient) {
-  return defer({
-    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-  });
-}
-
-export async function UserAndFriendsAndDetailedMessagesLoader(
-  queryClient: QueryClient,
-  chat_id: string,
-) {
-  return defer({
-    user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-    friends: fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-    detailedMessages: fetchDataForLoaders(queryClient, ['detailed_messages', chat_id], () =>
-      getDetailedMessages(Number(chat_id)),
-    ),
+    data: Promise.all([
+      fetchDataForLoaders(queryClient, ['user'], getUserInfo),
+      fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
+      fetchDataForLoaders(queryClient, ['chats_related_with_current_user'], getChats),
+    ]),
   });
 }

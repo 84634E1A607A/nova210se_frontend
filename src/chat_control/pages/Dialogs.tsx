@@ -1,15 +1,13 @@
-import { SingleChatProps } from './ChatHeader';
-import { Await, Navigate, useLoaderData, useLocation } from 'react-router-dom';
-import { assertIsUserAndFriendsAndDetailedMessagesData } from '../../utils/AssertsForRouterLoader';
-import { Suspense, useRef, useState } from 'react';
-import {
-  assertIsDetailedMessages,
-  assertIsFriendsList,
-  assertIsLeastUserInfo,
-  assertIsMessage,
-} from '../../utils/Asserts';
+import { useEffect, useRef, useState } from 'react';
+import { assertIsMessage } from '../../utils/Asserts';
 import { MessageTab } from '../components/MessageTab';
-import { DetailedMessage, Message } from '../../utils/Types';
+import {
+  ChatRelatedWithCurrentUser,
+  DetailedMessage,
+  Friend,
+  LeastUserInfo,
+  Message,
+} from '../../utils/Types';
 import { parseAnyoneName } from '../../friend_control/utils/parseAnyoneName';
 import { ContextMenu } from 'primereact/contextmenu';
 import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
@@ -17,8 +15,30 @@ import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 import { NoticesBar } from '../components/NoticesBar';
 import { getIsSelf } from '../utils/getIsSelf';
 import { messageTabListItemCssClass } from '../components/ui/MessageTabListItem';
+import { useQuery } from '@tanstack/react-query';
+import { getDetailedMessages } from '../getDetailedMessages';
+import { useRefetchContext } from '../states/RefetchProvider';
 
-export function Dialogs({ chat }: SingleChatProps) {
+export function Dialogs({ chat, user, friends }: Props) {
+  const {
+    isLoading,
+    data: messages,
+    refetch,
+  } = useQuery({
+    queryKey: ['detailed_messages', chat.chat_id],
+    queryFn: () => getDetailedMessages(chat),
+  });
+
+  const { refetches } = useRefetchContext();
+  useEffect(() => {
+    if (refetches.length === 0) {
+      refetches.push(refetch);
+    }
+    return () => {
+      refetches.splice(refetches.indexOf(refetch), 1);
+    };
+  }, [refetch, refetches]);
+
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();
   const { setRepliedMessage } = useRepliedMessageContext();
@@ -46,76 +66,43 @@ export function Dialogs({ chat }: SingleChatProps) {
     }
   };
 
-  const location = useLocation();
-  const thisUrl = location.pathname;
-
-  const userAndFriendsAndDetailedMessagesData = useLoaderData();
-  assertIsUserAndFriendsAndDetailedMessagesData(userAndFriendsAndDetailedMessagesData);
+  if (isLoading || messages === undefined) return <p>Loading messages...</p>;
+  messages.sort((a, b) => a.send_time - b.send_time);
 
   return (
-    <Suspense fallback={<div>Loading messages</div>}>
-      <Await
-        resolve={userAndFriendsAndDetailedMessagesData.detailedMessages}
-        errorElement={<Navigate to={thisUrl} replace={true} />}
-      >
-        {(detailedMessages) => {
+    <div className="flex flex-col overflow-auto">
+      <NoticesBar chat={chat} />
+      <ul className="m-2 flex flex-col">
+        {messages.map((detailedMessage) => {
           return (
-            <Await
-              resolve={userAndFriendsAndDetailedMessagesData.user}
-              errorElement={<Navigate to={thisUrl} replace={true} />}
-            >
-              {(currentUser) => {
-                return (
-                  <Await
-                    resolve={userAndFriendsAndDetailedMessagesData.friends}
-                    errorElement={<Navigate to={thisUrl} replace={true} />}
-                  >
-                    {(friends) => {
-                      assertIsDetailedMessages(detailedMessages);
-                      assertIsLeastUserInfo(currentUser);
-                      assertIsFriendsList(friends);
-                      detailedMessages.sort((a, b) => a.send_time - b.send_time);
-                      return (
-                        <div className="flex flex-col overflow-auto">
-                          <NoticesBar chat={chat} />
-                          <ul className="m-2 flex flex-col">
-                            {detailedMessages.map((detailedMessage) => {
-                              return (
-                                <li
-                                  key={detailedMessage.message_id}
-                                  className={messageTabListItemCssClass}
-                                >
-                                  <MessageTab
-                                    detailedMessage={detailedMessage}
-                                    isSelf={getIsSelf(detailedMessage, currentUser)}
-                                    name={parseAnyoneName({
-                                      unknownUser: detailedMessage.sender,
-                                      friends,
-                                    })}
-                                    onRightClick={onRightClick}
-                                    chat={chat}
-                                  />
-                                </li>
-                              );
-                            })}
-                          </ul>
-                          <ContextMenu
-                            ref={cm}
-                            model={contextMenuItems}
-                            onHide={() => {
-                              setSelectedMessage(undefined);
-                            }}
-                          />
-                        </div>
-                      );
-                    }}
-                  </Await>
-                );
-              }}
-            </Await>
+            <li key={detailedMessage.message_id} className={messageTabListItemCssClass}>
+              <MessageTab
+                detailedMessage={detailedMessage}
+                isSelf={getIsSelf(detailedMessage, user)}
+                name={parseAnyoneName({
+                  unknownUser: detailedMessage.sender,
+                  friends,
+                })}
+                onRightClick={onRightClick}
+                chat={chat}
+              />
+            </li>
           );
+        })}
+      </ul>
+      <ContextMenu
+        ref={cm}
+        model={contextMenuItems}
+        onHide={() => {
+          setSelectedMessage(undefined);
         }}
-      </Await>
-    </Suspense>
+      />
+    </div>
   );
+}
+
+interface Props {
+  chat: ChatRelatedWithCurrentUser;
+  user: LeastUserInfo;
+  friends: Friend[];
 }

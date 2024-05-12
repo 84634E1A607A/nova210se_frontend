@@ -7,7 +7,7 @@ import { UserTabTemplate } from './UserTabTemplate';
 import { Button } from 'primereact/button';
 import { multiselectElementStyle } from '../../utils/ui/TailwindConsts';
 import { inviteToGroupChat } from '../inviteToGroupChat';
-import { useChatId } from '../../utils/UrlParamsHooks';
+import { useCurrentChatContext } from '../states/CurrentChatProvider';
 
 /**
  * @description Mainly a multiselect component that allows users to select friends to invite into a chat.
@@ -24,7 +24,7 @@ export function InviteFriendIntoChat({ toast, invitableFriends }: Props) {
     },
   });
 
-  const chatId = useChatId();
+  const { currentChat } = useCurrentChatContext();
 
   const onSubmit = async (form: InvitedFriendsForm) => {
     const friends = form.friends;
@@ -32,7 +32,10 @@ export function InviteFriendIntoChat({ toast, invitableFriends }: Props) {
     let hasOneSuccess = false;
     let hasOneFailure = false;
     for (const friend of friends) {
-      const response = await inviteToGroupChat({ chatId, userId: friend.userId });
+      const response = await inviteToGroupChat({
+        chatId: currentChat!.chat_id,
+        userId: friend.userId,
+      });
       if (response.isSuccessful) {
         hasOneSuccess = true;
       } else {
