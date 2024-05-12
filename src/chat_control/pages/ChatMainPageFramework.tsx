@@ -29,8 +29,7 @@ export function ChatMainPageFramework() {
   /**
    * @description The state that manages which should be displayed on the right-hand side of this page.
    */
-  const [rightComponent, setRightComponent] = useState<RightSideComponent>();
-  const { setCurrentChat } = useCurrentChatContext();
+  const { setCurrentChat, rightComponent, setRightComponent } = useCurrentChatContext();
 
   /**
    * @description The data management part.
@@ -118,9 +117,3 @@ export function ChatMainPageFramework() {
     </Suspense>
   );
 }
-
-/**
- * @description The right side of the chat page can be chat or chat detail. If it's undefined, then no
- * single chat should be displayed.
- */
-type RightSideComponent = 'chat' | 'more' | undefined;

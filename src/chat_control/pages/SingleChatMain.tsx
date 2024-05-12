@@ -10,7 +10,7 @@ import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
 import { getChatInfo } from '../getChatInfo';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { ChatRelatedWithCurrentUser, Friend, LeastUserInfo } from '../../utils/Types';
+import { Friend, LeastUserInfo } from '../../utils/Types';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
 
 /**
@@ -37,21 +37,7 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
         action: sendReadMessagesC2SActionWS,
         data: { chat_id: chatId },
       });
-
-      queryClient.setQueryData<ChatRelatedWithCurrentUser[]>(
-        ['chats_related_with_current_user'],
-        (oldChats) => {
-          return oldChats!.map((chat) => {
-            if (chat.chat_id === chatId) {
-              return {
-                ...chat,
-                unread_count: 0,
-              };
-            }
-            return chat;
-          });
-        },
-      );
+      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
       navigate(currentRouterUrl);
     }
   }, [

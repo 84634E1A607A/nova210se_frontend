@@ -56,7 +56,7 @@ export function UpdateDataCompanion() {
   const navigate = useNavigate();
 
   const toast = useRef<Toast | null>(null);
-  const { currentChat } = useCurrentChatContext();
+  const { currentChat, rightComponent } = useCurrentChatContext();
   const { refetches } = useRefetchContext();
 
   useEffect(() => {
@@ -121,54 +121,42 @@ export function UpdateDataCompanion() {
           case receiveMessageS2CActionWS:
             // Only in this case or when click the chat should we update the unread count of current user
 
-            queryClient.removeQueries({
-              queryKey: ['detailed_messages', String(lastJsonMessage.data.message.chat_id)],
-            });
-
-            // Mainly to update the last message of the chat.
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
 
             if (currentRouterUrl.match(chatsRouterUrl)) {
-              if (currentChat?.chat_id === lastJsonMessage.data.message.chat_id) {
+              if (
+                currentChat?.chat_id === lastJsonMessage.data.message.chat_id &&
+                rightComponent === 'chat'
+              ) {
                 // In exactly the page that needs changing: send 'I've read the messages' to server
                 // (no need to update unread count because it's set to zero when enter the chat before)
                 sendJsonMessage({
                   action: sendReadMessagesC2SActionWS,
                   data: { chat_id: lastJsonMessage.data.message.chat_id },
                 });
+
+                if (refetches[0]) {
+                  refetches[0]();
+                }
+                // With refetch, no need to `queryClient.removeQueries({queryKey: ['detailed_messages',
+                // String(lastJsonMessage.data.message.chat_id)]});`. It can update messages of a chat.
+                // Only when in a certain chat will `refetch` function exist.
               }
-              navigate(currentRouterUrl, { preventScrollReset: true });
-              console.log(refetches);
-              refetches[0]();
-            } else {
-              // `state` is for possible invitations page
-              navigate(currentRouterUrl, { preventScrollReset: true, state });
             }
+            // `state` is for possible invitations page
+            navigate(currentRouterUrl, { preventScrollReset: true, state });
 
             break;
 
-          // case receiveMemberAddedS2CActionWS:
-          //   queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-          //   if (
-          //     currentRouterUrl.match(chatsRouterUrl) ||
-          //     currentRouterUrl.match(chat_mainRouterUrl)
-          //   ) {
-          //     navigate(currentRouterUrl, { replace: true, preventScrollReset: true, state });
-          //   } else if (currentRouterUrl.match(chat_detailRouterUrl)) {
-          //     const chat = state.chat;
-          //     assertIsChatRelatedWithCurrentUser(chat);
-          //     updateChatState({
-          //       chatId: chat.chat_id,
-          //       toast: toastRef,
-          //       navigate,
-          //       userName,
-          //     }).then((updatedChat) => {
-          //       if (updatedChat) {
-          //         navigate(currentRouterUrl, { replace: true, state: { chat: updatedChat } });
-          //       } // else any problem will be dealt with within `updateChatState`
-          //     });
-          //   }
-          //   break;
+          case receiveMemberAddedS2CActionWS:
+            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+            if (currentRouterUrl.match(chatsRouterUrl)) {
+              navigate(currentRouterUrl, { preventScrollReset: true });
+              if (refetches[0] && currentChat?.chat_id === lastJsonMessage.data.chat_id) {
+                refetches[0](); // to show 'xx approved xx to join the group...'
+              }
+            }
+            break;
 
           case receiveFriendDeletedS2CActionWS:
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
@@ -220,7 +208,18 @@ export function UpdateDataCompanion() {
         }
       }
     }
-  }, [queryClient, lastJsonMessage, currentRouterUrl, navigate, state, userName, sendJsonMessage]);
+  }, [
+    queryClient,
+    lastJsonMessage,
+    currentRouterUrl,
+    navigate,
+    state,
+    userName,
+    sendJsonMessage,
+    currentChat?.chat_id,
+    refetches,
+    rightComponent,
+  ]);
 
   return <Toast ref={toast} />;
 }
