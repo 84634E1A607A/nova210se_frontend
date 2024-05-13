@@ -1,6 +1,5 @@
 import { useCollapse } from 'react-collapsed';
 import { Friend, Group } from '../utils/Types';
-import { theme } from '../utils/ui/themes';
 import { UserDisplayTab } from './UserDisplayTab';
 import { GroupSetting } from './GroupSetting';
 import { useQuery } from '@tanstack/react-query';
@@ -38,16 +37,22 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
 
   return (
     <div className="m-2 flex flex-col">
-      <div className="p-1 font-medium" style={{ backgroundColor: theme.secondary_container }}>
-        <p>{group.group_name === '' ? 'default' : group.group_name}</p>
-        <span
-          {...getToggleProps()}
-          role="img"
-          aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
-          className={`${group.group_name === '' ? 'hidden' : ''} flex cursor-pointer items-end justify-center`}
-        >
-          {isDefaultGroup ? null : <SettingIcon className="h-3 w-3 fill-teal-900" />}
-        </span>
+      <div className="flex flex-row rounded-md bg-teal-100 p-1 font-medium">
+        {
+          /* Padding when not default*/
+          isDefaultGroup ? null : <div className="w-[1.5rem]" />
+        }
+        <div className="grow">{group.group_name === '' ? 'default' : group.group_name}</div>
+        {isDefaultGroup ? null : (
+          <div
+            {...getToggleProps()}
+            role="img"
+            aria-label={isExpanded ? 'Expanded' : 'Collapsed'}
+            className={`${group.group_name === '' ? 'hidden' : ''} flex w-[1.5rem] cursor-pointer items-end justify-center`}
+          >
+            <SettingIcon className="w-[1rem] fill-teal-900" />
+          </div>
+        )}
       </div>
       <div {...getCollapseProps()} className={`grow ${isDefaultGroup ? 'hidden' : ''}`}>
         {isLoading ? (
@@ -58,8 +63,12 @@ export function FriendsForEachGroupList({ friendsInGroup, group, allFriends }: P
       </div>
 
       <div className="w-full p-1">
-        <div className="mx-6 mt-2">
-          <DataView value={friendsInGroup} listTemplate={listTemplate} />
+        <div className="mx-2 mt-2">
+          {friendsInGroup.length === 0 ? (
+            <div className="text-gray-500">No friends are in this group</div>
+          ) : (
+            <DataView value={friendsInGroup} listTemplate={listTemplate} />
+          )}
         </div>
       </div>
     </div>
