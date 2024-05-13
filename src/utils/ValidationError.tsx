@@ -5,9 +5,13 @@ type Props = {
 };
 
 export function ValidationError({ fieldError }: Props) {
+  const message =
+    fieldError?.message === undefined || fieldError?.message === ''
+      ? '\u00A0'
+      : fieldError?.message;
   return (
     <div role="alert" className="mt-1 text-xs text-red-500">
-      {fieldError ? fieldError.message : '\u00A0'}
+      {message}
     </div>
   );
 }
