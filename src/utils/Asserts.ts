@@ -62,14 +62,6 @@ export function assertIsFriendsList(friendsList: unknown): asserts friendsList i
   for (const friend of friendsList) assertIsFriend(friend);
 }
 
-export function assertIsFriendsListData(data: unknown): asserts data is { friends: Friend[] } {
-  if (data === undefined) throw new Error('Server response is undefined');
-  if (typeof data !== 'object') throw new Error('Server response is not an object');
-  if (data === null) throw new Error('Server response is null');
-  if (!('friends' in data)) throw new Error("Server response does not contain ' friends ' body");
-  assertIsFriendsList(data.friends);
-}
-
 export function assertIsInvitationList(
   invitationList: unknown,
 ): asserts invitationList is Invitation[] {
@@ -93,10 +85,6 @@ export function assertIsInvitationSourceType(
   if (source !== 'search' && typeof source !== 'number') throw new Error('source is not valid');
 }
 
-export function assertIsNumber(data: unknown): asserts data is number {
-  if (typeof data !== 'number') throw new Error('Not a number');
-}
-
 export function assertIsApiError(error: unknown): asserts error is { error: string } {
   if (typeof error !== 'object') throw new Error('Not an object');
   if (error === null) throw new Error('Null');
@@ -117,6 +105,8 @@ export function assertIsMessage(data: unknown): asserts data is Message {
   if (typeof data.send_time !== 'number') throw new Error('send_time is not a number');
   if (!('sender' in data)) throw new Error('Missing sender');
   assertIsLeastUserInfo(data.sender);
+  if (!('deleted' in data)) throw new Error('Missing deleted');
+  if (typeof data.deleted !== 'boolean') throw new Error('deleted is not a boolean');
 }
 export function assertIsMessages(data: unknown): asserts data is Message[] {
   if (!Array.isArray(data)) throw new Error('Not an array');

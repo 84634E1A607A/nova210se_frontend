@@ -16,7 +16,7 @@ import { getDetailedMessagesVerbosely } from '../getDetailedMessagesVerbosely';
 import { convertDateToUnixTImeStamp } from '../../utils/time/convertDateToUnixTImeStamp';
 import { MessageTab } from './MessageTab';
 import { getIsSelf } from '../utils/getIsSelf';
-import { messageTabListItemCssClass } from './ui/MessageTabListItem';
+import { messageTabListItemCssClass } from '../ui/MessageTabListItem';
 
 /**
  * @description To hold the entire messages filter. The calendar selector, user selector,
