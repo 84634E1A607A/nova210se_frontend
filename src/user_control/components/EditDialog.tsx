@@ -142,7 +142,7 @@ export default function EditDialog({ field }: Props) {
                       message: 'Invalid URL: it must start with http:// or https://',
                     },
                   })}
-                  className={`mt-1 block w-60 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                  className={`surface-0 mt-1 block w-60 rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
                             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
                             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                              `}
@@ -172,7 +172,7 @@ export default function EditDialog({ field }: Props) {
                         'Invalid user name. Only a-z A-Z 0-9 - _ ( ) @ . are allowed. At least 1 character.',
                     },
                   })}
-                  className={`mt-1 block w-60 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                  className={`surface-0 mt-1 block w-60 rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
                             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
                             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                              `}
@@ -197,7 +197,7 @@ export default function EditDialog({ field }: Props) {
                       message: 'Email pattern should be correct',
                     },
                   })}
-                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                  className={`surface-0 mt-1 block w-72 rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
                             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
                             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                              `}
@@ -224,7 +224,7 @@ export default function EditDialog({ field }: Props) {
                       message: 'Phone number must contain only digits',
                     },
                   })}
-                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                  className={`surface-0 mt-1 block w-72 rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
                             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
                             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                              `}
@@ -254,7 +254,7 @@ export default function EditDialog({ field }: Props) {
                       message: 'Password cannot contain blank spaces',
                     },
                   })}
-                  className={`mt-1 block w-72 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+                  className={`surface-0 mt-1 block w-72 rounded-md border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
                             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
                             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none
                              `}

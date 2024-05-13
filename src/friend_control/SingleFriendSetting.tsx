@@ -172,8 +172,8 @@ export function SingleFriendSetting({ friendUserId }: Props) {
               pattern: /^[\w@+\-.]+$/,
               maxLength: 19,
             })}
-            className={`${getEditorStyle(errors.target_group_name)} mt-1 block w-60 rounded-md border 
-            border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+            className={`${getEditorStyle(errors.target_group_name)} surface-0 mt-1 block w-60 rounded-md 
+            border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
             disabled:shadow-none
@@ -192,8 +192,8 @@ export function SingleFriendSetting({ friendUserId }: Props) {
               pattern: /^[\w@+\-.]+$/,
               maxLength: 99,
             })}
-            className={`${getEditorStyle(errors.nickname)} mt-1 block w-60 rounded-md border 
-            border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm
+            className={`${getEditorStyle(errors.nickname)} surface-0 mt-1 block w-60 rounded-md 
+            border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
             disabled:shadow-none

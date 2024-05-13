@@ -100,7 +100,7 @@ export function CreateGroupChat() {
             };
           });
           return (
-            <div className="m-auto box-border inline-block rounded-lg px-6 py-4 shadow-md">
+            <div className="surface-0 m-auto box-border inline-block rounded-lg px-6 py-4 shadow-md">
               <form
                 onSubmit={handleSubmit((form) => mutate(form))}
                 className="flex flex-col items-center gap-2"
@@ -112,7 +112,7 @@ export function CreateGroupChat() {
                 </label>
                 <input
                   id="groupName"
-                  className="borderborder-slate-300 shadow-smfocus:border-sky-500 focus:ring-sky-500disabled:border-slate-200 w-full rounded-md bg-white px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-1"
+                  className="borderborder-slate-300 shadow-smfocus:border-sky-500 focus:ring-sky-500disabled:border-slate-200 surface-0 w-full rounded-md px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-1"
                   type="text"
                   placeholder="Enter group name here"
                   {...register('groupName', {
