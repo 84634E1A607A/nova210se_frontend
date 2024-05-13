@@ -6,6 +6,7 @@ import { UserDisplayTab } from './UserDisplayTab';
 import { assertIsFriendsList } from '../utils/Asserts';
 import { Suspense } from 'react';
 import { assertIsFriendsData } from '../utils/AssertsForRouterLoader';
+import { ConfirmPopup } from 'primereact/confirmpopup';
 
 export function SearchNewFriendResultList() {
   const [searchParams] = useSearchParams();
@@ -26,7 +27,8 @@ export function SearchNewFriendResultList() {
     return <div className="mx-auto mt-6 w-72">Loading ...</div>;
 
   return (
-    <div className="surface-0 box-border rounded-lg px-6 py-4 shadow-md">
+    <div className="surface-0 m-4 box-border rounded-lg p-4 shadow-md">
+      <ConfirmPopup />
       <ul>
         {searchNewFriendResultList.length > 0 ? (
           searchNewFriendResultList.map((user) => {

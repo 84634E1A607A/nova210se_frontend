@@ -16,7 +16,7 @@ export function MainPageFramework() {
   const icon_class = 'h-10 w-10 fill-current m-auto';
 
   return (
-    <div className="flex h-screen w-screen min-w-[75rem] flex-row flex-wrap overflow-x-hidden">
+    <div className="flex h-screen max-h-screen w-screen min-w-[75rem] flex-row overflow-x-hidden">
       <nav
         aria-label="side bar"
         className="flex flex-none flex-col items-center border-r bg-teal-900 text-center text-gray-400"
@@ -67,7 +67,7 @@ export function MainPageFramework() {
           />
         </ul>
       </nav>
-      <div className="flex grow bg-gray-100">
+      <div className="flex max-h-screen grow overflow-auto bg-gray-100">
         <Outlet />
       </div>
     </div>

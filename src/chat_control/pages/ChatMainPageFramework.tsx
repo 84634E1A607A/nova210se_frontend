@@ -1,14 +1,14 @@
-import { SingleChatTab } from '../components/SingleChatTab';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQuery } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
 import { MoreOfChat } from './MoreOfChat';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
-import { getFriendsList } from '../../friend_control/getFriendsList';
-import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
-import { getChats } from '../getChats';
+import { ChatSideBar } from './ChatSideBar';
 import { ChatRelatedWithCurrentUser } from '../../utils/Types';
+import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
 import { getUserInfo } from '../../user_control/getUserInfo';
+import { getChats } from '../getChats';
+import { getFriendsList } from '../../friend_control/getFriendsList';
 import { parseChatName } from '../../utils/parseChatName';
 
 /**
@@ -75,27 +75,16 @@ export function ChatMainPageFramework() {
       chatName,
     } as ChatRelatedWithCurrentUser;
   });
-
   return (
-    <div className="flex flex-grow flex-row">
-      <div className="ml-2 flex w-1/5 max-w-72 flex-col">
-        <ul>
-          {chatsRelatedWithCurrentUser.map((chat) => (
-            <li
-              key={chat.chat_id}
-              onClick={() => {
-                setCurrentChat(chat);
-                setRightComponent('chat');
-              }}
-            >
-              <SingleChatTab chat={chat} />
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="flex max-h-screen flex-grow flex-row">
+      <ChatSideBar
+        chatsRelatedWithCurrentUser={chatsRelatedWithCurrentUser}
+        setCurrentChat={setCurrentChat}
+        setRightComponent={setRightComponent}
+      />
 
       {/* main page or chat detail page for chat apiece */}
-      <div className="ml-2 w-4/5 flex-wrap border-r-2">
+      <div className="ml-2 flex max-h-screen w-5/6 justify-center border-r-2">
         {rightComponent === 'chat' ? (
           <SingleChatMain user={currentUser} friends={friends} />
         ) : rightComponent === 'more' ? (

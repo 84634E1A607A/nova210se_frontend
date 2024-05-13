@@ -10,8 +10,10 @@ export function MessageContent({ message, isSelf, isReply }: Props) {
   const bgColor = isReply ? 'bg-gray-400' : isSelf ? 'bg-emerald-400' : 'bg-blue-400';
   const textColor = isReply ? 'text-gray-300' : isSelf ? 'text-white' : 'text-black';
   return (
-    <div className={`${bgColor} ml-4 h-fit min-h-7 max-w-[31rem] rounded-2xl border-blue-950`}>
-      <p className={`${textColor} ${basicTextTailwind} p-1.5`}>{message}</p>
+    <div
+      className={`${bgColor} ml-4 h-fit min-h-7 max-w-[31rem] rounded-2xl border-blue-950 py-2 pe-3 ps-3`}
+    >
+      <p className={`${textColor} ${basicTextTailwind}`}>{message}</p>
     </div>
   );
 }

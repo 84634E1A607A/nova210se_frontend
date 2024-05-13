@@ -20,6 +20,7 @@ import { getDetailedMessages } from '../getDetailedMessages';
 import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
 import useWebSocket from 'react-use-websocket';
 import { sendDeleteMessageC2SActionWS } from '../../websockets/Actions';
+import './css/auto-hidden-scroll.css';
 
 export function Dialogs({ chat, user, friends }: Props) {
   const {
@@ -80,9 +81,9 @@ export function Dialogs({ chat, user, friends }: Props) {
   messages.sort((a, b) => a.send_time - b.send_time);
 
   return (
-    <div className="flex flex-col overflow-auto">
+    <div className="auto-hidden-scroll flex h-[70%] w-auto flex-col">
       <NoticesBar chat={chat} />
-      <ul className="m-2 flex flex-col">
+      <ul className="m-2 flex w-auto flex-col">
         {messages.map((detailedMessage) => {
           if (detailedMessage.deleted) return null;
           return (

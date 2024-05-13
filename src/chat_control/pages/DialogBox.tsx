@@ -40,7 +40,7 @@ export function DialogBox({ chat }: Props) {
   });
 
   return (
-    <div className="static bottom-0 flex flex-col" ref={trueDialogBoxRef}>
+    <div className="static bottom-0 flex h-[20%] flex-col" ref={trueDialogBoxRef}>
       {/** The replied message, which can be canceled. */}
       <div
         className="flex flex-row place-content-center pb-2 text-gray-500"
@@ -78,16 +78,27 @@ export function DialogBox({ chat }: Props) {
           reset();
           setRepliedMessage(null);
         })}
-        className="flex min-w-[50rem] max-w-[50rem] flex-col"
+        className="flex max-h-[100%] min-h-[100%] min-w-[60rem] max-w-[60rem] flex-col"
       >
         <textarea
           id="content"
           {...register('content', {
             required: true,
           })}
-          className="h-20"
+          className="max-h-[60%] min-h-[60%] resize-none rounded-md border border-slate-300 px-3 py-2 text-sm
+                   placeholder-slate-400 shadow-sm focus:border-sky-500 focus:outline-none
+                     focus:ring-1 focus:ring-sky-500 disabled:border-slate-200 disabled:bg-slate-50 
+                   disabled:text-slate-500 disabled:shadow-none"
         />
-        {!isSubmitting ? <button type="submit">Send</button> : null}
+        {!isSubmitting ? (
+          <button
+            type="submit"
+            className="mb-2 mt-2 rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-300 
+                     focus:border-sky-200 focus:outline-none focus:ring-1 focus:ring-sky-500"
+          >
+            Send
+          </button>
+        ) : null}
         <ValidationError fieldError={errors.content} />
       </form>
     </div>
