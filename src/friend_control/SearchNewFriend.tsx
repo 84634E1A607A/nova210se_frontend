@@ -19,8 +19,8 @@ export function SearchNewFriend() {
   };
 
   return (
-    <div className="grow">
-      <div className="surface-0 m-4 box-border inline-block rounded-lg p-4 shadow-md">
+    <div className="flex grow flex-col">
+      <div className="surface-0 mx-auto my-4 box-border inline-block rounded-lg p-4 shadow-md">
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="searchParam">
@@ -49,7 +49,9 @@ export function SearchNewFriend() {
           </div>
         </form>
       </div>
-      <SearchNewFriendResultList />
+      <div className="mx-auto inline-block min-w-[80%]">
+        <SearchNewFriendResultList />
+      </div>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export function FriendsList({ friends, groups }: Props) {
       <ul>
         {groups.map((group) => {
           return (
-            <li key={group.group_id} className="border-1 mx-10 box-border rounded-sm shadow-md">
+            <li key={group.group_id} className="border-1 box-border rounded-sm shadow-md">
               <FriendsForEachGroupList
                 friendsInGroup={friends.filter((friend) => {
                   return friend.group.group_id === group.group_id;
