@@ -14,7 +14,7 @@ export function FriendsPage() {
   assertIsFriendsGroupsData(data);
 
   return (
-    <div className="auto-hidden-scroll ms-[7px] flex flex-grow flex-col">
+    <div className="surface-0 m-auto box-border inline-block min-h-[80%] min-w-[80%] rounded-lg p-4 shadow-md">
       <div className="text-900 h-fit bg-teal-100 py-3 text-3xl font-medium">Friends Page</div>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
