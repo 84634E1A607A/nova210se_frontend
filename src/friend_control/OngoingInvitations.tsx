@@ -11,9 +11,9 @@ import { rejectInvitation } from './rejectInvitation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Invitation } from '../utils/Types';
 import { useUserName } from '../utils/router/RouteParamsHooks';
-import { theme } from '../utils/ui/themes';
-import { UserDisplayTabInInvitations } from './UserDisplayTabInInvitations';
 import { ApplicationsForChatList } from '../chat_control/components/ApplicationsForChatList';
+import { Avatar } from '../utils/ui/Avatar';
+import { ScrollPanel } from 'primereact/scrollpanel';
 
 /**
  * @description Friend applications and applications for entering group chat if the current
@@ -79,51 +79,84 @@ export function OngoingInvitations() {
                     {(chats) => {
                       assertIsChatsRelatedWithCurrentUser(chats);
                       return (
-                        <div className="flex flex-grow flex-col">
-                          <strong className="m-2">Applications for friendship</strong>
-                          <ul>
-                            {invitations.map((invitation) => (
-                              <li key={invitation.id}>
-                                <div
-                                  className="m-1 p-2"
-                                  style={{ backgroundColor: theme.secondary_container }}
-                                >
-                                  <p className="m-1">
-                                    From{' '}
-                                    {invitation.source === 'search'
-                                      ? ' search'
-                                      : ` group with id: ${invitation.source}`}
-                                  </p>
-                                  {invitation.comment === '' ? null : (
-                                    <p className="m-2">Invitation message: {invitation.comment}</p>
-                                  )}
-                                  <UserDisplayTabInInvitations leastUserInfo={invitation.sender} />
-                                  <div className="flex flex-row place-content-evenly place-items-center">
-                                    <button
-                                      type="button"
-                                      onClick={() => accept(invitation.id)}
-                                      className="text-green-600"
-                                    >
-                                      Accept
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => reject(invitation.id)}
-                                      className="text-red-600"
-                                    >
-                                      Reject
-                                    </button>
-                                  </div>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
+                        <div className="flex grow flex-col">
+                          <div className="flex min-h-2 grow" />
+                          <div className="surface-0 mx-auto box-border flex h-[40%] min-w-[80%] flex-col rounded-lg p-4 shadow-md">
+                            <div className="text-900 mb-4 text-3xl font-medium">
+                              Applications for friendship
+                            </div>
+                            {invitations.length === 0 ? (
+                              <div className="text-gray-500">No applications</div>
+                            ) : (
+                              <ScrollPanel className="grow overflow-clip">
+                                <ul>
+                                  {invitations.map((invitation) => (
+                                    <li key={invitation.id}>
+                                      <div className="m-1 flex flex-row rounded-lg bg-blue-50 px-4 py-2">
+                                        <div className="my-auto flex h-14 w-14">
+                                          <Avatar url={invitation.sender.avatar_url} />
+                                        </div>
 
-                          <strong className="m-2">Applications for chat</strong>
-                          <ApplicationsForChatList
-                            applications={applicationsForChat}
-                            chats={chats}
-                          />
+                                        <div className="flex grow flex-col px-4 text-left">
+                                          <div className="m-1">
+                                            <span className="font-bold">Source: </span>
+                                            {invitation.source === 'search'
+                                              ? 'Search'
+                                              : `Group with id: ${invitation.source}`}
+                                          </div>
+
+                                          <div className="m-1">
+                                            <span className="font-bold">Message: </span>
+                                            {invitation.comment === '' ? (
+                                              <span className="italic">Not Provided</span>
+                                            ) : (
+                                              invitation.comment
+                                            )}
+                                          </div>
+                                          <div className="m-1">
+                                            <span className="font-bold">Username: </span>
+                                            <span>{invitation.sender.user_name}</span>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex flex-col">
+                                          <button
+                                            type="button"
+                                            onClick={() => accept(invitation.id)}
+                                            className="focus:shadow-outline my-1 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                          >
+                                            Accept
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => reject(invitation.id)}
+                                            className="focus:shadow-outline my-1 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                                          >
+                                            Reject
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </ScrollPanel>
+                            )}
+                          </div>
+                          <div className="flex min-h-2 grow" />
+                          <div className="surface-0 mx-auto box-border flex h-[40%] min-w-[80%] flex-col rounded-lg p-4 shadow-md">
+                            <div className="text-900 mb-4 text-3xl font-medium">
+                              Applications for chat
+                            </div>
+                            {applicationsForChat.length === 0 ? (
+                              <div className="text-gray-500">No applications</div>
+                            ) : (
+                              <ApplicationsForChatList
+                                applications={applicationsForChat}
+                                chats={chats}
+                              />
+                            )}
+                          </div>
+                          <div className="flex min-h-2 grow" />
                         </div>
                       );
                     }}
