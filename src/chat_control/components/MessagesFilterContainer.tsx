@@ -42,6 +42,7 @@ export function MessagesFilterContainer({ chat, currentUser, membersWithDisplayN
 
   const handleResult = (ret: any) => {
     if (ret.isSuccessful) {
+      ret.messages.sort((a: DetailedMessage, b: DetailedMessage) => a.send_time - b.send_time);
       setFilteredMessages(ret.messages);
       setIsLoading(false);
     } else {
@@ -124,6 +125,7 @@ export function MessagesFilterContainer({ chat, currentUser, membersWithDisplayN
       {!isLoading && (
         <ul className="m-2 flex flex-col">
           {filteredMessages!.map((detailedMessage) => {
+            if (detailedMessage.deleted) return null;
             return (
               <li key={detailedMessage.message_id} className={messageTabListItemCssClass}>
                 <MessageTab
