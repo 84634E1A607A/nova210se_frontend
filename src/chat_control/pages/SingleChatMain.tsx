@@ -10,16 +10,17 @@ import { sendReadMessagesC2SActionWS } from '../../websockets/Actions';
 import { getChatInfo } from '../getChatInfo';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { Friend, LeastUserInfo } from '../../utils/Types';
+import { ChatRelatedWithCurrentUser, Friend, LeastUserInfo } from '../../utils/Types';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
+import { useRefetchContext } from '../states/RefetchProvider';
 
 /**
  * @layout ChatHeader (including button for settings and details of this chat)
  * @layout Dialogs (all the chats, the core component)
  * @layout DialogBox
  */
-export function SingleChatMain({ setRightComponent, user, friends }: Props) {
-  const { currentChat } = useCurrentChatContext();
+export function SingleChatMain({ user, friends }: Props) {
+  const { currentChat, setRightComponent, setCurrentChat } = useCurrentChatContext();
   const chatId = currentChat!.chat_id;
   const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     share: true,
@@ -28,6 +29,7 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
   const navigate = useNavigate();
   const currentRouterUrl = useLocation().pathname;
   const queryClient = useQueryClient();
+  const { chatsRefetch } = useRefetchContext();
 
   useEffect(() => {
     // when click this chat, if there are unread messages, refresh the unread count
@@ -37,8 +39,13 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
         action: sendReadMessagesC2SActionWS,
         data: { chat_id: chatId },
       });
-      queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-      navigate(currentRouterUrl);
+      if (chatsRefetch[0]) {
+        chatsRefetch[0]();
+      }
+      setCurrentChat({
+        ...currentChat,
+        unread_count: 0,
+      } as ChatRelatedWithCurrentUser);
     }
   }, [
     currentChat,
@@ -48,16 +55,19 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
     queryClient,
     sendJsonMessage,
     user.user_name,
+    chatsRefetch,
+    setCurrentChat,
   ]);
 
   /** @description If the chat is unauthorized for this user, jump to chats page. */
   useEffect(() => {
     getChatInfo({ chatId }).then((fetchedCurrentChat) => {
       if (fetchedCurrentChat === undefined) {
-        navigate(`/${user.user_name}/chats`);
+        setRightComponent(undefined);
+        setCurrentChat(null);
       }
     });
-  }, [chatId, navigate, user.user_name]);
+  }, [chatId, navigate, user.user_name, setCurrentChat, setRightComponent]);
 
   return (
     <div className="flex flex-col">
@@ -75,7 +85,6 @@ export function SingleChatMain({ setRightComponent, user, friends }: Props) {
 }
 
 interface Props {
-  setRightComponent: any;
   user: LeastUserInfo;
   friends: Friend[];
 }

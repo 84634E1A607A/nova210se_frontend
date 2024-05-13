@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { assertIsMessage } from '../../utils/Asserts';
 import { MessageTab } from '../components/MessageTab';
 import {
@@ -17,7 +17,7 @@ import { getIsSelf } from '../utils/getIsSelf';
 import { messageTabListItemCssClass } from '../components/ui/MessageTabListItem';
 import { useQuery } from '@tanstack/react-query';
 import { getDetailedMessages } from '../getDetailedMessages';
-import { useRefetchContext } from '../states/RefetchProvider';
+import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
 
 export function Dialogs({ chat, user, friends }: Props) {
   const {
@@ -29,15 +29,8 @@ export function Dialogs({ chat, user, friends }: Props) {
     queryFn: () => getDetailedMessages(chat),
   });
 
-  const { refetches } = useRefetchContext();
-  useEffect(() => {
-    if (refetches.length === 0) {
-      refetches.push(refetch);
-    }
-    return () => {
-      refetches.splice(refetches.indexOf(refetch), 1);
-    };
-  }, [refetch, refetches]);
+  const { messagesRefetch } = useRefetchContext();
+  useSetupRefetch(refetch, messagesRefetch);
 
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();

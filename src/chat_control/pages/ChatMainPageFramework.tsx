@@ -1,17 +1,15 @@
-import { Suspense, useEffect, useState } from 'react';
-import { useLoaderData, Await, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import {
-  assertIsChatsRelatedWithCurrentUser,
-  assertIsFriendsList,
-  assertIsLeastUserInfo,
-} from '../../utils/Asserts';
 import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
 import { MoreOfChat } from './MoreOfChat';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
+import { getFriendsList } from '../../friend_control/getFriendsList';
+import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
+import { getChats } from '../getChats';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
+import { getUserInfo } from '../../user_control/getUserInfo';
 
 /**
  * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
@@ -22,9 +20,6 @@ export function ChatMainPageFramework() {
    * @description The router path/url management part.
    */
   const userName = useUserName();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const currentRouterUrl = useLocation().pathname;
 
   /**
    * @description The state that manages which should be displayed on the right-hand side of this page.
@@ -34,86 +29,79 @@ export function ChatMainPageFramework() {
   /**
    * @description The data management part.
    */
-  const { data } = useLoaderData() as any;
+  const { isLoading: isLoadingUser, data: currentUser } = useQuery({
+    queryKey: ['user'],
+    queryFn: getUserInfo,
+  });
 
-  /**
-   * @description `parseChatName` may throw an error if a new friend is added and the friends list
-   * is not updated to include the friend of the new private chat (when click chats page, chats may
-   * load for the first time while friends is already loaded in other pages, so friends list may lag
-   * behind chats list
-   */
-  const [shouldReload, setShouldReload] = useState(false);
-  useEffect(() => {
-    if (shouldReload) {
-      queryClient.removeQueries({ queryKey: ['friends'] });
-      navigate(currentRouterUrl, { replace: true, preventScrollReset: true });
-      // must navigate, only setState won't be enough to trigger re-render or reload
-      setShouldReload(false);
-    }
-    return () => setShouldReload(false);
-  }, [navigate, queryClient, shouldReload, userName, setShouldReload, currentRouterUrl]);
+  const {
+    isLoading: isLoadingChats,
+    data: chats,
+    refetch: refetchChats,
+  } = useQuery({
+    queryKey: ['chats_related_with_current_user'],
+    queryFn: getChats,
+  });
+
+  const {
+    isLoading: isLoadingFriends,
+    data: friends,
+    refetch: refetchFriends,
+  } = useQuery({
+    queryKey: ['friends'],
+    queryFn: getFriendsList,
+  });
+
+  const { friendsRefetch, chatsRefetch } = useRefetchContext();
+  useSetupRefetch(refetchChats, chatsRefetch);
+  useSetupRefetch(refetchFriends, friendsRefetch);
+
+  if (
+    isLoadingChats ||
+    isLoadingFriends ||
+    isLoadingUser ||
+    chats === undefined ||
+    friends === undefined ||
+    currentUser === undefined
+  ) {
+    return <p>Loading chats...</p>;
+  }
+
+  /** @description get the chat name that can be directly displayed for a specific current user */
+  const chatsRelatedWithCurrentUser = chats.map((chat) => {
+    const chatName = parseChatName(chat, userName, friends);
+    return {
+      ...chat,
+      chatName,
+    } as ChatRelatedWithCurrentUser;
+  });
 
   return (
-    <Suspense fallback={<p>Loading chats...</p>}>
-      <Await resolve={data} errorElement={<Navigate to={currentRouterUrl} />}>
-        {([currentUser, friends, chatsRelatedWithCurrentUser]) => {
-          assertIsLeastUserInfo(currentUser);
-          assertIsFriendsList(friends);
-          assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
+    <div className="flex flex-grow flex-row">
+      <div className="ml-2 flex w-1/5 max-w-72 flex-col">
+        <ul>
+          {chatsRelatedWithCurrentUser.map((chat) => (
+            <li
+              key={chat.chat_id}
+              onClick={() => {
+                setCurrentChat(chat);
+                setRightComponent('chat');
+              }}
+            >
+              <SingleChatTab chat={chat} />
+            </li>
+          ))}
+        </ul>
+      </div>
 
-          /** @description get the chat name that can be directly displayed for a specific current user */
-          chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
-            let chatName = '';
-            try {
-              chatName = parseChatName(chat, userName, friends);
-            } catch (e) {
-              setShouldReload(true);
-            }
-            return {
-              ...chat,
-              chatName,
-            };
-          });
-          assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
-
-          return (
-            <div className="flex flex-grow flex-row">
-              <div className="ml-2 flex w-1/5 max-w-72 flex-col">
-                <ul>
-                  {chatsRelatedWithCurrentUser.map((chat) => (
-                    <li
-                      key={chat.chat_id}
-                      onClick={() => {
-                        setCurrentChat(chat);
-                        setRightComponent('chat');
-                      }}
-                    >
-                      <SingleChatTab chat={chat} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* main page or chat detail page for chat apiece */}
-              <div className="ml-2 w-4/5 flex-wrap border-r-2">
-                {rightComponent === 'chat' ? (
-                  <SingleChatMain
-                    setRightComponent={setRightComponent}
-                    user={currentUser}
-                    friends={friends}
-                  />
-                ) : rightComponent === 'more' ? (
-                  <MoreOfChat
-                    user={currentUser}
-                    friends={friends}
-                    setRightComponent={setRightComponent}
-                  />
-                ) : null}
-              </div>
-            </div>
-          );
-        }}
-      </Await>
-    </Suspense>
+      {/* main page or chat detail page for chat apiece */}
+      <div className="ml-2 w-4/5 flex-wrap border-r-2">
+        {rightComponent === 'chat' ? (
+          <SingleChatMain user={currentUser} friends={friends} />
+        ) : rightComponent === 'more' ? (
+          <MoreOfChat user={currentUser} friends={friends} setRightComponent={setRightComponent} />
+        ) : null}
+      </div>
+    </div>
   );
 }

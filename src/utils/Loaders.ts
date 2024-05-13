@@ -56,13 +56,3 @@ export async function UserLoader(queryClient: QueryClient) {
     user: fetchDataForLoaders(queryClient, ['user'], getUserInfo),
   });
 }
-
-export async function UserAndFriendsAndChatsRelatedWithCurrentUserLoader(queryClient: QueryClient) {
-  return defer({
-    data: Promise.all([
-      fetchDataForLoaders(queryClient, ['user'], getUserInfo),
-      fetchDataForLoaders(queryClient, ['friends'], getFriendsList),
-      fetchDataForLoaders(queryClient, ['chats_related_with_current_user'], getChats),
-    ]),
-  });
-}
