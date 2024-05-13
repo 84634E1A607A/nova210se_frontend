@@ -1,11 +1,13 @@
 .auto-hidden-scroll {
     @apply overflow-hidden;
+    @apply pr-[7px];
 }
 .auto-hidden-scroll:hover {
-    @apply overflow-auto;
+    @apply overflow-y-scroll;
+    @apply pr-0;
 }
 .auto-hidden-scroll p {
-    @apply pr-4;
+    @apply pr-[0px];
 }
 .auto-hidden-scroll:hover p {
     @apply pr-0;
