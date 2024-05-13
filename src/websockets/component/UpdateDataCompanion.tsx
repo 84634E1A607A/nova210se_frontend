@@ -56,7 +56,7 @@ export function UpdateDataCompanion() {
   const toast = useRef<Toast | null>(null);
   const { currentChat, setCurrentChat, rightComponent, setRightComponent } =
     useCurrentChatContext();
-  const { messagesRefetch } = useRefetchContext();
+  const { messagesRefetch, chatsRefetch, friendsRefetch } = useRefetchContext();
 
   useEffect(() => {
     /**
@@ -117,8 +117,7 @@ export function UpdateDataCompanion() {
           case receiveMessageS2CActionWS:
             // Only in this case or when click the chat should we update the unread count of current user
 
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-
+            if (chatsRefetch[0]) chatsRefetch[0]();
             if (currentRouterUrl.match(chatsRouterUrl)) {
               if (
                 currentChat?.chat_id === lastJsonMessage.data.message.chat_id &&
@@ -131,16 +130,9 @@ export function UpdateDataCompanion() {
                   data: { chat_id: lastJsonMessage.data.message.chat_id },
                 });
 
-                if (messagesRefetch[0]) {
-                  messagesRefetch[0]();
-                }
-                // With refetch, no need to `queryClient.removeQueries({queryKey: ['detailed_messages',
-                // String(lastJsonMessage.data.message.chat_id)]});`. It can update messages of a chat.
-                // Only when in a certain chat will `refetch` function exist.
+                if (messagesRefetch[0]) messagesRefetch[0]();
               }
             }
-            // `state` is for possible invitations page
-            navigate(currentRouterUrl, { preventScrollReset: true, state });
 
             break;
 
@@ -157,6 +149,8 @@ export function UpdateDataCompanion() {
           case receiveFriendDeletedS2CActionWS:
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             queryClient.removeQueries({ queryKey: ['friends'] });
+            if (friendsRefetch[0]) friendsRefetch[0]();
+
             dealChatUnauthorized(
               'Friend deleted',
               'The friend has been deleted. No chat any more',
@@ -176,7 +170,7 @@ export function UpdateDataCompanion() {
             break;
 
           case receiveMemberRemovedS2CActionWS:
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
+            if (chatsRefetch[0]) chatsRefetch[0]();
             const deletedUserId = lastJsonMessage.data.user_id as number;
             getUserInfo().then((currentUser) => {
               if (currentUser?.id === deletedUserId) {
@@ -187,7 +181,6 @@ export function UpdateDataCompanion() {
                   undefined,
                 );
               } else if (currentRouterUrl.match(chatsRouterUrl)) {
-                navigate(currentRouterUrl, { preventScrollReset: true });
                 if (rightComponent === 'chat' && messagesRefetch[0]) {
                   messagesRefetch[0](); // to show 'xx removed xx from the group...'
                 }
@@ -237,6 +230,8 @@ export function UpdateDataCompanion() {
     rightComponent,
     setRightComponent,
     setCurrentChat,
+    chatsRefetch,
+    friendsRefetch,
   ]);
 
   return <Toast ref={toast} />;
