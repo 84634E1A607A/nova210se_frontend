@@ -390,6 +390,17 @@ export function MoreOfChat({ user, friends, setRightComponent }: Props) {
           </div>
         ) : null}
 
+        {currentChat.chat.chat_owner.id !== user.id && !isPrivateChat ? (
+          <div className="card justify-content-center flex flex-wrap gap-2">
+            <Button
+              onClick={() => mutateLeaveChat({ chatId: currentChat.chat_id })}
+              icon="pi pi-check"
+              label="Leave chat"
+              className="mr-2"
+            />
+          </div>
+        ) : null}
+
         {isPrivateChat ? null : (
           <InviteFriendIntoChat
             toast={toast}
