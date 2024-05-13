@@ -19,6 +19,7 @@ import { MouseEvent } from 'react';
 import { MessagesFilterContainer } from '../components/MessagesFilterContainer';
 import { parseNameOfFriend } from '../../friend_control/utils/parseNameOfFirend';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
+import { InviteFriendPage } from '../../friend_control/InviteFriendPage';
 
 /**
  * @description the members and settings, etc. of a chat
@@ -160,6 +161,7 @@ export function MoreOfChat({ user, friends, setRightComponent }: Props) {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMember, setSelectedMember] = useState<DetailedMemberInfo | undefined>();
   const toast = useRef<Toast | null>(null);
+  const inviteConfirmation = useRef<any>();
 
   const inviteFriendContextMenuItem = {
     label: 'Invite',
@@ -173,8 +175,24 @@ export function MoreOfChat({ user, friends, setRightComponent }: Props) {
           life: 2000,
         });
       else {
-        navigate(`/${user.user_name}/invite`, {
-          state: { source: currentChat.chat_id, id: selectedMember!.id },
+        confirmDialog({
+          header: 'Invite friend',
+          message: (
+            <InviteFriendPage
+              ref={inviteConfirmation}
+              state={{ source: currentChat.chat_id, id: selectedMember!.id }}
+              callback={(success: boolean, message: string) => {
+                toast.current?.show({
+                  severity: success ? 'success' : 'error',
+                  summary: success ? 'Success' : 'Error',
+                  detail: message,
+                });
+              }}
+            />
+          ),
+          accept() {
+            inviteConfirmation.current?.submit();
+          },
         });
       }
     },

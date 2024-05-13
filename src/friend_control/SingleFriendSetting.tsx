@@ -202,8 +202,12 @@ export function SingleFriendSetting({ friendUserId }: Props) {
           <ValidationError fieldError={errors.nickname} />
         </div>
         <div className="mx-2">
-          <button type="submit" disabled={isSubmitting}>
-            submit
+          <button
+            type="submit"
+            className="focus:shadow-outline rounded bg-blue-500 px-2 py-2 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={isSubmitting}
+          >
+            Submit
           </button>
         </div>
       </form>
