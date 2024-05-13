@@ -43,6 +43,7 @@ export type Message = {
   message: string;
   send_time: number;
   sender: LeastUserInfo;
+  deleted: boolean;
 };
 
 export type DetailedMessage = Message & {

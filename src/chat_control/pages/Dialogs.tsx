@@ -14,10 +14,12 @@ import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 import { NoticesBar } from '../components/NoticesBar';
 import { getIsSelf } from '../utils/getIsSelf';
-import { messageTabListItemCssClass } from '../components/ui/MessageTabListItem';
+import { messageTabListItemCssClass } from '../ui/MessageTabListItem';
 import { useQuery } from '@tanstack/react-query';
 import { getDetailedMessages } from '../getDetailedMessages';
 import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
+import useWebSocket from 'react-use-websocket';
+import { sendDeleteMessageC2SActionWS } from '../../websockets/Actions';
 
 export function Dialogs({ chat, user, friends }: Props) {
   const {
@@ -46,7 +48,22 @@ export function Dialogs({ chat, user, friends }: Props) {
     },
   };
 
-  const contextMenuItems = [replyMessageContextMenuItem];
+  const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
+    share: true,
+  });
+
+  const deleteMessageContextMenuItem = {
+    label: 'Delete',
+    icon: 'pi pi-trash',
+    command: () => {
+      sendJsonMessage({
+        action: sendDeleteMessageC2SActionWS,
+        data: { message_id: selectedMessage!.message_id, delete: true },
+      });
+    },
+  };
+
+  const contextMenuItems = [replyMessageContextMenuItem, deleteMessageContextMenuItem];
 
   /**
    * @description When right-click on a message, show the context menu
@@ -67,6 +84,7 @@ export function Dialogs({ chat, user, friends }: Props) {
       <NoticesBar chat={chat} />
       <ul className="m-2 flex flex-col">
         {messages.map((detailedMessage) => {
+          if (detailedMessage.deleted) return null;
           return (
             <li key={detailedMessage.message_id} className={messageTabListItemCssClass}>
               <MessageTab

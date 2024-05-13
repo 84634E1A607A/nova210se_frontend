@@ -19,3 +19,5 @@ export const receiveMemberRemovedS2CActionWS = 'member_deleted';
 export const sendReadMessagesC2SActionWS = 'messages_read';
 
 export const receiveReadMessagesS2CActionWS = 'messages_read';
+
+export const sendDeleteMessageC2SActionWS = 'recall_message';
