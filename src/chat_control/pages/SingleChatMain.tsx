@@ -70,7 +70,7 @@ export function SingleChatMain({ user, friends }: Props) {
   }, [chatId, navigate, user.user_name, setCurrentChat, setRightComponent]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex h-screen max-h-screen flex-col overflow-hidden">
       <ChatHeader chat={currentChat!} setRightComponent={setRightComponent} />
       <RepliedMessageProvider>
         <DialogBoxRefProvider>

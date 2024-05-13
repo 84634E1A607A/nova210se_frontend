@@ -34,7 +34,7 @@ export function ChatSideBar({
   };
 
   return (
-    <div className="auto-hidden-scroll ml-2 flex w-1/5 max-w-72 flex-col">
+    <div className="auto-hidden-scroll mx-2 flex w-1/6 max-w-72 flex-col">
       <DataView value={chatsRelatedWithCurrentUser} listTemplate={listTemplate} />
     </div>
   );

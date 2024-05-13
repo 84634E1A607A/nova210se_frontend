@@ -10,7 +10,7 @@ interface Props {
  */
 export function SingleChatTab({ chat }: Props) {
   return (
-    <div className="p-d-flex p-ai-center border-top-1 surface-border relative mt-2 h-auto w-auto cursor-pointer bg-green-50 p-2">
+    <div className="p-d-flex p-ai-center border-top-1 surface-border relative mt-2 h-auto w-auto cursor-pointer rounded-md bg-teal-100 p-2">
       {chat.unread_count > 0 && (
         <Badge
           className="absolute -left-0 -top-1 block h-min w-min"

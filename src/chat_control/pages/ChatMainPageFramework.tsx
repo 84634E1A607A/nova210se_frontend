@@ -84,7 +84,7 @@ export function ChatMainPageFramework() {
       />
 
       {/* main page or chat detail page for chat apiece */}
-      <div className="ml-2 flex max-h-screen w-4/5 justify-center border-r-2">
+      <div className="ml-2 flex max-h-screen w-5/6 justify-center border-r-2">
         {rightComponent === 'chat' ? (
           <SingleChatMain user={currentUser} friends={friends} />
         ) : rightComponent === 'more' ? (
