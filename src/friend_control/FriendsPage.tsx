@@ -3,6 +3,7 @@ import { Await, useLoaderData } from 'react-router-dom';
 import { assertIsFriendsList, assertIsGroupsList } from '../utils/Asserts';
 import { FriendsList } from './FriendsList';
 import { assertIsFriendsGroupsData } from '../utils/AssertsForRouterLoader';
+import '../chat_control/pages/css/auto-hidden-scroll.css';
 
 /**
  * @description for listing all the friends and chat groups, categorized by friend group.
@@ -13,8 +14,8 @@ export function FriendsPage() {
   assertIsFriendsGroupsData(data);
 
   return (
-    <div className="surface-0 m-auto box-border inline-block min-h-[80%] min-w-[80%] rounded-lg p-4 shadow-md">
-      <div className="text-900 mb-4 text-3xl font-medium">Friends</div>
+    <div className="auto-hidden-scroll ms-[7px] flex flex-grow flex-col">
+      <div className="text-900 h-fit bg-teal-100 py-3 text-3xl font-medium">Friends Page</div>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
           {(friends) => {
