@@ -67,7 +67,7 @@ export function MainPageFramework() {
           />
         </ul>
       </nav>
-      <div className="flex max-h-screen grow overflow-auto">
+      <div className="flex max-h-screen grow overflow-auto bg-gray-100">
         <Outlet />
       </div>
     </div>
