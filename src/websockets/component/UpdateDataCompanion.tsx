@@ -56,7 +56,7 @@ export function UpdateDataCompanion() {
   const toast = useRef<Toast | null>(null);
   const { currentChat, setCurrentChat, rightComponent, setRightComponent } =
     useCurrentChatContext();
-  const { refetches } = useRefetchContext();
+  const { messagesRefetch } = useRefetchContext();
 
   useEffect(() => {
     /**
@@ -131,8 +131,8 @@ export function UpdateDataCompanion() {
                   data: { chat_id: lastJsonMessage.data.message.chat_id },
                 });
 
-                if (refetches[0]) {
-                  refetches[0]();
+                if (messagesRefetch[0]) {
+                  messagesRefetch[0]();
                 }
                 // With refetch, no need to `queryClient.removeQueries({queryKey: ['detailed_messages',
                 // String(lastJsonMessage.data.message.chat_id)]});`. It can update messages of a chat.
@@ -148,8 +148,8 @@ export function UpdateDataCompanion() {
             queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             if (currentRouterUrl.match(chatsRouterUrl)) {
               navigate(currentRouterUrl, { preventScrollReset: true });
-              if (refetches[0] && currentChat?.chat_id === lastJsonMessage.data.chat_id) {
-                refetches[0](); // to show 'xx approved xx to join the group...'
+              if (messagesRefetch[0] && currentChat?.chat_id === lastJsonMessage.data.chat_id) {
+                messagesRefetch[0](); // to show 'xx approved xx to join the group...'
               }
             }
             break;
@@ -188,8 +188,8 @@ export function UpdateDataCompanion() {
                 );
               } else if (currentRouterUrl.match(chatsRouterUrl)) {
                 navigate(currentRouterUrl, { preventScrollReset: true });
-                if (rightComponent === 'chat' && refetches[0]) {
-                  refetches[0](); // to show 'xx removed xx from the group...'
+                if (rightComponent === 'chat' && messagesRefetch[0]) {
+                  messagesRefetch[0](); // to show 'xx removed xx from the group...'
                 }
                 if (rightComponent === 'more') {
                   getChatInfo({ chatId: lastJsonMessage.data.chat_id }).then(
@@ -233,7 +233,7 @@ export function UpdateDataCompanion() {
     userName,
     sendJsonMessage,
     currentChat,
-    refetches,
+    messagesRefetch,
     rightComponent,
     setRightComponent,
     setCurrentChat,

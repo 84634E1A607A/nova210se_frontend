@@ -1,17 +1,18 @@
-import { Suspense, useEffect, useState } from 'react';
-import { useLoaderData, Await, useNavigate, Navigate, useLocation } from 'react-router-dom';
-import {
-  assertIsChatsRelatedWithCurrentUser,
-  assertIsFriendsList,
-  assertIsLeastUserInfo,
-} from '../../utils/Asserts';
+import { Suspense } from 'react';
+import { Await, Navigate, useLocation, useRouteLoaderData } from 'react-router-dom';
+import { assertIsLeastUserInfo } from '../../utils/Asserts';
 import { SingleChatTab } from '../components/SingleChatTab';
 import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
 import { MoreOfChat } from './MoreOfChat';
 import { useCurrentChatContext } from '../states/CurrentChatProvider';
+import { assertIsUserData } from '../../utils/AssertsForRouterLoader';
+import { getFriendsList } from '../../friend_control/getFriendsList';
+import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
+import { getChats } from '../getChats';
+import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 
 /**
  * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
@@ -22,8 +23,6 @@ export function ChatMainPageFramework() {
    * @description The router path/url management part.
    */
   const userName = useUserName();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const currentRouterUrl = useLocation().pathname;
 
   /**
@@ -34,47 +33,49 @@ export function ChatMainPageFramework() {
   /**
    * @description The data management part.
    */
-  const { data } = useLoaderData() as any;
+  const data = useRouteLoaderData('main_page'); // current 'user'
+  assertIsUserData(data);
 
-  /**
-   * @description `parseChatName` may throw an error if a new friend is added and the friends list
-   * is not updated to include the friend of the new private chat (when click chats page, chats may
-   * load for the first time while friends is already loaded in other pages, so friends list may lag
-   * behind chats list
-   */
-  const [shouldReload, setShouldReload] = useState(false);
-  useEffect(() => {
-    if (shouldReload) {
-      queryClient.removeQueries({ queryKey: ['friends'] });
-      navigate(currentRouterUrl, { replace: true, preventScrollReset: true });
-      // must navigate, only setState won't be enough to trigger re-render or reload
-      setShouldReload(false);
-    }
-    return () => setShouldReload(false);
-  }, [navigate, queryClient, shouldReload, userName, setShouldReload, currentRouterUrl]);
+  const {
+    isLoading: isLoadingChats,
+    data: chats,
+    refetch: refetchChats,
+  } = useQuery({
+    queryKey: ['chats_related_with_current_user'],
+    queryFn: getChats,
+  });
+
+  const {
+    isLoading: isLoadingFriends,
+    data: friends,
+    refetch: refetchFriends,
+  } = useQuery({
+    queryKey: ['friends'],
+    queryFn: getFriendsList,
+  });
+
+  const { friendsRefetch, chatsRefetch } = useRefetchContext();
+  useSetupRefetch(refetchChats, chatsRefetch);
+  useSetupRefetch(refetchFriends, friendsRefetch);
+
+  if (isLoadingChats || isLoadingFriends || chats === undefined || friends === undefined) {
+    return <p>Loading chats...</p>;
+  }
+
+  /** @description get the chat name that can be directly displayed for a specific current user */
+  const chatsRelatedWithCurrentUser = chats.map((chat) => {
+    const chatName = parseChatName(chat, userName, friends);
+    return {
+      ...chat,
+      chatName,
+    } as ChatRelatedWithCurrentUser;
+  });
 
   return (
-    <Suspense fallback={<p>Loading chats...</p>}>
-      <Await resolve={data} errorElement={<Navigate to={currentRouterUrl} />}>
-        {([currentUser, friends, chatsRelatedWithCurrentUser]) => {
+    <Suspense fallback={<p>Loading current user info...</p>}>
+      <Await resolve={data.user} errorElement={<Navigate to={currentRouterUrl} />}>
+        {([currentUser]) => {
           assertIsLeastUserInfo(currentUser);
-          assertIsFriendsList(friends);
-          assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
-
-          /** @description get the chat name that can be directly displayed for a specific current user */
-          chatsRelatedWithCurrentUser = chatsRelatedWithCurrentUser.map((chat) => {
-            let chatName = '';
-            try {
-              chatName = parseChatName(chat, userName, friends);
-            } catch (e) {
-              setShouldReload(true);
-            }
-            return {
-              ...chat,
-              chatName,
-            };
-          });
-          assertIsChatsRelatedWithCurrentUser(chatsRelatedWithCurrentUser);
 
           return (
             <div className="flex flex-grow flex-row">

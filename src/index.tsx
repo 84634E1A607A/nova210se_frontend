@@ -14,7 +14,6 @@ import {
   FriendsGroupsLoader,
   FriendsLoader,
   InvitationsAndApplicationsForChatAndChatsRelatedWithCurrentUserLoader,
-  UserAndFriendsAndChatsRelatedWithCurrentUserLoader,
   UserLoader,
 } from './utils/Loaders';
 import { ErrorPage } from './utils/ErrorPage';
@@ -48,7 +47,6 @@ const router = createBrowserRouter([
             path: 'chats',
             element: <ChatMainPageFramework />,
             id: 'chats',
-            loader: async () => UserAndFriendsAndChatsRelatedWithCurrentUserLoader(queryClient),
           },
           {
             path: 'friends',
