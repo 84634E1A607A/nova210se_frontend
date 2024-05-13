@@ -72,13 +72,14 @@ export function SingleChatMain({ user, friends }: Props) {
   return (
     <div className="flex h-screen max-h-screen flex-col overflow-hidden">
       <ChatHeader chat={currentChat!} setRightComponent={setRightComponent} />
-      <div className="w-full border-b-4 border-l"></div>
+      <div className="mb-3 w-full border-b-4 border-l"></div>
       <RepliedMessageProvider>
         <DialogBoxRefProvider>
           <MessageRefsProvider>
             <Dialogs chat={currentChat!} user={user} friends={friends} />
           </MessageRefsProvider>
           <DialogBox chat={currentChat!} />
+          <div className="mb-3 w-full border-l border-white"></div>
         </DialogBoxRefProvider>
       </RepliedMessageProvider>
     </div>

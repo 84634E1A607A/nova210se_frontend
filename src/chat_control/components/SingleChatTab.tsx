@@ -21,7 +21,10 @@ export function SingleChatTab({ chat }: Props) {
       <div className="ml-5 flex flex-row px-2">
         <span className="p-mr-2">{chat.chatName}</span>
       </div>
-      <span className="ml-3 block max-w-36 truncate" title={chat.chat.last_message.message}>
+      <span
+        className="ml-3 block max-w-36 truncate text-left"
+        title={chat.chat.last_message.message}
+      >
         {chat.chat.last_message.message}
       </span>
     </div>

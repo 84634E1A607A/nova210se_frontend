@@ -13,7 +13,7 @@ export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
   const isPrivateChat = chat?.chat.chat_name === '';
 
   return (
-    <div className="m-1 flex flex-row">
+    <div className="m-1 flex w-auto flex-row">
       <div className="flex flex-col text-xs">
         <div>
           <p className="inline">Reply: </p>
