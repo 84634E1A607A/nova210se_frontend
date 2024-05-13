@@ -21,3 +21,6 @@ export const sendReadMessagesC2SActionWS = 'messages_read';
 export const receiveReadMessagesS2CActionWS = 'messages_read';
 
 export const sendDeleteMessageC2SActionWS = 'recall_message';
+
+// by the way, `data` is {message_id: 24}
+export const receiveMessageDeletedS2CActionWS = 'message_deleted';

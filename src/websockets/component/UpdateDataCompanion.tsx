@@ -7,6 +7,7 @@ import {
   receiveFriendDeletedS2CActionWS,
   receiveMemberAddedS2CActionWS,
   receiveMemberRemovedS2CActionWS,
+  receiveMessageDeletedS2CActionWS,
   receiveMessageS2CActionWS,
   receiveReadMessagesS2CActionWS,
   sendReadMessagesC2SActionWS,
@@ -203,12 +204,15 @@ export function UpdateDataCompanion() {
             break;
 
           case receiveReadMessagesS2CActionWS:
-            queryClient.removeQueries({
-              queryKey: ['detailed_messages', String(lastJsonMessage.data.chat_id)],
-            });
+            if (messagesRefetch[0]) messagesRefetch[0]();
             if (currentRouterUrl.match(chatsRouterUrl)) {
               navigate(currentRouterUrl, { replace: true, state });
             }
+            break;
+
+          case receiveMessageDeletedS2CActionWS:
+            if (messagesRefetch[0]) messagesRefetch[0]();
+            if (chatsRefetch[0]) chatsRefetch[0](); // update last message of the chat
             break;
 
           default:
