@@ -20,7 +20,7 @@ export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
           <strong className="inline">{detailedMessage.replied_by.length}</strong>
         </div>
 
-        <div className="mt-1" title={'send time'}>
+        <div className="mt-1 whitespace-nowrap" title={'send time'}>
           {unixTimestampToExactTimeString(detailedMessage.send_time)}
         </div>
       </div>
@@ -28,7 +28,7 @@ export function MessageAssociateInfo({ detailedMessage, chat }: Props) {
       <Button
         type="button"
         icon="pi pi-list-check"
-        className="ml-5 h-4 w-3"
+        className="ml-3 flex h-4 w-3 justify-between"
         unstyled={true}
         onClick={(e) => op.current?.toggle(e)}
       ></Button>

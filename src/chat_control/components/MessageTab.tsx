@@ -60,8 +60,8 @@ export function MessageTab({ detailedMessage, isSelf, name, onRightClick, chat }
   return (
     <div className="flex h-fit w-auto flex-col" ref={ref}>
       <div className="flex flex-row">
-        <div className="left-0 ml-2 mt-2 flex h-9 w-20 flex-col">
-          <div className="h-5 w-4">
+        <div className="left-0 ml-3 mt-2 flex h-12 w-20 flex-col items-center">
+          <div className="flex h-7 w-6">
             <Avatar
               url={detailedMessage.sender.avatar_url}
               enablePopup={true}
