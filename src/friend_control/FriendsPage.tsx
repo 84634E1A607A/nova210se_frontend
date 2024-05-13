@@ -6,15 +6,15 @@ import { assertIsFriendsGroupsData } from '../utils/AssertsForRouterLoader';
 
 /**
  * @description for listing all the friends and chat groups, categorized by friend group.
- * Outlet: to show SingleFriendSetting component if a frined is clicked
+ * Outlet: to show SingleFriendSetting component if a friend is clicked
  */
 export function FriendsPage() {
   const data = useLoaderData();
   assertIsFriendsGroupsData(data);
 
   return (
-    <div className="flex flex-grow flex-col">
-      <div className="text-900 h-fit bg-teal-100 py-3 text-3xl font-medium">Friends Page</div>
+    <div className="surface-0 m-auto box-border inline-block min-h-[80%] min-w-[80%] rounded-lg p-4 shadow-md">
+      <div className="text-900 mb-4 text-3xl font-medium">Friends</div>
       <Suspense fallback={<div>Loading friends list...</div>}>
         <Await resolve={data.friends}>
           {(friends) => {
