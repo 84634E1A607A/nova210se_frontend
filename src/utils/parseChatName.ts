@@ -1,5 +1,5 @@
 import { parseNameOfFriend } from '../friend_control/utils/parseNameOfFirend';
-import { ChatRelatedWithCurrentUser, Friend } from '../utils/Types';
+import { ChatRelatedWithCurrentUser, Friend } from './Types';
 
 /**
  * @description Parse the chat name that should be displayed everywhere, such as in the chat list or in the header of a single chat.
@@ -18,11 +18,11 @@ export function parseChatName(
   const thisChat = chat.chat;
 
   if (thisChat.chat_name === '') {
-    // means it's a private chat (between two people and can't be extended to more people)
     const friendLeastInfo = thisChat.chat_members.filter(
       (member) => member.user_name !== currentUserName,
     )[0]; // this doesn't contain nickname of the friend
-    const friend = friends.filter((friendItem) => friendItem.friend.id === friendLeastInfo.id)[0];
+    const friend = friends.find((friendItem) => friendItem.friend.id === friendLeastInfo.id);
+    if (!friend) return friendLeastInfo.user_name;
     return parseNameOfFriend(friend);
   } else return thisChat.chat_name;
 }

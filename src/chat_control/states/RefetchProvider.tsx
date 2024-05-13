@@ -40,3 +40,7 @@ export function useSetupRefetch<T>(
     };
   }, [refetch, refetchInContext]);
 }
+
+export function tryToRefetch<T>(refetch: RefetchFunctionType<T>[]) {
+  if (refetch[0]) refetch[0]();
+}

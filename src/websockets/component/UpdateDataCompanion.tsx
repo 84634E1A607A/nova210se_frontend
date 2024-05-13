@@ -23,8 +23,8 @@ import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { getUserInfo } from '../../user_control/getUserInfo';
 import { useCurrentChatContext } from '../../chat_control/states/CurrentChatProvider';
 import { Toast } from 'primereact/toast';
-import { useRefetchContext } from '../../chat_control/states/RefetchProvider';
-import { getChatInfo } from '../../chat_control/getChatInfo';
+import { useRefetchContext, tryToRefetch } from '../../chat_control/states/RefetchProvider';
+import { updateChatState } from '../../chat_control/states/updateChatState';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -65,6 +65,7 @@ export function UpdateDataCompanion() {
      * and only reload the data.
      * Unauthorized chat means the chat has been deleted or the user has been removed from the chat or a friend has been
      * deleted.
+     * This function should be used under `/:user_id/chats`
      * @param messageSummary The summary message to show in the toast
      * @param messageDetail The detail message to show in the toast
      * @param chatId The chat id notified by web socket. Without it, we'll deal with friendship broken case.
@@ -76,28 +77,24 @@ export function UpdateDataCompanion() {
       chatId: number | undefined,
       friendId: number | undefined,
     ) {
-      if (currentRouterUrl.match(chatsRouterUrl)) {
-        let shouldJumpToParent = false;
-        if (
-          chatId === undefined &&
-          currentChat?.chat.chat_name === '' &&
-          currentChat.chat.chat_members.find((m) => m.id === friendId)
-        ) {
-          shouldJumpToParent = true;
-        }
-        if (currentChat?.chat_id === chatId) {
-          shouldJumpToParent = true;
-        } else {
-          navigate(currentRouterUrl, { preventScrollReset: true });
-        }
-        if (shouldJumpToParent) {
-          setRightComponent(undefined);
-          toast.current?.show({
-            severity: 'warn',
-            summary: messageSummary,
-            detail: messageDetail,
-          });
-        }
+      let shouldJumpToParent = false;
+      if (
+        chatId === undefined &&
+        currentChat?.chat.chat_name === '' &&
+        currentChat.chat.chat_members.find((m) => m.id === friendId)
+      ) {
+        shouldJumpToParent = true;
+      }
+      if (currentChat?.chat_id === chatId) shouldJumpToParent = true;
+
+      if (shouldJumpToParent) {
+        setRightComponent(undefined);
+        setCurrentChat(null);
+        toast.current?.show({
+          severity: 'warn',
+          summary: messageSummary,
+          detail: messageDetail,
+        });
       }
     }
 
@@ -111,70 +108,83 @@ export function UpdateDataCompanion() {
           case receiveApplicationForChatS2CActionWS:
             queryClient.removeQueries({ queryKey: ['applications_for_chat'] });
             if (currentRouterUrl.match(invitationsRouterUrl)) {
-              navigate(currentRouterUrl, { replace: true, state });
+              navigate(currentRouterUrl, { preventScrollReset: true });
             }
             break;
 
           case receiveMessageS2CActionWS:
             // Only in this case or when click the chat should we update the unread count of current user
 
-            if (chatsRefetch[0]) chatsRefetch[0]();
-            if (currentRouterUrl.match(chatsRouterUrl)) {
-              if (
-                currentChat?.chat_id === lastJsonMessage.data.message.chat_id &&
-                rightComponent === 'chat'
-              ) {
-                // In exactly the page that needs changing: send 'I've read the messages' to server
-                // (no need to update unread count because it's set to zero when enter the chat before)
-                sendJsonMessage({
-                  action: sendReadMessagesC2SActionWS,
-                  data: { chat_id: lastJsonMessage.data.message.chat_id },
-                });
-
-                if (messagesRefetch[0]) messagesRefetch[0]();
-              }
+            if (
+              currentRouterUrl.match(chatsRouterUrl) &&
+              currentChat?.chat_id === lastJsonMessage.data.message.chat_id &&
+              rightComponent === 'chat'
+            ) {
+              // In exactly the page that needs changing: send 'I've read the messages' to server
+              // (no need to update unread count because it's set to zero when enter the chat before)
+              sendJsonMessage({
+                action: sendReadMessagesC2SActionWS,
+                data: { chat_id: lastJsonMessage.data.message.chat_id },
+              });
+              tryToRefetch(messagesRefetch);
             }
 
+            tryToRefetch(chatsRefetch);
             break;
 
           case receiveMemberAddedS2CActionWS:
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-            if (currentRouterUrl.match(chatsRouterUrl)) {
-              navigate(currentRouterUrl, { preventScrollReset: true });
-              if (messagesRefetch[0] && currentChat?.chat_id === lastJsonMessage.data.chat_id) {
-                messagesRefetch[0](); // to show 'xx approved xx to join the group...'
+            tryToRefetch(chatsRefetch); // the last message of some chat will certainly be updated
+
+            if (
+              currentRouterUrl.match(chatsRouterUrl) &&
+              currentChat?.chat_id === lastJsonMessage.data.chat_id
+            ) {
+              tryToRefetch(messagesRefetch); // to show 'xx approved xx to join the group...'
+              if (rightComponent === 'more') {
+                updateChatState({
+                  chatId: lastJsonMessage.data.chat_id,
+                  toast,
+                  navigate,
+                  userName,
+                }).then((newChat) => {
+                  if (newChat) setCurrentChat(newChat);
+                });
               }
             }
             break;
 
           case receiveFriendDeletedS2CActionWS:
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
-            queryClient.removeQueries({ queryKey: ['friends'] });
-            if (friendsRefetch[0]) friendsRefetch[0]();
+            tryToRefetch(chatsRefetch);
+            tryToRefetch(friendsRefetch);
 
-            dealChatUnauthorized(
-              'Friend deleted',
-              'The friend has been deleted. No chat any more',
-              undefined,
-              lastJsonMessage.data.friend.friend.id,
-            );
+            if (currentRouterUrl.match(chatsRouterUrl)) {
+              dealChatUnauthorized(
+                'Friend deleted',
+                'The friend has been deleted. No chat any more',
+                undefined,
+                lastJsonMessage.data.friend.id,
+              );
+
+              // member color of the friend in chat detail will correctly change by itself, don't know why
+            }
+
             break;
 
           case receiveChatDeletedS2CActionWS:
-            queryClient.removeQueries({ queryKey: ['chats_related_with_current_user'] });
             dealChatUnauthorized(
               'Chat deleted',
               'The chat has been deleted',
               lastJsonMessage.data.chat.chat_id,
               undefined,
             );
+            tryToRefetch(chatsRefetch);
             break;
 
           case receiveMemberRemovedS2CActionWS:
-            if (chatsRefetch[0]) chatsRefetch[0]();
+            tryToRefetch(chatsRefetch);
             const deletedUserId = lastJsonMessage.data.user_id as number;
             getUserInfo().then((currentUser) => {
-              if (currentUser?.id === deletedUserId) {
+              if (currentUser?.id === deletedUserId && currentRouterUrl.match(chatsRouterUrl)) {
                 dealChatUnauthorized(
                   'You have been removed',
                   'You have been removed from the chat',
@@ -182,37 +192,31 @@ export function UpdateDataCompanion() {
                   undefined,
                 );
               } else if (currentRouterUrl.match(chatsRouterUrl)) {
-                if (rightComponent === 'chat' && messagesRefetch[0]) {
-                  messagesRefetch[0](); // to show 'xx removed xx from the group...'
-                }
+                tryToRefetch(messagesRefetch);
                 if (rightComponent === 'more') {
-                  getChatInfo({ chatId: lastJsonMessage.data.chat_id }).then(
-                    (fetchedCurrentChat) => {
-                      if (fetchedCurrentChat) {
-                        setCurrentChat(fetchedCurrentChat);
-                      } else {
-                        toast.current?.show({
-                          severity: 'error',
-                          summary: 'Failure in getting chat message',
-                        });
-                      }
-                    },
-                  );
+                  updateChatState({
+                    chatId: lastJsonMessage.data.chat_id,
+                    toast,
+                    navigate,
+                    userName,
+                  }).then((newChat) => {
+                    if (newChat) setCurrentChat(newChat);
+                  });
                 }
               }
             });
             break;
 
           case receiveReadMessagesS2CActionWS:
-            if (messagesRefetch[0]) messagesRefetch[0]();
-            if (currentRouterUrl.match(chatsRouterUrl)) {
-              navigate(currentRouterUrl, { replace: true, state });
+            if (currentChat?.chat_id === lastJsonMessage.data.chat_id) {
+              tryToRefetch(messagesRefetch);
             }
+            tryToRefetch(chatsRefetch);
             break;
 
           case receiveMessageDeletedS2CActionWS:
-            if (messagesRefetch[0]) messagesRefetch[0]();
-            if (chatsRefetch[0]) chatsRefetch[0](); // update last message of the chat
+            tryToRefetch(messagesRefetch);
+            tryToRefetch(chatsRefetch); // update last message of the chat
             break;
 
           default:
