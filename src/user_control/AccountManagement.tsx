@@ -25,20 +25,20 @@ export function AccountManagement() {
         {(user) => {
           assertIsLeastUserInfo(user);
           return (
-            <div className="me-5 mt-3 flex flex-grow flex-col">
+            <div className="surface-0 mx-auto my-auto box-border flex flex-col rounded-lg p-6 shadow-md">
               <div className="surface-0">
-                <div className="text-900 mb-2 text-3xl font-medium">User Information</div>
-                <div className="text-500">You can modify your current info here.</div>
+                <div className="text-900 mb-2 text-3xl font-medium">Account Settings</div>
+                <div className="text-500">You can modify your info here.</div>
                 <div className="text-500 mb-5">
                   If you want to edit your email, phone number, or password, you have to provide
                   your old password.
                 </div>
                 <div className="parent-container w-full">
                   <ul className="m-0 list-none px-10">
-                    <li className="align-items-center border-top-1 border-300 flex h-52 px-2 py-3">
+                    <li className="align-items-center border-top-1 border-300 flex px-2 py-3">
                       <div className="text-500 w-6 font-medium md:w-2">Avatar</div>
                       <div className="md:flex-order-0 flex-order-1 flex flex-grow items-center justify-center md:w-8">
-                        <div className="h-32 w-32 ">
+                        <div className="h-24">
                           <Avatar url={user.avatar_url} />
                         </div>
                       </div>
@@ -51,8 +51,11 @@ export function AccountManagement() {
                     </li>
                     <li className="align-items-center border-top-1 border-300 flex flex-wrap px-2 py-3">
                       <div className="text-500 w-6 font-medium md:w-2">Email</div>
-                      <div className="text-900 md:flex-order-0 flex-order-1 w-full md:w-8">
-                        {`${user.email}`}
+                      <div
+                        className="text-900 md:flex-order-0 flex-order-1 w-full max-w-[48rem] truncate md:w-8"
+                        title={user.email}
+                      >
+                        {user.email}
                       </div>
                       <EditDialog field="Email" />
                     </li>
@@ -73,7 +76,7 @@ export function AccountManagement() {
                   </ul>
                 </div>
               </div>
-              <div className="flex flex-row justify-center gap-10 pt-4">
+              <div className="flex flex-row justify-center gap-32 pt-4">
                 <button
                   className="rounded bg-teal-500 px-4 py-2 font-bold text-white hover:bg-teal-600
           focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"

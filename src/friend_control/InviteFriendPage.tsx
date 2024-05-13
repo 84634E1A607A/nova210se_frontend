@@ -44,7 +44,7 @@ export const InviteFriendPage = forwardRef(({ state, callback }: Props, ref) => 
         Leave your comment here
       </label>
       <textarea
-        className="mt-1 block w-60 rounded-md border border-slate-300 bg-white text-sm placeholder-slate-400 shadow-sm
+        className="surface-0 mt-1 block w-60 rounded-md border border-slate-300 text-sm placeholder-slate-400 shadow-sm
             focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
             disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none"
         id="comment"

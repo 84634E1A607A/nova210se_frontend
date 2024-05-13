@@ -20,7 +20,7 @@ export function SearchNewFriend() {
 
   return (
     <div className="grow">
-      <div className="m-4 box-border inline-block rounded-lg p-4 shadow-md">
+      <div className="surface-0 m-4 box-border inline-block rounded-lg p-4 shadow-md">
         <form noValidate onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label className="block text-sm font-medium text-slate-700" htmlFor="searchParam">
@@ -32,7 +32,7 @@ export function SearchNewFriend() {
               {...register('searchParam', { required: 'You must enter a search parameter' })}
               className={
                 'mt-1 w-60 rounded-md border' +
-                'border-slate-300 bg-white px-3 py-2 text-sm placeholder-slate-400 shadow-sm' +
+                'surface-0 border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm' +
                 'focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500' +
                 'disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 ' +
                 'disabled:shadow-none' +

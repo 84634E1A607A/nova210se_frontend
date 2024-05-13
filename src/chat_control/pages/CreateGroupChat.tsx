@@ -1,5 +1,5 @@
 import { Suspense, useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { MultiSelect, MultiSelectChangeEvent } from 'primereact/multiselect';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -100,25 +100,28 @@ export function CreateGroupChat() {
             };
           });
           return (
-            <div className="card flex content-center">
+            <div className="surface-0 m-auto box-border inline-block rounded-lg px-6 py-4 shadow-md">
               <form
                 onSubmit={handleSubmit((form) => mutate(form))}
                 className="flex flex-col items-center gap-2"
               >
                 <Toast ref={toast} />
-                <div>
-                  <label htmlFor="groupName">Group name</label>
-                  <input
-                    id="groupName"
-                    type="text"
-                    {...register('groupName', {
-                      required: 'You must enter a group chat name.',
-                      pattern: /^[\w@+\-.]+$/,
-                      maxLength: 19,
-                    })}
-                  />
-                  {getFormErrorMessage('groupName')}
-                </div>
+
+                <label className="mb-4 block text-xl font-medium text-slate-700">
+                  Create new group
+                </label>
+                <input
+                  id="groupName"
+                  className="borderborder-slate-300 shadow-smfocus:border-sky-500 focus:ring-sky-500disabled:border-slate-200 surface-0 w-full rounded-md px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-1"
+                  type="text"
+                  placeholder="Enter group name here"
+                  {...register('groupName', {
+                    required: 'You must enter a group chat name.',
+                    pattern: /^[\w@+\-.]+$/,
+                    maxLength: 19,
+                  })}
+                />
+                {getFormErrorMessage('groupName')}
 
                 {/** Without `optionLabel`, when you click one item, there will be runtime error*/}
                 <Controller
@@ -143,7 +146,7 @@ export function CreateGroupChat() {
                 />
                 {getFormErrorMessage('friends')}
 
-                <Button type="submit" label="Submit" className="mt-2" />
+                <Button type="submit" label="Submit" />
               </form>
             </div>
           );
