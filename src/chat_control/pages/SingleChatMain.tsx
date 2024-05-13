@@ -32,16 +32,16 @@ export function SingleChatMain({ user, friends }: Props) {
   const { chatsRefetch } = useRefetchContext();
 
   useEffect(() => {
-    // when click this chat, if there are unread messages, refresh the unread count
+    /** @description When click this chat, if there are unread messages, refresh the unread count. */
     if (currentChat!.unread_count !== 0) {
-      // send to server that this user has read the messages in this chat when click and enter into this chat page
+      // send to server that this user has read the messages in this chat when click and enter this chat page
+      // `UpdateDataCompanion` will then deal with the 'messages_read' message sent by the server
       sendJsonMessage({
         action: sendReadMessagesC2SActionWS,
         data: { chat_id: chatId },
       });
-      if (chatsRefetch[0]) {
-        chatsRefetch[0]();
-      }
+
+      // to prevent dead loop of useEffect
       setCurrentChat({
         ...currentChat,
         unread_count: 0,

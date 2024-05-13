@@ -1,5 +1,4 @@
 import { SingleChatTab } from '../components/SingleChatTab';
-import { parseChatName } from '../parseChatName';
 import { useUserName } from '../../utils/router/RouteParamsHooks';
 import { useQuery } from '@tanstack/react-query';
 import { SingleChatMain } from './SingleChatMain';
@@ -10,6 +9,7 @@ import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
 import { getChats } from '../getChats';
 import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 import { getUserInfo } from '../../user_control/getUserInfo';
+import { parseChatName } from '../../utils/parseChatName';
 
 /**
  * @description Includes the list of chats on the left, the main chat or chat detail on the right side.
