@@ -95,8 +95,10 @@ export function GroupSetting({ group, defaultGroup }: Props) {
         onSubmit={handleSubmit((form) => dispatchChangeGroupName(form))}
         className="mb-1 flex flex-grow flex-row items-center justify-center"
       >
-        <div>
-          <label htmlFor="new_group_name">New group name</label>
+        <div className="mx-2">
+          <label className="block text-sm font-medium text-slate-700" htmlFor="new_group_name">
+            New group name
+          </label>
           <input
             type="text"
             id="new_group_name"
@@ -107,22 +109,22 @@ export function GroupSetting({ group, defaultGroup }: Props) {
             })}
             className={`${getEditorStyle(errors.new_group_name)} surface-0 mt-1 block w-60 rounded-md 
             border border-slate-300 px-3 py-2 text-sm placeholder-slate-400 shadow-sm
-            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500
-            disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 
-            disabled:shadow-none
-           `}
+            focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500`}
           />
           <ValidationError fieldError={errors.new_group_name} />
         </div>
-        <div>
-          <button type="submit" className="ms-3">
-            edit
+        <div className="mx-2">
+          <button
+            type="submit"
+            className="focus:shadow-outline rounded bg-blue-500 px-2 py-2 font-bold text-white hover:bg-blue-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            Edit
           </button>
         </div>
       </form>
       <button
         type="button"
-        className="focus:shadow-outline mb-4 rounded bg-red-500 px-4 py-2 font-bold 
+        className="focus:shadow-outline mb-4 rounded bg-red-500 px-4 py-2 font-bold
     text-white hover:bg-red-600 focus:border-red-500 focus:outline-none focus:ring-1
       focus:ring-red-500"
         onClick={() => dispatchDelete(groupId)}
