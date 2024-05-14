@@ -1,7 +1,7 @@
 import { createContext, RefObject, useContext } from 'react';
 import { ContextProviderChildrenProp } from './RepliedMessageProvider';
 
-const initialContextValue = { ref: [] };
+const initialContextValue = { lastMassageRef: [] };
 
 const DialogBoxRefContext = createContext<DialogBoxRefContextType>(initialContextValue);
 
@@ -19,5 +19,5 @@ export function DialogBoxRefProvider({ children }: ContextProviderChildrenProp) 
 export const useDialogBoxRefContext = () => useContext(DialogBoxRefContext);
 
 interface DialogBoxRefContextType {
-  ref: RefObject<HTMLDivElement>[];
+  lastMassageRef: RefObject<HTMLDivElement>[];
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { assertIsMessage } from '../../utils/Asserts';
 import { MessageTab } from '../components/MessageTab';
 import {
@@ -38,14 +38,26 @@ export function Dialogs({ chat, user, friends }: Props) {
   const cm = useRef<ContextMenu | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<Message | undefined>();
   const { setRepliedMessage } = useRepliedMessageContext();
-  const { ref: dialogBoxRef } = useDialogBoxRefContext();
+  const { lastMassageRef: dialogBoxRefContext } = useDialogBoxRefContext();
+  const lastMassageDialogBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (dialogBoxRefContext.length === 0) {
+      dialogBoxRefContext.push(lastMassageDialogBoxRef);
+    }
+    return () => {
+      dialogBoxRefContext.splice(
+        dialogBoxRefContext.findIndex((r) => r === lastMassageDialogBoxRef),
+        1,
+      );
+    };
+  }, [lastMassageDialogBoxRef, dialogBoxRefContext]);
 
   const replyMessageContextMenuItem = {
     label: 'Reply',
     icon: 'pi pi-reply',
     command: () => {
       setRepliedMessage(selectedMessage!);
-      dialogBoxRef[0].current?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+      dialogBoxRefContext[0].current?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     },
   };
 
@@ -109,6 +121,7 @@ export function Dialogs({ chat, user, friends }: Props) {
           setSelectedMessage(undefined);
         }}
       />
+      <div ref={lastMassageDialogBoxRef} />
     </div>
   );
 }
