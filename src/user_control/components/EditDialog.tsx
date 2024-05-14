@@ -241,7 +241,7 @@ export default function EditDialog({ field }: Props) {
               <label htmlFor="new_password" className="mt-2 block text-left">
                 <span className="block text-sm font-medium text-slate-700">New Password</span>
                 <input
-                  type="text"
+                  type="password"
                   id="new_password"
                   {...register('new_password', {
                     maxLength: {
