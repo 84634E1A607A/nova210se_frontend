@@ -4,7 +4,6 @@ import { useRepliedMessageContext } from '../states/RepliedMessageProvider';
 import { ReactComponent as CancelReply } from '../../svg/cancel-svgrepo-com.svg';
 import useWebSocket from 'react-use-websocket';
 import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
-import { useEffect, useRef } from 'react';
 import { sendMessageC2SActionWS } from '../../websockets/Actions';
 import { ChatRelatedWithCurrentUser } from '../../utils/Types';
 
@@ -21,26 +20,14 @@ export function DialogBox({ chat }: Props) {
     ? `${repliedMessage.sender.user_name}: ${repliedMessage.message}`
     : '';
 
-  const { ref: dialogBoxRefContext } = useDialogBoxRefContext();
-  const trueDialogBoxRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (dialogBoxRefContext.length === 0) {
-      dialogBoxRefContext.push(trueDialogBoxRef);
-    }
-    return () => {
-      dialogBoxRefContext.splice(
-        dialogBoxRefContext.findIndex((r) => r === trueDialogBoxRef),
-        1,
-      );
-    };
-  }, [trueDialogBoxRef, dialogBoxRefContext]);
+  const { lastMassageRef: dialogBoxRefContext } = useDialogBoxRefContext();
 
   const { sendJsonMessage } = useWebSocket(process.env.REACT_APP_WEBSOCKET_URL!, {
     share: true,
   });
 
   return (
-    <div className="static bottom-0 flex h-[20%] flex-col" ref={trueDialogBoxRef}>
+    <div className="static bottom-0 flex h-[20%] flex-col">
       {/** The replied message, which can be canceled. */}
       <div
         className="flex flex-row place-content-center pb-2 text-gray-500"
@@ -77,6 +64,7 @@ export function DialogBox({ chat }: Props) {
           });
           reset();
           setRepliedMessage(null);
+          dialogBoxRefContext[0].current?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
         })}
         className="flex max-h-[100%] min-h-[100%] min-w-[60rem] max-w-[60rem] flex-col"
       >
