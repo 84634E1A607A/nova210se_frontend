@@ -126,6 +126,11 @@ export function UpdateDataCompanion() {
                 action: sendReadMessagesC2SActionWS,
                 data: { chat_id: lastJsonMessage.data.message.chat_id },
               });
+              toast.current?.show({
+                severity: 'info',
+                summary: 'New message',
+                detail: lastJsonMessage.data.message.message,
+              }); // a temporary solution
               tryToRefetch(messagesRefetch);
             }
 
