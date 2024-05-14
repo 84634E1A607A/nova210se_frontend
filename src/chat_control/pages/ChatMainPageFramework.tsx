@@ -83,6 +83,8 @@ export function ChatMainPageFramework() {
         setRightComponent={setRightComponent}
       />
 
+      <div className="h-full w-[3px] border-b-4 border-l bg-gray-300"></div>
+
       {/* main page or chat detail page for chat apiece */}
       <div className="ml-2 flex max-h-screen w-5/6 justify-center border-r-2">
         {rightComponent === 'chat' ? (
