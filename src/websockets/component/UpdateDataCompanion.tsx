@@ -25,6 +25,7 @@ import { useCurrentChatContext } from '../../chat_control/states/CurrentChatProv
 import { Toast } from 'primereact/toast';
 import { useRefetchContext, tryToRefetch } from '../../chat_control/states/RefetchProvider';
 import { updateChatState } from '../../chat_control/states/updateChatState';
+import { DetailedMessage } from '../../utils/Types';
 
 /**
  * @description If websocket message is received, remove the corresponding cache and re-navigate
@@ -120,20 +121,31 @@ export function UpdateDataCompanion() {
               currentChat?.chat_id === lastJsonMessage.data.message.chat_id &&
               rightComponent === 'chat'
             ) {
-              // In exactly the page that needs changing: send 'I've read the messages' to server
+              // In exactly the page that needs changing
               // (no need to update unread count because it's set to zero when enter the chat before)
+
+              queryClient.setQueryData<DetailedMessage[]>(
+                ['detailed_messages', String(lastJsonMessage.data.message.chat_id)],
+                (oldMessages) => {
+                  if (!oldMessages) return [lastJsonMessage.data.message];
+                  return [...oldMessages, lastJsonMessage.data.message];
+                },
+              );
+
+              // send 'I've read the messages' to server
+              // related info of chat and correct messages will be updated in `receiveReadMessagesS2CActionWS` case
               sendJsonMessage({
                 action: sendReadMessagesC2SActionWS,
                 data: { chat_id: lastJsonMessage.data.message.chat_id },
               });
-              toast.current?.show({
-                severity: 'info',
-                summary: 'New message',
-                detail: lastJsonMessage.data.message.message,
-              }); // a temporary solution
-              tryToRefetch(messagesRefetch);
             }
 
+            break;
+
+          case receiveReadMessagesS2CActionWS:
+            if (currentChat?.chat_id === lastJsonMessage.data.chat_id) {
+              tryToRefetch(messagesRefetch);
+            }
             tryToRefetch(chatsRefetch);
             break;
 
@@ -210,13 +222,6 @@ export function UpdateDataCompanion() {
                 }
               }
             });
-            break;
-
-          case receiveReadMessagesS2CActionWS:
-            if (currentChat?.chat_id === lastJsonMessage.data.chat_id) {
-              tryToRefetch(messagesRefetch);
-            }
-            tryToRefetch(chatsRefetch);
             break;
 
           case receiveMessageDeletedS2CActionWS:

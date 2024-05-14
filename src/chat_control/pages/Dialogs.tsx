@@ -15,7 +15,7 @@ import { useDialogBoxRefContext } from '../states/DialogBoxRefProvider';
 import { NoticesBar } from '../components/NoticesBar';
 import { getIsSelf } from '../utils/getIsSelf';
 import { messageTabListItemCssClass } from '../ui/MessageTabListItem';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getDetailedMessages } from '../getDetailedMessages';
 import { useRefetchContext, useSetupRefetch } from '../states/RefetchProvider';
 import useWebSocket from 'react-use-websocket';
@@ -23,14 +23,18 @@ import { sendDeleteMessageC2SActionWS } from '../../websockets/Actions';
 import './css/auto-hidden-scroll.css';
 
 export function Dialogs({ chat, user, friends }: Props) {
+  const queryClient = useQueryClient();
   const {
     isLoading,
     data: messages,
     refetch,
-  } = useQuery({
-    queryKey: ['detailed_messages', chat.chat_id],
-    queryFn: () => getDetailedMessages(chat),
-  });
+  } = useQuery(
+    {
+      queryKey: ['detailed_messages', String(chat.chat_id)],
+      queryFn: () => getDetailedMessages(chat),
+    },
+    queryClient,
+  );
 
   const { messagesRefetch } = useRefetchContext();
   useSetupRefetch(refetch, messagesRefetch);
